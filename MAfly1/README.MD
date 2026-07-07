@@ -4,6 +4,6 @@
 
 #PIC   图片目录
 /alien_converted-1M.gif 图片  
-![gif图片alien](/pic/alien_converted-1M.gif)  
+![gif图片alien](./pic/alien_converted-1M.gif)  
 /alien_webm.webm视频  
-![alien视频webm格式](/pic/alien_webm.webm)  
+![alien视频webm格式](./pic/alien_webm.webm)  

@@ -1,0 +1,514 @@
+{
+  "live": [
+    {
+      "name": "裤佬TV直播",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "url": "https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly1",
+      "type": 10,
+      "remark": "✈️TG频道@flymaf"
+    },
+{
+  "live": [
+    {
+      "name": "裤佬TV直播",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "url": "https://gh-proxy.org/https://raw.githubusercontent.com/Jsnzkpg/Jsnzkpg/Jsnzkpg/Jsnzkpg1",
+      "type": 10,
+      "remark": "✈️TG频道@flymaf"
+    },
+    {
+      "name": "潇雨萌萌TV直播",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "url": "https://itv.tv1288.xyz",
+      "type": 10,
+      "remark": "✈️TG频道@flymaf"
+},
+    {
+      "name": "日后TV直播",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "url": "http://rihou.cc:555/gggg.nzk",
+      "type": 10,
+      "remark": "✈️TG频道@flymaf"
+},
+    {
+      "name": "咪咕TV直播",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "url": "https://proxy.api.030101.xyz/develop202.github.io/migu_video/interface.txt",
+      "type": 10,
+      "remark": "✈️TG频道@flymaf"
+    },
+{
+      "name": "涛涛TV直播",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "url": "https://gh-proxy.org/https://raw.githubusercontent.com/taoBox2620/taoBox2620/refs/heads/main/log.png",
+      "type": 10,
+      "remark": "✈️TG频道@flymaf"
+},
+{
+      "name": "虎牙TV直播",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "url": "https://yg.ygbox.de5.net/huya.php",
+      "type": 10,
+      "remark": "✈️TG频道@flymaf"
+},
+    {
+      "name": "宫殿TV直播",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "url": "https://gongdian.top/tv/iptv",
+      "type": 10,
+      "remark": "✈️TG频道@flymaf"
+    },
+    {
+      "name": "易发TV直播",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "url": "https://gh-proxy.org/https://raw.githubusercontent.com/fafa002/yf2025/refs/heads/main/yiyifafa.txt",
+      "type": 10,
+      "remark": "✈️TG频道@flymaf"
+    },
+    {
+      "name": "JackTV直播{翻}",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "url": "https://php.946985.filegear-sg.me/jackTV.m3u",
+      "type": 10,
+      "remark": "✈️TG频道@flymaf"
+},
+{
+      "name": "台湾TV直播{翻}",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "url": "https://ha.msbot.dpdns.org/4gtv_api.php",
+      "type": 10,
+      "remark": "✈️TG频道@flymaf"
+    },
+    {
+      "name": "全球TV直播{翻}",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "url": "https://proxy.api.030101.xyz/iptv-org.github.io/iptv/index.m3u",
+      "type": 10,
+      "remark": "✈️TG频道@flymaf"
+    }
+  ],
+  "vod": [
+    {
+      "name": "2026美加墨世界杯直播",
+      "logo": "https://mpimg.cn/view.php/249e347b9656ef54467430b1e44de0a0.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://jsnzkpg.us.ci"
+    },
+    {
+      "name": "关注TG频道@stymei",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "version": 4,
+      "remark": "✈️TG频道@flymaf",
+      "webSite": "https://movie.douban.com",
+      "codeID": "4r9lCCTjjoqI5sGDkzho2sNKSL2BQXpc",
+      "order": "A00",
+      "api": "https://cdn.jsdelivr.net/gh/YYDS678/uzVideo-extensions@main/vod/js/Jian_douban2.txt",
+      "type": 101
+    },
+    {
+      "name": "bilibili直播",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "version": 9,
+      "remark": "✈️TG频道@flymaf",
+      "env": "bili_cookie##bili_cookie 用于获取个性化推荐和高清视频",
+      "webSite": "doubi",
+      "codeID": "9Djl2QaDMOIgvhl8tYAhdVowEsmuPZpA",
+      "order": "B",
+      "api": "https://cdn.jsdelivr.net/gh/YYDS678/uzVideo-extensions@main/vod/js/Zhi_doubi.txt",
+      "type": 101
+    },
+        {
+            "name": "瓜子影视",
+            "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+            "version": 2,
+            "remark": "✈️TG频道@flymaf",
+            "webSite": "https://api.w32z7vtd.com",
+            "codeID": "GsrfFOqB7JtHhaMDFHw9Xv3uHrCGSdwe",
+            "order": "B",
+            "api": "https://cdn.jsdelivr.net/gh/YYDS678/uzVideo-extensions@main/vod/js/Zhi_guazi.txt",
+            "type": 101
+        },
+    {
+      "name": "永乐视频",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://ylsp.jsnzkpg.ccwu.cc"
+    },
+    {
+      "name": "荐片",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "version": 2,
+      "remark": "✈️TG频道@flymaf",
+      "webSite": "jianpian",
+      "codeID": "3UXc19H0H2Dzz4vJEO4yFIGCmKXIlfoM",
+      "order": "B",
+      "api": "https://cdn.jsdelivr.net/gh/YYDS678/uzVideo-extensions@main/vod/js/Zhi_jianpian.txt",
+      "type": 101
+    },
+        {
+            "name": "移动云盘",
+            "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+            "version": 1,
+            "remark": "✈️TG频道@flymaf",
+            "webSite": "https://www.91panta.cn/",
+            "codeID": "fYX7prspKVl5o8VMImJQllzG3NHeBdpp",
+            "order": "A12",
+            "api": "https://cdn.jsdelivr.net/gh/YYDS678/uzVideo-extensions@main/vod/js/Pan_panta.txt",
+            "type": 101
+        },
+        {
+            "name": "乌云影视",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+            "version": 3,
+            "remark": "✈️TG频道@flymaf",
+            "webSite": "https://wooyun.tv",
+            "order": "B",
+            "api": "https://cdn.jsdelivr.net/gh/YYDS678/uzVideo-extensions@main/vod/js/Zhi_wooyun.js",
+            "type": 101
+        },
+    {
+      "name": "欧乐影视",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "version": 3,
+      "remark": "✈️TG频道@flymaf",
+      "webSite": "https://www.olehdtv.com",
+      "instance": "olevod20240620",
+      "order": "B",
+      "api": "https://cdn.jsdelivr.net/gh/YYDS678/uzVideo-extensions@main/vod/js/Zhi_olevod.js",
+      "type": 100
+    },
+    {
+      "name": "奇优影院",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "version": 2,
+      "remark": "✈️TG频道@flymaf",
+      "webSite": "http://www.qiyoudy4.com",
+      "order": "B",
+      "api": "https://cdn.jsdelivr.net/gh/YYDS678/uzVideo-extensions@main/vod/js/Zhi_qiyou.js",
+      "type": 101
+    },
+    {
+      "name": "八号影视",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "version": 1,
+      "remark": "✈️TG频道@flymaf",
+      "webSite": "https://www.bahaotv.com",
+      "order": "C",
+      "api": "https://raw.githubusercontent.com/YYDS678/uzVideo-extensions/main/vod/js/Xiu_bhys.js",
+      "type": 101
+    },
+    {
+      "name": "无广影视",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://php.doube.eu.org/spider/php/电影天堂.php"
+    },
+    {
+      "name": "iKanBot",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "version": 1,
+      "remark": "✈️TG频道@flymaf",
+      "webSite": "https://v.aikanbot.com",
+      "codeID": "xWEHbLCxcGGhC4tstiAXbQ5NT6FJz50X",
+      "order": "B",
+      "api": "https://cdn.jsdelivr.net/gh/YYDS678/uzVideo-extensions@main/vod/js/Zhi_iKanBot.txt",
+      "type": 101
+    },
+    {
+      "name": "河马短剧",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "version": 1,
+      "remark": "✈️TG频道@flymaf",
+      "webSite": "https://www.kuaikaw.cn",
+      "codeID": "y1JFo0Sxs3fVwTggELeJ4U4MWLVKM1dK",
+      "order": "B",
+      "api": "https://cdn.jsdelivr.net/gh/YYDS678/uzVideo-extensions@main/vod/js/Zhi_hmdj.txt",
+      "type": 101
+    },
+    {
+      "name": "E-ACG",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "version": 1,
+      "remark": "✈️TG频道@flymaf",
+      "webSite": "https://eacg1.com",
+      "order": "C",
+      "api": "https://raw.githubusercontent.com/YYDS678/uzVideo-extensions/main/vod/js/Xiu_eacg.js",
+      "type": 101
+    },
+    {
+      "name": "E-ACG2",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "version": 1,
+      "remark": "✈️TG频道@flymaf",
+      "webSite": "https://eacg1.com",
+      "order": "C",
+      "api": "https://raw.githubusercontent.com/YYDS678/uzVideo-extensions/main/vod/js/Xiu_eacg2.js",
+      "type": 101
+    },
+    {
+      "name": "girigirilove",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "version": 1,
+      "remark": "✈️TG频道@flymaf",
+      "webSite": "https://anime.girigirilove.com",
+      "order": "C",
+      "api": "https://raw.githubusercontent.com/YYDS678/uzVideo-extensions/main/vod/js/Xiu_girigirilove.js",
+      "type": 101
+    },
+    {
+      "name": "酷我听书",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "version": 1,
+      "remark": "✈️TG频道@flymaf",
+      "webSite": "http://tingshu.kuwo.cn",
+      "codeID": "USdWmrhBwHEAElFD428HKfByc0WbhzTw",
+      "api": "https://cdn.jsdelivr.net/gh/YYDS678/uzVideo-extensions@main/vod/js/Zhi_kwts.txt",
+      "type": 101
+    },
+        {
+            "name": "GD音乐台",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+            "version": 4,
+            "remark": "✈️TG频道@flymaf",
+            "webSite": "https://music.gdstudio.xyz/",
+            "codeID": "M9nkucZA62rwJZsCkCkvdxuzYlRmmE4G",
+            "order": "B",
+            "api": "https://cdn.jsdelivr.net/gh/YYDS678/uzVideo-extensions@main/vod/js/Zhi_gdstudio.txt",
+            "type": 101
+        },
+    {
+      "name": "无水印",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://api.wsyzy.net/api.php/provide/vod"
+    },
+    {
+      "name": "爬虫",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://dy.7772888.xyz/api.php/tvbox"
+    },
+    {
+      "name": "极速",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://jszyapi.com/api.php/provide/vod/from/jsm3u8/at/json"
+    },
+    {
+      "name": "暴风",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "http://by.bfzyapi.com/api.php/provide/vod"
+    },
+    {
+      "name": "电影天堂",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "http://dyttzyw.com/api.php/provide/vod/?ac=list"
+    },
+    {
+      "name": "豆瓣",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://caiji.dbzy5.com/api.php/provide/vod/from/dbm3u8/at/xml"
+    },
+    {
+      "name": "茅台",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://caiji.maotaizy.cc/api.php/provide/vod/from/mtm3u8/at/josn"
+    },
+    {
+      "name": "如意",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "http://cj.rycjapi.com/api.php/provide/vod/?ac=list"
+    },
+    {
+      "name": "量子",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://cj.lziapi.com/api.php/provide/vod/?ac=list"
+    },
+    {
+      "name": "360",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://360zyzz.com/api.php/provide/vod"
+    },
+    {
+      "name": "U酷",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://api.ukuapi88.com/api.php/provide/vod/?ac=list"
+    },
+    {
+      "name": "天涯",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://tyyszyapi.com/api.php/provide/vod/?ac=list"
+    },
+    {
+      "name": "无尽",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://api.wujinapi.me/api.php/provide/vod/?ac=list"
+    },
+    {
+      "name": "iQIYI",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://iqiyizyapi.com/api.php/provide/vod"
+    },
+    {
+      "name": "ikun",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://ikunzyapi.com/api.php/provide/vod/from/ikm3u8/at/json"
+    },
+    {
+      "name": "魔都",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://www.mdzyapi.com/api.php/provide/vod/?ac=list"
+    },
+    {
+      "name": "百度云",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://api.apibdzy.com/api.php/provide/vod/?ac=list"
+    },
+    {
+      "name": "闪电",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://xsd.sdzyapi.com/api.php/provide/vod/?ac=list"
+    },
+    {
+      "name": "红牛",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://www.hongniuzy2.com/api.php/provide/vod/from/hnm3u8/at/josn"
+    },
+    {
+      "name": "光速",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://api.guangsuapi.com/api.php/provide/vod/from/gsm3u8"
+    },
+    {
+      "name": "新浪",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://api.xinlangapi.com/xinlangapi.php/provide/vod/from/xlm3u8"
+    },
+    {
+      "name": "快车",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://caiji.kuaichezy.org/api.php/provide/vod/?ac=list"
+    },
+    {
+      "name": "金鹰",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://jyzyapi.com/provide/vod/from/jinyingm3u8/at/json"
+    },
+    {
+      "name": "猫眼",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://api.maoyanapi.top/api.php/provide/vod"
+    },
+    {
+      "name": "旺旺",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://api.wwzy.tv/api.php/provide/vod/?ac=list"
+    },
+    {
+      "name": "虎牙",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://www.huyaapi.com/api.php/provide/vod/from/hym3u8/at/json"
+    },
+    {
+      "name": "豪华",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://hhzyapi.com/api.php/provide/vod/from/hhm3u8/at/json"
+    },
+    {
+      "name": "速播",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://subocj.com/api.php/provide/vod/from/subm3u8/at/json"
+    },
+    {
+      "name": "非凡",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://ffzy1.tv/api.php/provide/vod"
+    },
+    {
+      "name": "樱花",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://m3u8.apiyhzy.com/api.php/provide/vod/?ac=list"
+    },
+    {
+      "name": "优质",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "http://api.yzzy-api.com/inc/apijson.php?ac=list"
+    },
+    {
+      "name": "鸭鸭",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://cj.yayazy.net/api.php/provide/vod/?ac=list"
+    },
+    {
+      "name": "牛牛",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://api.niuniuzy.me/api.php/provide/vod"
+    },
+    {
+      "name": "最大",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "http://zuidazy.me/api.php/provide/vod"
+    },
+    {
+      "name": "飘零",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://p2100.net/api.php/provide/vod"
+    },
+    {
+      "name": "1080",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://api.1080zyku.com/inc/apijson.php"
+    },
+    {
+      "name": "艾旦影视",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://lovedan.net/api.php/provide/vod"
+    },
+    {
+      "name": "OK",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://api.okzyw.net/api.php/provide/vod/?ac=list"
+    },
+    {
+      "name": "索尼",
+      "logo": "https://mpimg.cn/view.php/1b3a6f24ad4cb359a01277fb53674c49.png",
+      "remark": "✈️TG频道@flymaf",
+      "url": "https://suoniapi.com/api.php/provide/vod/?ac=list"
+    }
+  ]
+}

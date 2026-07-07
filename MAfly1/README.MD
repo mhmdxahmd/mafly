@@ -15,4 +15,10 @@
  <video controls="true" allowfullscreen="true">
  <source src="./pic/alien_webm.webm" type="video/webm">
  </video>
+</figure>  
+
+
+<figure class="video_container">
+  <iframe src="./pic/alien_webm.webm" frameborder="0" allowfullscreen="true"> 
+</iframe>
 </figure>

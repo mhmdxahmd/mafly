@@ -11,14 +11,9 @@
 ```HTML
 <video src="./pic/alien_webm.webm" controls="controls" width="500" height="300"></video>
 ```
+  
 <figure class="video_container">
  <video controls="true" allowfullscreen="true">
  <source src="./pic/alien_webm.webm" type="video/webm">
  </video>
 </figure>  
-
-
-<figure class="video_container">
-  <iframe src="./pic/alien_webm.webm" frameborder="0" allowfullscreen="true"> 
-</iframe>
-</figure>

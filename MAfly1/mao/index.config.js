@@ -72,7 +72,7 @@ var index_config_default = {
     autoPush: true
   },
  t4: {list: [
-    {name: "✈️关注TG频道@stymei",
+    {name: "✈️TG频道@flymaf",
       address: "http://bob2.hkt.net.cn/miraplay/dbo.php"},
     {name: "⚽实时体育直播[KF]",
       address: "https://jsnzkpg.us.ci"},

@@ -1,0 +1,5 @@
+{"showTime":79200000,"txt":"软件接口免费，请勿受骗购买！",
+"limitShowText":"提示 适配『影视仓』App 观看",
+"msg": "✈️✈️✈️一定要记得关注我的TG频道 https://t.me/flymaf",
+"date": "20220304000000",
+"duration": 80}

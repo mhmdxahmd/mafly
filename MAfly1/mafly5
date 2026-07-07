@@ -1,0 +1,380 @@
+{
+  "site_name": "EchoTV",
+  "announcement": "",
+  "api_site": {
+    "1772635443107": {
+      "key": "1772635443107",
+      "name": "✈️关注TG频道@flymaf",
+      "api": "https://19q.cc/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772635515259": {
+      "key": "1772635515259",
+      "name": "⭐无水印",
+      "api": "https://api.wsyzy.net/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772635534240": {
+      "key": "1772635534240",
+      "name": "⭐爬虫",
+      "api": "https://dy.7772888.xyz/api.php/tvbox",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772635551132": {
+      "key": "1772635551132",
+      "name": "⭐极速",
+      "api": "https://jszyapi.com/api.php/provide/vod/from/jsm3u8/at/json",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772635571544": {
+      "key": "1772635571544",
+      "name": "⭐暴风",
+      "api": "http://by.bfzyapi.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772635651731": {
+      "key": "1772635651731",
+      "name": "⭐电影天堂",
+      "api": "http://dyttzyw.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772635687613": {
+      "key": "1772635687613",
+      "name": "⭐豆瓣",
+      "api": "https://caiji.doubanzy.cc/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772635737318": {
+      "key": "1772635737318",
+      "name": "⭐茅台",
+      "api": "https://caiji.maotaizy.cc/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772635781202": {
+      "key": "1772635781202",
+      "name": "⭐如意",
+      "api": "http://cj.rycjapi.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772635872719": {
+      "key": "1772635872719",
+      "name": "⭐量子",
+      "api": "https://cj.lziapi.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772635912266": {
+      "key": "1772635912266",
+      "name": "⭐360",
+      "api": "https://360zyzz.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772635945917": {
+      "key": "1772635945917",
+      "name": "⭐U酷",
+      "api": "https://api.ukuapi88.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772635975098": {
+      "key": "1772635975098",
+      "name": "⭐天涯",
+      "api": "https://tyyszyapi.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636004361": {
+      "key": "1772636004361",
+      "name": "⭐无尽",
+      "api": "https://api.wujinapi.me/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636031412": {
+      "key": "1772636031412",
+      "name": "⭐iQIYI",
+      "api": "https://iqiyizyapi.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636117561": {
+      "key": "1772636117561",
+      "name": "⭐ikun",
+      "api": "https://ikunzyapi.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636329926": {
+      "key": "1772636329926",
+      "name": "⭐魔都",
+      "api": "https://www.mdzyapi.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636384719": {
+      "key": "1772636384719",
+      "name": "⭐百度云",
+      "api": "https://api.apibdzy.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636508131": {
+      "key": "1772636508131",
+      "name": "⭐闪电",
+      "api": "https://xsd.sdzyapi.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636537925": {
+      "key": "1772636537925",
+      "name": "⭐红牛",
+      "api": "https://www.hongniuzy2.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636565838": {
+      "key": "1772636565838",
+      "name": "⭐光速",
+      "api": "https://api.guangsuapi.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636601069": {
+      "key": "1772636601069",
+      "name": "⭐新浪",
+      "api": "https://api.xinlangapi.com/xinlangapi.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636626460": {
+      "key": "1772636626460",
+      "name": "⭐快车",
+      "api": "https://caiji.kuaichezy.org/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636659394": {
+      "key": "1772636659394",
+      "name": "⭐金鹰",
+      "api": "https://jyzyapi.com/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636692778": {
+      "key": "1772636692778",
+      "name": "⭐猫眼",
+      "api": "https://api.maoyanapi.top/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636742366": {
+      "key": "1772636742366",
+      "name": "⭐旺旺",
+      "api": "https://api.wwzy.tv/api.php/provide/vod/?ac=list",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636773170": {
+      "key": "1772636773170",
+      "name": "⭐虎牙",
+      "api": "https://www.huyaapi.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636800974": {
+      "key": "1772636800974",
+      "name": "⭐豪华",
+      "api": "https://hhzyapi.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636839287": {
+      "key": "1772636839287",
+      "name": "⭐速播",
+      "api": "https://subocj.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636857084": {
+      "key": "1772636857084",
+      "name": "⭐非凡",
+      "api": "https://ffzy1.tv/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636895284": {
+      "key": "1772636895284",
+      "name": "⭐樱花",
+      "api": "https://m3u8.apiyhzy.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636967015": {
+      "key": "1772636967015",
+      "name": "⭐优质",
+      "api": "http://api.yzzy-api.com/inc/apijson.php",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772636998694": {
+      "key": "1772636998694",
+      "name": "⭐鸭鸭",
+      "api": "https://cj.yayazy.net/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772637019314": {
+      "key": "1772637019314",
+      "name": "⭐牛牛",
+      "api": "https://api.niuniuzy.me/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772637046495": {
+      "key": "1772637046495",
+      "name": "⭐最大",
+      "api": "http://zuidazy.me/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772637068704": {
+      "key": "1772637068704",
+      "name": "⭐飘零",
+      "api": "https://p2100.net/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772637092344": {
+      "key": "1772637092344",
+      "name": "⭐1080",
+      "api": "https://api.1080zyku.com/inc/apijson.php",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772637177381": {
+      "key": "1772637177381",
+      "name": "⭐OK",
+      "api": "https://api.okzyw.net/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1772637209090": {
+      "key": "1772637209090",
+      "name": "⭐索尼",
+      "api": "https://suoniapi.com/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    },
+    "1780505240003": {
+      "key": "1780505240003",
+      "name": "⭐艾旦",
+      "api": "https://lovedan.net/api.php/provide/vod",
+      "detail": null,
+      "from": "subscription",
+      "disabled": false,
+      "subscriptionId": "1774508348956"
+    }
+  },
+  "lives": {
+    "1772637934627": {
+      "key": "1772637934627",
+      "name": "裤佬 | ⚽2026美加墨世界杯",
+      "api": "https://jsnzkpg.us.ci/live.m3u",
+      "url": "https://jsnzkpg.us.ci/live.m3u",
+      "ua": null,
+      "epg": null,
+      "from": "custom",
+      "disabled": false,
+      "subscriptionId": null
+    }
+  },
+  "custom_category": []
+}

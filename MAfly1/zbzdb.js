@@ -1,7 +1,7 @@
 var globalHeaders = [];
 var classes = [];
 var categories = {}; // 修复：正确使用categories存储分类数据
-var picUrl = 'https://mpimg.cn/view.php/e6138ae03c06c73d4a2abc002eae3e80.jpg';
+var picUrl = 'https://mpimg.cn/view.php/329b911dae9e056eda894f2f5ab388db.jpg';
 var webPaths = {};
 var sourceHeaders = {};
 var sourceConfigs = {}; // 修复：统一使用sourceConfigs变量名

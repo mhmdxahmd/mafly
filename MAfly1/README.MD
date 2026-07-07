@@ -6,4 +6,4 @@
 /alien_converted-1M.gif 图片  
 ![gif图片alien](./pic/alien_converted-1M.gif)  
 /alien_webm.webm视频  
-![alien视频webm格式](./pic/alien_webm.webm)  
+<video src="./pic/alien_webm.webm" controls="controls" width="500" height="300"></video>

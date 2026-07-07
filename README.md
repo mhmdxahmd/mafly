@@ -13,6 +13,14 @@
 
 觉得OK
 
-USDT 打赏 支持更新
+USDT 打赏 支持更新  
+  
+TYJkyTEeiqvHYMUGWndztCUZ2NemKEKuK5  
+  
+支持：区块链：波场(如TRX 或 TRC10/20/271 通证) 转入其他通证将无法找回  
+波场(TRON)  
+USDT(TRC20)  
+TRX  
+USDD  
 > [!IMPORTANT]  
-![jpg图片USDT](./MAfly1/pic/usdt.jpg) 
+![jpg图片USDT](./MAfly1/pic/usdt.jpg)  

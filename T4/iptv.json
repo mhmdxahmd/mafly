@@ -1,1 +1,25 @@
-t4iptv
+{
+  "spider": "",
+  "wallpaper": "https://tuapi.eees.cc/api.php?category=fengjing&type=302",
+  "sites": [
+    {
+      "key": "Local_Search",
+      "name": "本地搜索",
+      "type": 3,
+      "api": "csp_Local",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 0
+    }
+  ],
+  "lives": [
+    {
+      "name": "Maflya电视直播",
+      "type": 0,
+      "url": "./live.m3u",
+      "playerType": 1,
+      "epg": "http://epg.112114.xyz/?ch={name}&date={date}",
+      "logo": "https://epg.112114.xyz/logo/{name}.png"
+    }
+  ]
+}

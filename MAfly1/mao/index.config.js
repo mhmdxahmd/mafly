@@ -82,6 +82,8 @@ var index_config_default = {
       address: "https://jsnzkpg.ggff.net"},
     {name: "📡IPTV直播",
       address: "https://live.jsnzkpg.ccwu.cc"},
+    {name: "📡Maflya-iptv",
+      address: "https://maflyt4.pages.dev/iptv.json"},
     {name: "📡Maflya直播",
       address: "https://t4.maflya.com"},
     {name: "👖永乐影视",

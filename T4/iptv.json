@@ -16,7 +16,7 @@
     {
       "name": "Maflya电视直播",
       "type": 0,
-      "url": "https://maflyt4.pages.dev/live.m3u",
+      "url": "https://maflyt4.pages.dev/iptv.m3u",
       "playerType": 1,
       "epg": "http://epg.112114.xyz/?ch={name}&date={date}",
       "logo": "https://epg.112114.xyz/logo/{name}.png"

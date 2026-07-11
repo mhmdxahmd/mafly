@@ -28,3 +28,12 @@ TRX
 USDD  
 > [!IMPORTANT]  
 ![jpg图片USDT](./MAfly1/pic/usdt.jpg)  
+
+
+
+
+灵感来自以下之一 thans
+
+裤佬  
+https://t.me/stymei  
+https://jsnzkpg.com/  

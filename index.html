@@ -54,34 +54,21 @@
             filter: blur(100px);
         }
 
-        .orb-1 { width: 50vw; height: 50vw; background: #dcd0ff; top: -10%;
-            left: -10%; animation-duration: 22s; }
-        .orb-2 { width: 60vw; height: 60vw; background: #b4d8ff;
-            bottom: -20%; right: -10%; animation-duration: 28s; animation-delay: -5s; }
-        .orb-3 { width: 45vw;
-            height: 45vw; background: #c2f0fb; top: 40%; left: 40%; animation-duration: 25s; animation-delay: -10s;
-        }
-        .orb-4 { width: 40vw; height: 40vw; background: #ffe0f0; bottom: 10%; left: -10%;
-            animation-duration: 30s; animation-delay: -15s; }
+        .orb-1 { width: 50vw; height: 50vw; background: #dcd0ff; top: -10%; left: -10%; animation-duration: 22s; }
+        .orb-2 { width: 60vw; height: 60vw; background: #b4d8ff; bottom: -20%; right: -10%; animation-duration: 28s; animation-delay: -5s; }
+        .orb-3 { width: 45vw; height: 45vw; background: #c2f0fb; top: 40%; left: 40%; animation-duration: 25s; animation-delay: -10s; }
+        .orb-4 { width: 40vw; height: 40vw; background: #ffe0f0; bottom: 10%; left: -10%; animation-duration: 30s; animation-delay: -15s; }
 
-        body.dark .orb-1 { background: #3c1e7a;
-        }
-        body.dark .orb-2 { background: #133a70;
-        }
-        body.dark .orb-3 { background: #115e6e;
-        }
-        body.dark .orb-4 { background: #611e4b;
-        }
+        body.dark .orb-1 { background: #3c1e7a; }
+        body.dark .orb-2 { background: #133a70; }
+        body.dark .orb-3 { background: #115e6e; }
+        body.dark .orb-4 { background: #611e4b; }
 
         @keyframes floatOrb {
-            0% { transform: translate(0, 0) scale(1) rotate(0deg);
-            }
-            33% { transform: translate(5vw, 8vh) scale(1.1) rotate(10deg);
-            }
-            66% { transform: translate(-8vw, 5vh) scale(0.95) rotate(-5deg);
-            }
-            100% { transform: translate(5vw, -5vh) scale(1.05) rotate(5deg);
-            }
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            33% { transform: translate(5vw, 8vh) scale(1.1) rotate(10deg); }
+            66% { transform: translate(-8vw, 5vh) scale(0.95) rotate(-5deg); }
+            100% { transform: translate(5vw, -5vh) scale(1.05) rotate(5deg); }
         }
 
         body {
@@ -160,7 +147,7 @@
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
 
-        /* --- 头像容器优化 --- */
+        /* --- 头像容器 --- */
         .avatar-wrapper {
             position: relative;
             width: 100px;
@@ -182,7 +169,7 @@
         }
 
         .avatar-img {
-            display: none; /* 动态判断切换 */
+            display: none;
         }
 
         .subtitle {
@@ -377,24 +364,20 @@
         }
 
         @keyframes iosIntro {
-            from { opacity: 0;
-                transform: translateY(20px) translateZ(-10px); }
-            to { opacity: 1;
-                transform: translateY(0) translateZ(0); }
+            from { opacity: 0; transform: translateY(20px) translateZ(-10px); }
+            to { opacity: 1; transform: translateY(0) translateZ(0); }
         }
 
-        audio {
+        /* 隐藏的辅助和主音频元素 */
+        #bg-music, .hidden-bridge-video {
             position: fixed;
-            bottom: -30px;
-            left: 0;
-            width: 1px;
-            height: 1px;
-            opacity: 0.01;
+            bottom: -50px; left: 0;
+            width: 1px; height: 1px;
+            opacity: 0.001;
             pointer-events: none;
-            z-index: -1;
+            z-index: -999;
         }
 
-        /* --- 轻量级 Toast 提示样式 --- */
         .toast-notification {
             position: fixed;
             bottom: 30px;
@@ -434,7 +417,12 @@
     </div>
     <div class="bg-noise"></div>
 
-    <!-- 解决音源加载：优化预加载机制 -->
+    <!-- 💡 【核心改进 1】：保留一个不可见的辅助神秘视频，专门用来欺骗 iOS 系统的自动播放白名单 -->
+    <video class="hidden-bridge-video" autoplay loop muted playsinline webkit-playsinline id="iosBridgeVideo">
+        <source src="https://mpimg.cn/down.php/3ba2707593da50a980d719ac7ec5ee3e.webm" type="video/webm">
+    </video>
+
+    <!-- 主音频 -->
     <audio id="bg-music" preload="auto" loop crossorigin="anonymous">
         <source src="https://mpimg.cn/down.php/480cde5dec5b3d0e9c3381fe95399102.m4a" type="audio/mpeg">
     </audio>
@@ -447,12 +435,11 @@
         <div class="header-area">
             <h1>MAfly</h1>
             
-            <!-- 核心改进：修复苹果WebKit图像解析容器 -->
+            <!-- 头像容器：完美进行分离控制 -->
             <div class="avatar-wrapper">
                 <video id="avatarVideo" class="avatar-video" autoplay loop muted playsinline webkit-playsinline>
                     <source src="https://mpimg.cn/down.php/3ba2707593da50a980d719ac7ec5ee3e.webm" type="video/webm">
                 </video>
-                <!-- 将view.php替换为down.php纯净直链，解决苹果不显示动画的问题 -->
                 <img id="avatarGif" class="avatar-img" src="https://mpimg.cn/down.php/a67bdffe28a513f430c7f80e066b959f.gif" alt="MAfly Logo">
             </div>
             
@@ -544,7 +531,6 @@
                 const video = document.getElementById('avatarVideo');
                 const gif = document.getElementById('avatarGif');
                 
-                // 完美的苹果设备检测逻辑（包含所有iOS版本和iPhone/iPad上的第三方浏览器）
                 const isApple = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
                                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
                                 /AppleWebKit/.test(navigator.userAgent) && !/Android/i.test(navigator.userAgent);
@@ -564,7 +550,6 @@
                 function switchToGif() {
                     if (video) video.style.display = 'none';
                     if (gif) {
-                        // 加上随机时间戳防止苹果浏览器死卡缓存导致GIF静止不播放
                         gif.src = "https://mpimg.cn/down.php/a67bdffe28a513f430c7f80e066b959f.gif?t=" + new Date().getTime();
                         gif.style.display = 'block';
                     }
@@ -577,39 +562,41 @@
                 checkAvatarCompatibility();
             }
 
-            /* --- 2. 完美的安卓/全平台背景音乐自动激活逻辑 --- */
+            /* --- 2. 【核心改进 2】：全自动兼顾 iOS/安卓 的音频激活流 --- */
             const audioEl = document.getElementById('bg-music');
             
-            function forcePlayMusic() {
-                if (audioEl && audioEl.paused) {
-                    audioEl.volume = 0.55;
-                    audioEl.play().then(() => {
-                        // 播放成功后移除事件，防止重复触发
-                        removeAllMusicTriggers();
-                    }).catch(err => {
-                        console.log("播放仍受限:", err);
+            function runMusicPlayer() {
+                if (!audioEl) return;
+                audioEl.volume = 0.55;
+
+                // 尝试直接自动播放
+                const startPromise = audioEl.play();
+                
+                if (startPromise !== undefined) {
+                    startPromise.catch(() => {
+                        // 如果被部分安卓或老版本环境拦截，启用后备点击/触摸监听器，只要用户摸一下就响
+                        const wakeUpAudio = () => {
+                            if (audioEl.paused) {
+                                audioEl.play().then(() => {
+                                    window.removeEventListener('click', wakeUpAudio);
+                                    window.removeEventListener('touchstart', wakeUpAudio);
+                                    window.removeEventListener('scroll', wakeUpAudio);
+                                });
+                            }
+                        };
+                        window.addEventListener('click', wakeUpAudio, { passive: true });
+                        window.addEventListener('touchstart', wakeUpAudio, { passive: true });
+                        window.addEventListener('scroll', wakeUpAudio, { passive: true });
                     });
                 }
+
+                // 微信内置浏览器专属自动播放通道
+                document.addEventListener("WeixinJSBridgeReady", function () {
+                    audioEl.play().catch(()=>{});
+                }, false);
             }
 
-            function removeAllMusicTriggers() {
-                window.removeEventListener('touchstart', forcePlayMusic);
-                window.removeEventListener('click', forcePlayMusic);
-                window.removeEventListener('scroll', forcePlayMusic);
-                document.removeEventListener('pointerdown', forcePlayMusic);
-            }
-
-            // 初始尝试直接播放
-            if (audioEl) {
-                audioEl.volume = 0.55;
-                audioEl.play().catch(() => {
-                    // 如果被拦截，绑定全屏幕任意触摸/滑动/点击事件来解锁音频
-                    window.addEventListener('touchstart', forcePlayMusic, { passive: true });
-                    window.addEventListener('click', forcePlayMusic, { passive: true });
-                    window.addEventListener('scroll', forcePlayMusic, { passive: true });
-                    document.addEventListener('pointerdown', forcePlayMusic, { passive: true });
-                });
-            }
+            runMusicPlayer();
 
             /* --- 3. 复制并打开逻辑 --- */
             window.copyAndOpen = function(event, url) {

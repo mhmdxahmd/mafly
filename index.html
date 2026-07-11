@@ -14,7 +14,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- 新增：高级动态流光系统 --- */
+        /* --- 高级动态流光系统 --- */
         .bg-ambient {
             position: fixed;
             top: 0; left: 0;
@@ -368,14 +368,12 @@
             to { opacity: 1; transform: translateY(0) translateZ(0); }
         }
 
-        /* 隐藏的辅助和主音频元素 */
-        #bg-music, .hidden-bridge-video {
-            position: fixed;
-            bottom: -50px; left: 0;
-            width: 1px; height: 1px;
-            opacity: 0.001;
-            pointer-events: none;
-            z-index: -999;
+        /* 纯粹隐藏 */
+        #bg-music {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            visibility: hidden;
         }
 
         .toast-notification {
@@ -417,13 +415,8 @@
     </div>
     <div class="bg-noise"></div>
 
-    <!-- 💡 【核心改进 1】：保留一个不可见的辅助神秘视频，专门用来欺骗 iOS 系统的自动播放白名单 -->
-    <video class="hidden-bridge-video" autoplay loop muted playsinline webkit-playsinline id="iosBridgeVideo">
-        <source src="https://mpimg.cn/down.php/3ba2707593da50a980d719ac7ec5ee3e.webm" type="video/webm">
-    </video>
-
-    <!-- 主音频 -->
-    <audio id="bg-music" preload="auto" loop crossorigin="anonymous">
+    <!-- 💡 【彻底还原】：去掉了所有多余的跨域和预加载属性，还原最初始最简纯的干净音源标签 -->
+    <audio id="bg-music" loop>
         <source src="https://mpimg.cn/down.php/480cde5dec5b3d0e9c3381fe95399102.m4a" type="audio/mpeg">
     </audio>
 
@@ -435,11 +428,12 @@
         <div class="header-area">
             <h1>MAfly</h1>
             
-            <!-- 头像容器：完美进行分离控制 -->
             <div class="avatar-wrapper">
+                <!-- 原版Logo视频渲染机制 -->
                 <video id="avatarVideo" class="avatar-video" autoplay loop muted playsinline webkit-playsinline>
                     <source src="https://mpimg.cn/down.php/3ba2707593da50a980d719ac7ec5ee3e.webm" type="video/webm">
                 </video>
+                <!-- 苹果特供直链GIF -->
                 <img id="avatarGif" class="avatar-img" src="https://mpimg.cn/down.php/a67bdffe28a513f430c7f80e066b959f.gif" alt="MAfly Logo">
             </div>
             
@@ -536,67 +530,52 @@
                                 /AppleWebKit/.test(navigator.userAgent) && !/Android/i.test(navigator.userAgent);
                 
                 if (isApple) {
-                    switchToGif();
-                } else if (video) {
-                    video.addEventListener('error', switchToGif);
-                    const playPromise = video.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(() => {
-                            switchToGif();
-                        });
-                    }
-                }
-
-                function switchToGif() {
                     if (video) video.style.display = 'none';
                     if (gif) {
                         gif.src = "https://mpimg.cn/down.php/a67bdffe28a513f430c7f80e066b959f.gif?t=" + new Date().getTime();
                         gif.style.display = 'block';
                     }
+                } else {
+                    // 非苹果系统（PC/安卓）继续使用原视频
+                    if (video) {
+                        video.addEventListener('error', () => {
+                            video.style.display = 'none';
+                            if (gif) gif.style.display = 'block';
+                        });
+                    }
                 }
             }
             
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', checkAvatarCompatibility);
-            } else {
-                checkAvatarCompatibility();
-            }
+            checkAvatarCompatibility();
 
-            /* --- 2. 【核心改进 2】：全自动兼顾 iOS/安卓 的音频激活流 --- */
+            /* --- 2. 完美回归最初的超兼容自动播放逻辑 --- */
             const audioEl = document.getElementById('bg-music');
             
-            function runMusicPlayer() {
-                if (!audioEl) return;
+            if (audioEl) {
+                // 最朴素的全局播放指令，不再加任何画蛇添足的限制
                 audioEl.volume = 0.55;
-
-                // 尝试直接自动播放
-                const startPromise = audioEl.play();
                 
-                if (startPromise !== undefined) {
-                    startPromise.catch(() => {
-                        // 如果被部分安卓或老版本环境拦截，启用后备点击/触摸监听器，只要用户摸一下就响
-                        const wakeUpAudio = () => {
-                            if (audioEl.paused) {
-                                audioEl.play().then(() => {
-                                    window.removeEventListener('click', wakeUpAudio);
-                                    window.removeEventListener('touchstart', wakeUpAudio);
-                                    window.removeEventListener('scroll', wakeUpAudio);
-                                });
-                            }
-                        };
-                        window.addEventListener('click', wakeUpAudio, { passive: true });
-                        window.addEventListener('touchstart', wakeUpAudio, { passive: true });
-                        window.addEventListener('scroll', wakeUpAudio, { passive: true });
-                    });
-                }
+                const playAudio = () => {
+                    audioEl.play().catch(e => console.log('AutoPlay blocked, waiting for touch.'));
+                };
 
-                // 微信内置浏览器专属自动播放通道
+                // 首次尝试直接播放
+                playAudio();
+
+                // 绑定最基础的后备事件（安卓/苹果如果首次没播出来，碰一下屏幕任何地方立刻补播）
+                const triggerPlay = () => {
+                    audioEl.play();
+                    window.removeEventListener('click', triggerPlay);
+                    window.removeEventListener('touchstart', triggerPlay);
+                };
+                window.addEventListener('click', triggerPlay);
+                window.addEventListener('touchstart', triggerPlay);
+
+                // 微信环境补加支持
                 document.addEventListener("WeixinJSBridgeReady", function () {
-                    audioEl.play().catch(()=>{});
+                    audioEl.play();
                 }, false);
             }
-
-            runMusicPlayer();
 
             /* --- 3. 复制并打开逻辑 --- */
             window.copyAndOpen = function(event, url) {

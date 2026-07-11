@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+    <title>MA永久发布页 · 终身入口官网·请收藏永不迷路</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- 新增：高级动态流光系统 --- */
+        .bg-ambient {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -2;
+            overflow: hidden;
+            background-color: #f5f5f7;
+            transition: background-color 0.5s ease;
+        }
+        body.dark .bg-ambient {
+            background-color: #0a0a0f;
+        }
+
+        .bg-noise {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        body.dark .bg-noise {
+            opacity: 0.08;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.8;
+            will-change: transform;
+            animation: floatOrb 25s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        body.dark .bg-orb {
+            opacity: 0.45;
+            filter: blur(100px);
+        }
+
+        .orb-1 { width: 50vw; height: 50vw; background: #dcd0ff; top: -10%;
+            left: -10%; animation-duration: 22s; }
+        .orb-2 { width: 60vw; height: 60vw; background: #b4d8ff;
+            bottom: -20%; right: -10%; animation-duration: 28s; animation-delay: -5s; }
+        .orb-3 { width: 45vw;
+            height: 45vw; background: #c2f0fb; top: 40%; left: 40%; animation-duration: 25s; animation-delay: -10s;
+        }
+        .orb-4 { width: 40vw; height: 40vw; background: #ffe0f0; bottom: 10%; left: -10%;
+            animation-duration: 30s; animation-delay: -15s; }
+
+        body.dark .orb-1 { background: #3c1e7a;
+        }
+        body.dark .orb-2 { background: #133a70;
+        }
+        body.dark .orb-3 { background: #115e6e;
+        }
+        body.dark .orb-4 { background: #611e4b;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            33% { transform: translate(5vw, 8vh) scale(1.1) rotate(10deg);
+            }
+            66% { transform: translate(-8vw, 5vh) scale(0.95) rotate(-5deg);
+            }
+            100% { transform: translate(5vw, -5vh) scale(1.05) rotate(5deg);
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro Icons", sans-serif;
+            color: #000000;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+            padding: 40px 16px env(safe-area-inset-bottom);
+            letter-spacing: -0.4px;
+            overflow-x: hidden;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        body.dark {
+            color: #f5f5f7;
+        }
+
+        .theme-toggle-corner {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 1000;
+            background: rgba(120, 120, 128, 0.4);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 0.5px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        body.dark .theme-toggle-corner {
+            background: rgba(40, 40, 48, 0.5);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+        .theme-toggle-corner:active {
+            transform: scale(0.92);
+        }
+        .toggle-icon {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 390px;
+            transform-style: preserve-3d;
+            perspective: 1200px;
+        }
+
+        .header-area {
+            margin-bottom: 24px;
+            text-align: center;
+            animation: iosIntro 0.9s cubic-bezier(0.15, 0.95, 0.3, 1) both;
+        }
+
+        h1 {
+            font-size: 27px;
+            font-weight: 700;
+            letter-spacing: -0.8px;
+            color: #1d1d1f;
+            margin-bottom: 18px;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.02);
+            transition: color 0.2s;
+        }
+        body.dark h1 {
+            color: #f5f5f7;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 16px auto;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .subtitle {
+            font-size: 14.5px;
+            color: rgba(29, 29, 31, 0.7);
+            line-height: 1.5;
+            padding: 0 24px;
+            font-weight: 500;
+            margin-bottom: 18px;
+            transition: color 0.2s;
+        }
+        body.dark .subtitle {
+            color: rgba(245, 245, 247, 0.6);
+        }
+
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 0 4px;
+            margin-bottom: 8px;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 0.5px solid rgba(255, 255, 255, 0.6);
+            border-radius: 14px;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1d1d1f;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s ease;
+        }
+        body.dark .social-btn {
+            background: rgba(40, 40, 48, 0.4);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #efeff4;
+        }
+
+        .ios-card {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(35px) saturate(210%);
+            border-radius: 20px;
+            margin-top: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04), 0 0.5px 0 rgba(255, 255, 255, 0.8) inset;
+            border: 0.5px solid rgba(255, 255, 255, 0.6);
+            animation: iosIntro 0.9s cubic-bezier(0.15, 0.95, 0.3, 1) 0.08s both;
+        }
+        body.dark .ios-card {
+            background: rgba(28, 28, 35, 0.5);
+            border: 0.5px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* --- 书签样式 --- */
+        .bookmark-wrapper {
+            padding: 16px 16px 6px 16px;
+        }
+
+        .bookmark {
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 16px;
+            padding: 14px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        body.dark .bookmark {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .bookmark-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 4px 0;
+            position: relative;
+            user-select: none;
+        }
+
+        .bookmark-title {
+            color: #1d1d1f;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 0.3px;
+            transition: color 0.2s ease;
+        }
+        body.dark .bookmark-title {
+            color: #f2f2f5;
+        }
+
+        .bookmark-header i.chevron {
+            position: absolute;
+            right: 0;
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        body.dark .bookmark-header i.chevron {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .bookmark-header.collapsed i.chevron {
+            transform: rotate(-90deg);
+        }
+
+        .bookmark-links {
+            display: grid;
+            grid-template-rows: 1fr;
+            gap: 6px;
+            transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, gap 0.35s ease, margin-top 0.35s ease;
+            opacity: 1;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .bookmark-links.collapsed {
+            grid-template-rows: 0fr;
+            opacity: 0;
+            gap: 0;
+            margin-top: 0;
+            pointer-events: none;
+        }
+
+        .bookmark-links-inner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .column-title {
+            font-size: 15px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+        body.dark .column-title {
+            color: #f2f2f5;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .link-item a {
+            display: block;
+            padding: 11px 12px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            text-align: center;
+            color: #1d1d1f;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            cursor: pointer;
+        }
+        body.dark .link-item a {
+            color: #efeff4;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.03);
+            box-shadow: none;
+        }
+
+        .link-item a:active {
+            background: rgba(0, 0, 0, 0.06);
+            transform: scale(0.97);
+        }
+        body.dark .link-item a:active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-text {
+            font-size: 12.5px;
+            color: #8e8e93;
+            text-align: center;
+            font-weight: 500;
+            padding: 40px 0 10px 0;
+            animation: iosIntro 0.9s cubic-bezier(0.15, 0.95, 0.3, 1) 0.16s both;
+        }
+        body.dark .footer-text {
+            color: #63636e;
+        }
+
+        @keyframes iosIntro {
+            from { opacity: 0;
+                transform: translateY(20px) translateZ(-10px); }
+            to { opacity: 1;
+                transform: translateY(0) translateZ(0); }
+        }
+
+        audio {
+            position: fixed;
+            bottom: -30px;
+            left: 0;
+            width: 1px;
+            height: 1px;
+            opacity: 0.01;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* --- 新增：极简轻量级 Toast 提示样式 --- */
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffffff;
+            padding: 10px 22px;
+            border-radius: 22px;
+            font-size: 13.5px;
+            font-weight: 600;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.15, 0.95, 0.3, 1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        body.dark .toast-notification {
+            background: rgba(245, 245, 247, 0.9);
+            color: #000000;
+        }
+        .toast-notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-ambient">
+        <div class="bg-orb orb-1"></div>
+        <div class="bg-orb orb-2"></div>
+        <div class="bg-orb orb-3"></div>
+        <div class="bg-orb orb-4"></div>
+    </div>
+    <div class="bg-noise"></div>
+
+    <audio id="bg-music" preload="auto" loop>
+        <source src="https://mpimg.cn/view.php/480cde5dec5b3d0e9c3381fe95399102.m4a" type="audio/mpeg">
+    </audio>
+
+    <div class="theme-toggle-corner" id="themeToggleCorner">
+        <span class="toggle-icon" id="themeIcon">☀️</span>
+    </div>
+
+    <div class="container">
+        <div class="header-area">
+            <h1>MAfly</h1>
+            <div class="avatar-wrapper">
+                <video class="avatar-img" autoplay loop muted playsinline>
+                    <source src="https://mpimg.cn/down.php/3ba2707593da50a980d719ac7ec5ee3e.webm" type="video/webm">
+                </video>
+            </div>
+            <p class="subtitle">maflya.com请收藏本页域名,一切从模仿开始</p>
+            
+            <div class="social-grid">
+                <a href="https://t.me/flymaf" target="_blank" class="social-btn">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0088cc" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4Z"/></svg>
+                    TG频道
+                </a>
+                <a href="https://t.me/+vBTBjfJsag4xYmRk" target="_blank" class="social-btn">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0088cc" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4Z"/></svg>
+                    TG群聊
+                </a>
+                <a href="https://github.com/mhmdxahmd/mafly" target="_blank" class="social-btn">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4M9 18c-4.51 2-5-2-7-2"/></svg>
+                    Github仓库
+                </a>
+                <a href="https://www.maflya.com/" target="_blank" class="social-btn">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4M9 18c-4.51 2-5-2-7-2"/></svg>
+                    maflya发布页
+                </a>
+            </div>
+        </div>
+        
+        <div class="ios-card">
+            <div class="bookmark-wrapper">
+                <div class="bookmark">
+                    <div class="bookmark-header" onclick="toggleBookmark(this)">
+                        <div class="bookmark-title">公益项目汇总</div>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="bookmark-links">
+                        <div class="bookmark-links-inner">
+
+                            <div>
+                                <div class="column-title">MA公益项目汇总</div>
+                                <div class="link-item"><a href="https://sub.maflya.com/" target="_blank" onclick="copyAndOpen(event, 'https://sub.maflya.com/')">节点订阅链接</a></div>
+                                <div class="link-item"><a href="https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly1" target="_blank" onclick="copyAndOpen(event, 'https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly1')">MAFly-iptv.txt</a></div>
+                                <div class="link-item"><a href="https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly.m3u" target="_blank" onclick="copyAndOpen(event, 'https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly.m3u')">MAFly-IPTV订阅</a></div>
+                                <div class="link-item"><a href="https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly2" target="_blank" onclick="copyAndOpen(event, 'https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly2')">MAFly-TVbox订阅</a></div>
+                                <div class="link-item"><a href="https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly3" target="_blank" onclick="copyAndOpen(event, 'https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly3')">MAFly-UZ影视订阅</a></div>
+                                <div class="link-item"><a href="https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly4" target="_blank" onclick="copyAndOpen(event, 'https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly4')">MAFly-Cinetry订阅</a></div>
+                                <div class="link-item"><a href="https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly5" target="_blank" onclick="copyAndOpen(event, 'https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly5')">MAFly-EchoTV订阅</a></div>
+                                <div class="link-item"><a href="https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/index.js.md5" target="_blank" onclick="copyAndOpen(event, 'https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/index.js.md5')"> MAFly-猫源md5订阅</a></div>
+                                <div class="link-item"><a href="https://m5.maflya.com/" target="_blank" onclick="copyAndOpen(event, 'https://m5.maflya.com/')"> MAFly-猫源md5订阅修改制作</a></div>
+                            </div>
+
+                            <div>
+                                <div class="column-title">裤佬公益项目汇总</div>
+                                <div class="link-item"><a href="https://jsnzkpg.com/">裤佬导航页</a></div>
+                                <div class="link-item"><a href="https://526900.xyz">软件下载站</a></div>
+                                <div class="link-item"><a href="https://ip.jsnzkpg.ccwu.cc">CF优选ip</a></div>
+                                <div class="link-item"><a href="https://zh.dhsv.eu.org">节点订阅转换</a></div>
+                                <div class="link-item"><a href="https://proxy.dhsv.eu.org">代理加速</a></div>
+                                <div class="link-item"><a href="https://id.dhsv.eu.org">共享美区ID</a></div>
+                                <div class="link-item"><a href="https://upload.dhsv.eu.org">直链托管</a></div>
+                                <div class="link-item"><a href="https://music.dhsv.eu.org">音乐网站</a></div>
+                                <div class="link-item"><a href="https://tg.dhsv.eu.org">Telegram代理</a></div>
+                                <div class="link-item"><a href="https://pan.dhsv.eu.org">网盘搜索</a></div>
+                                <div class="link-item"><a href="https://email.dhsv.eu.org">临时邮箱</a></div>
+                                <div class="link-item"><a href="https://jsnzkpg.us.ci/live.m3u">[长按复制]-世界杯直播源</a></div>
+                                <div class="link-item"><a href="https://gh-proxy.org/https://raw.githubusercontent.com/Jsnzkpg/Jsnzkpg/Jsnzkpg/Jsnzkpg">[长按复制]-节点订阅</a></div>
+                                <div class="link-item"><a href="https://gh-proxy.org/https://raw.githubusercontent.com/Jsnzkpg/Jsnzkpg/Jsnzkpg/Jsnzkpg1.m3u"> [长按复制]-IPTV订阅</a></div>
+                                <div class="link-item"><a href="https://gh-proxy.org/https://raw.githubusercontent.com/Jsnzkpg/Jsnzkpg/Jsnzkpg/Jsnzkpg2"> [长按复制]-TVbox订阅</a></div>
+                                <div class="link-item"><a href="https://gh-proxy.org/https://raw.githubusercontent.com/Jsnzkpg/Jsnzkpg/Jsnzkpg/Jsnzkpg3"> [长按复制]-UZ影视订阅</a></div>
+                                <div class="link-item"><a href="https://gh-proxy.org/https://raw.githubusercontent.com/Jsnzkpg/Jsnzkpg/Jsnzkpg/Jsnzkpg4"> [长按复制]-Cinetry订阅</a></div>
+                                <div class="link-item"><a href="https://gh-proxy.org/https://raw.githubusercontent.com/Jsnzkpg/Jsnzkpg/Jsnzkpg/Jsnzkpg5"> [长按复制]-EchoTV订阅</a></div>
+                                <div class="link-item"><a href="https://gh-proxy.org/https://raw.githubusercontent.com/Jsnzkpg/stymei/Jsnzkpg/index.js.md5"> [长按复制]-猫源md5订阅</a></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="toastNotification" class="toast-notification">链接已复制到剪贴板</div>
+
+    <p class="footer-text">© 2026 MAFly. All Rights Reserved.</p>
+    
+    <script>
+        (function() {
+            /* --- 新增：全局复制并打开逻辑 --- */
+            window.copyAndOpen = function(event, url) {
+                // 优先使用更现代的 Clipboard API 复制文本
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(url).then(() => {
+                        showToast();
+                    }).catch(err => {
+                        fallbackCopy(url);
+                    });
+                } else {
+                    fallbackCopy(url);
+                }
+            };
+
+            // 兼容性复制方案 (防止非HTTPS或老旧设备失效)
+            function fallbackCopy(text) {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.opacity = "0";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast();
+                } catch (err) {
+                    console.error('复制失败', err);
+                }
+                document.body.removeChild(textArea);
+            }
+
+            // 显示Toast提示
+            let toastTimer = null;
+            function showToast() {
+                const toast = document.getElementById('toastNotification');
+                if (!toast) return;
+                
+                clearTimeout(toastTimer);
+                toast.classList.add('show');
+                
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2000); // 2秒后自动消失
+            }
+
+            const audioEl = document.getElementById('bg-music');
+            let playAttempted = false;
+
+            function attemptAutoPlay() {
+                if (!audioEl || playAttempted) return;
+                audioEl.volume = 0.55;
+                audioEl.play().then(() => {
+                    playAttempted = true;
+                }).catch(err => {
+                    console.log("autoplay blocked, waiting for user gesture");
+                });
+            }
+            attemptAutoPlay();
+
+            const resumePlayOnInteraction = () => {
+                if (!audioEl.paused && audioEl.currentTime > 0) return;
+                audioEl.play().catch(e => console.log("resume failed", e));
+                window.removeEventListener('touchstart', resumePlayOnInteraction);
+                window.removeEventListener('click', resumePlayOnInteraction);
+            };
+            if (audioEl && audioEl.paused) {
+                window.addEventListener('touchstart', resumePlayOnInteraction, { once: true });
+                window.addEventListener('click', resumePlayOnInteraction, { once: true });
+            }
+
+            const themeToggle = document.getElementById('themeToggleCorner');
+            const themeIconSpan = document.getElementById('themeIcon');
+            const DARK_CLASS = 'dark';
+
+            function setTheme(theme) {
+                const isDark = theme === 'dark';
+                if (isDark) {
+                    document.body.classList.add(DARK_CLASS);
+                    themeIconSpan.innerText = '🌙';
+                } else {
+                    document.body.classList.remove(DARK_CLASS);
+                    themeIconSpan.innerText = '☀️';
+                }
+                localStorage.setItem('kulao_theme', theme);
+            }
+
+            function toggleTheme() {
+                const currentIsDark = document.body.classList.contains(DARK_CLASS);
+                if (currentIsDark) {
+                    setTheme('light');
+                } else {
+                    setTheme('dark');
+                }
+            }
+
+            const savedTheme = localStorage.getItem('kulao_theme');
+            if (savedTheme === 'dark') {
+                setTheme('dark');
+            } else if (savedTheme === 'light') {
+                setTheme('light');
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                setTheme('dark');
+            } else {
+                setTheme('light');
+            }
+            themeToggle.addEventListener('click', toggleTheme);
+
+            window.toggleBookmark = function(headerElement) {
+                const bookmark = headerElement.closest('.bookmark');
+                if (!bookmark) return;
+                const links = bookmark.querySelector('.bookmark-links');
+                if (!links) return;
+                
+                const isCurrentlyCollapsed = headerElement.classList.contains('collapsed');
+                if (isCurrentlyCollapsed) {
+                    headerElement.classList.remove('collapsed');
+                    links.classList.remove('collapsed');
+                } else {
+                    headerElement.classList.add('collapsed');
+                    links.classList.add('collapsed');
+                }
+                
+                const bookmarkId = Array.from(bookmark.parentElement.children).indexOf(bookmark);
+                localStorage.setItem(`bookmark_${bookmarkId}`, !isCurrentlyCollapsed);
+            };
+
+            function initializeBookmarks() {
+                const bookmarks = document.querySelectorAll('.bookmark');
+                bookmarks.forEach((bookmark, index) => {
+                    const storedState = localStorage.getItem(`bookmark_${index}`);
+                    const header = bookmark.querySelector('.bookmark-header');
+                    const links = bookmark.querySelector('.bookmark-links');
+                    if (!header || !links) return;
+    
+                    let isCollapsed = true;
+                    if (storedState !== null) {
+                        isCollapsed = storedState === 'true';
+                    } else {
+                        localStorage.setItem(`bookmark_${index}`, 'true');
+                    }
+                    
+                    if (isCollapsed) {
+                        header.classList.add('collapsed');
+                        links.classList.add('collapsed');
+                    } else {
+                        header.classList.remove('collapsed');
+                        links.classList.remove('collapsed');
+                    }
+                });
+            }
+
+            initializeBookmarks();
+        })();
+    </script>
+</body>
+</html>

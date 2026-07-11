@@ -160,6 +160,7 @@
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
 
+        /* --- 头像容器优化 --- */
         .avatar-wrapper {
             position: relative;
             width: 100px;
@@ -167,12 +168,21 @@
             margin: 0 auto 16px auto;
             border-radius: 50%;
             overflow: hidden;
+            background: rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
 
-        .avatar-img {
+        .avatar-img, .avatar-video {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .avatar-img {
+            display: none; /* 动态判断切换 */
         }
 
         .subtitle {
@@ -384,7 +394,7 @@
             z-index: -1;
         }
 
-        /* --- 新增：极简轻量级 Toast 提示样式 --- */
+        /* --- 轻量级 Toast 提示样式 --- */
         .toast-notification {
             position: fixed;
             bottom: 30px;
@@ -424,8 +434,9 @@
     </div>
     <div class="bg-noise"></div>
 
-    <audio id="bg-music" preload="auto" loop>
-        <source src="https://mpimg.cn/view.php/480cde5dec5b3d0e9c3381fe95399102.m4a" type="audio/mpeg">
+    <!-- 解决音源加载：优化预加载机制 -->
+    <audio id="bg-music" preload="auto" loop crossorigin="anonymous">
+        <source src="https://mpimg.cn/down.php/480cde5dec5b3d0e9c3381fe95399102.m4a" type="audio/mpeg">
     </audio>
 
     <div class="theme-toggle-corner" id="themeToggleCorner">
@@ -435,11 +446,16 @@
     <div class="container">
         <div class="header-area">
             <h1>MAfly</h1>
+            
+            <!-- 核心改进：修复苹果WebKit图像解析容器 -->
             <div class="avatar-wrapper">
-                <video class="avatar-img" autoplay loop muted playsinline>
+                <video id="avatarVideo" class="avatar-video" autoplay loop muted playsinline webkit-playsinline>
                     <source src="https://mpimg.cn/down.php/3ba2707593da50a980d719ac7ec5ee3e.webm" type="video/webm">
                 </video>
+                <!-- 将view.php替换为down.php纯净直链，解决苹果不显示动画的问题 -->
+                <img id="avatarGif" class="avatar-img" src="https://mpimg.cn/down.php/a67bdffe28a513f430c7f80e066b959f.gif" alt="MAfly Logo">
             </div>
+            
             <p class="subtitle">maflya.com请收藏本页域名,一切从模仿开始</p>
             
             <div class="social-grid">
@@ -472,6 +488,7 @@
                     <div class="bookmark-links">
                         <div class="bookmark-links-inner">
 
+                            <!-- 左侧 MA公益项目汇总 -->
                             <div>
                                 <div class="column-title">MA公益项目汇总</div>
                                 <div class="link-item"><a href="https://sub.maflya.com/" target="_blank" onclick="copyAndOpen(event, 'https://sub.maflya.com/')">节点订阅链接</a></div>
@@ -485,6 +502,7 @@
                                 <div class="link-item"><a href="https://m5.maflya.com/" target="_blank" onclick="copyAndOpen(event, 'https://m5.maflya.com/')"> MAFly-猫源md5订阅修改制作</a></div>
                             </div>
 
+                            <!-- 右侧 裤佬公益项目汇总 -->
                             <div>
                                 <div class="column-title">裤佬公益项目汇总</div>
                                 <div class="link-item"><a href="https://jsnzkpg.com/">裤佬导航页</a></div>
@@ -521,9 +539,80 @@
     
     <script>
         (function() {
-            /* --- 新增：全局复制并打开逻辑 --- */
+            /* --- 1. 智能环境判定与苹果Logo显示修复 --- */
+            function checkAvatarCompatibility() {
+                const video = document.getElementById('avatarVideo');
+                const gif = document.getElementById('avatarGif');
+                
+                // 完美的苹果设备检测逻辑（包含所有iOS版本和iPhone/iPad上的第三方浏览器）
+                const isApple = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
+                                /AppleWebKit/.test(navigator.userAgent) && !/Android/i.test(navigator.userAgent);
+                
+                if (isApple) {
+                    switchToGif();
+                } else if (video) {
+                    video.addEventListener('error', switchToGif);
+                    const playPromise = video.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(() => {
+                            switchToGif();
+                        });
+                    }
+                }
+
+                function switchToGif() {
+                    if (video) video.style.display = 'none';
+                    if (gif) {
+                        // 加上随机时间戳防止苹果浏览器死卡缓存导致GIF静止不播放
+                        gif.src = "https://mpimg.cn/down.php/a67bdffe28a513f430c7f80e066b959f.gif?t=" + new Date().getTime();
+                        gif.style.display = 'block';
+                    }
+                }
+            }
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', checkAvatarCompatibility);
+            } else {
+                checkAvatarCompatibility();
+            }
+
+            /* --- 2. 完美的安卓/全平台背景音乐自动激活逻辑 --- */
+            const audioEl = document.getElementById('bg-music');
+            
+            function forcePlayMusic() {
+                if (audioEl && audioEl.paused) {
+                    audioEl.volume = 0.55;
+                    audioEl.play().then(() => {
+                        // 播放成功后移除事件，防止重复触发
+                        removeAllMusicTriggers();
+                    }).catch(err => {
+                        console.log("播放仍受限:", err);
+                    });
+                }
+            }
+
+            function removeAllMusicTriggers() {
+                window.removeEventListener('touchstart', forcePlayMusic);
+                window.removeEventListener('click', forcePlayMusic);
+                window.removeEventListener('scroll', forcePlayMusic);
+                document.removeEventListener('pointerdown', forcePlayMusic);
+            }
+
+            // 初始尝试直接播放
+            if (audioEl) {
+                audioEl.volume = 0.55;
+                audioEl.play().catch(() => {
+                    // 如果被拦截，绑定全屏幕任意触摸/滑动/点击事件来解锁音频
+                    window.addEventListener('touchstart', forcePlayMusic, { passive: true });
+                    window.addEventListener('click', forcePlayMusic, { passive: true });
+                    window.addEventListener('scroll', forcePlayMusic, { passive: true });
+                    document.addEventListener('pointerdown', forcePlayMusic, { passive: true });
+                });
+            }
+
+            /* --- 3. 复制并打开逻辑 --- */
             window.copyAndOpen = function(event, url) {
-                // 优先使用更现代的 Clipboard API 复制文本
                 if (navigator.clipboard && window.isSecureContext) {
                     navigator.clipboard.writeText(url).then(() => {
                         showToast();
@@ -535,7 +624,6 @@
                 }
             };
 
-            // 兼容性复制方案 (防止非HTTPS或老旧设备失效)
             function fallbackCopy(text) {
                 const textArea = document.createElement("textarea");
                 textArea.value = text;
@@ -553,7 +641,6 @@
                 document.body.removeChild(textArea);
             }
 
-            // 显示Toast提示
             let toastTimer = null;
             function showToast() {
                 const toast = document.getElementById('toastNotification');
@@ -564,34 +651,10 @@
                 
                 toastTimer = setTimeout(() => {
                     toast.classList.remove('show');
-                }, 2000); // 2秒后自动消失
+                }, 2000);
             }
 
-            const audioEl = document.getElementById('bg-music');
-            let playAttempted = false;
-
-            function attemptAutoPlay() {
-                if (!audioEl || playAttempted) return;
-                audioEl.volume = 0.55;
-                audioEl.play().then(() => {
-                    playAttempted = true;
-                }).catch(err => {
-                    console.log("autoplay blocked, waiting for user gesture");
-                });
-            }
-            attemptAutoPlay();
-
-            const resumePlayOnInteraction = () => {
-                if (!audioEl.paused && audioEl.currentTime > 0) return;
-                audioEl.play().catch(e => console.log("resume failed", e));
-                window.removeEventListener('touchstart', resumePlayOnInteraction);
-                window.removeEventListener('click', resumePlayOnInteraction);
-            };
-            if (audioEl && audioEl.paused) {
-                window.addEventListener('touchstart', resumePlayOnInteraction, { once: true });
-                window.addEventListener('click', resumePlayOnInteraction, { once: true });
-            }
-
+            /* --- 4. 主题切换与卡片折叠 --- */
             const themeToggle = document.getElementById('themeToggleCorner');
             const themeIconSpan = document.getElementById('themeIcon');
             const DARK_CLASS = 'dark';
@@ -609,8 +672,7 @@
             }
 
             function toggleTheme() {
-                const currentIsDark = document.body.classList.contains(DARK_CLASS);
-                if (currentIsDark) {
+                if (document.body.classList.contains(DARK_CLASS)) {
                     setTheme('light');
                 } else {
                     setTheme('dark');

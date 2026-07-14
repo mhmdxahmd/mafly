@@ -1,0 +1,208 @@
+mixed-port: 7890
+allow-lan: true
+bind-address: '*'
+mode: rule
+log-level: info
+external-controller: 127.0.0.1:9090
+
+proxies:
+  # ==================== 美国节点 ====================
+  - name: "🇺🇸 美国·01"
+    type: http
+    server: fan.365747.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  - name: "🇺🇸 美国·洛杉矶01(三网优化)"
+    type: http
+    server: fan.891058.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  - name: "🇺🇸 美国·洛杉矶02(三网优化)"
+    type: http
+    server: fan.596189.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  - name: "🇺🇸 美国·圣何塞(三网优化)"
+    type: http
+    server: fan.226278.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  - name: "🇺🇸 美国·洛杉矶03(三网优化)"
+    type: http
+    server: fan.607528.xyz
+    port: 8443
+    tls: true
+    skip-cert-verify: true
+
+  - name: "🇺🇸 美国(优化)"
+    type: http
+    server: fan.3453453.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  - name: "🇺🇸 美国(原生·解锁)"
+    type: http
+    server: fan.467115.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  - name: "🇺🇸 美国·洛杉矶(住宅·原生)"
+    type: http
+    server: fan.420218.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  # ==================== 香港节点 ====================
+  - name: "🇭🇰 香港·01(移动优化·解锁)"
+    type: http
+    server: fan.240104.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  - name: "🇭🇰 香港·02(解锁)"
+    type: http
+    server: fan2.240104.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  - name: "🇭🇰 香港·03(网页专用)"
+    type: http
+    server: fan.263491.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  # ==================== 日本节点 ====================
+  - name: "🇯🇵 日本·01"
+    type: http
+    server: fan.587475.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  - name: "🇯🇵 日本·02(联通优化·解锁)"
+    type: http
+    server: fan.571589.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  - name: "🇯🇵 日本·03(优化)"
+    type: http
+    server: fan.399763.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  # ==================== 韩国节点 ====================
+  - name: "🇰🇷 韩国·01"
+    type: http
+    server: fan.572609.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  - name: "🇰🇷 韩国·02(住宅·原生)"
+    type: http
+    server: fan.859973.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  - name: "🇰🇷 韩国·03"
+    type: http
+    server: fan.212800.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  # ==================== 其他地区 ====================
+  - name: "🇹🇼 台湾·Hinet(原生·解锁)"
+    type: http
+    server: fan.764969.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  - name: "🇩🇪 德国·01(住宅·原生)"
+    type: http
+    server: fan.973511.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+  - name: "🇫🇷 法国·01(住宅·原生)"
+    type: http
+    server: fan.132031.xyz
+    port: 443
+    tls: true
+    skip-cert-verify: true
+
+proxy-groups:
+  - name: "🚀 选择节点"
+    type: select
+    proxies:
+      - 自动选择
+      - 🇺🇸 美国·01
+      - 🇺🇸 美国·洛杉矶01(三网优化)
+      - 🇺🇸 美国·洛杉矶02(三网优化)
+      - 🇺🇸 美国·圣何塞(三网优化)
+      - 🇺🇸 美国·洛杉矶03(三网优化)
+      - 🇺🇸 美国(原生·解锁)
+      - 🇺🇸 美国·洛杉矶(住宅·原生)
+      - 🇭🇰 香港·01(移动优化·解锁)
+      - 🇭🇰 香港·02(解锁)
+      - 🇭🇰 香港·03(网页专用)
+      - 🇯🇵 日本·01
+      - 🇯🇵 日本·02(联通优化·解锁)
+      - 🇯🇵 日本·03(优化)
+      - 🇰🇷 韩国·01
+      - 🇰🇷 韩国·02(住宅·原生)
+      - 🇰🇷 韩国·03
+      - 🇯🇵 日本·03(优化)
+      - 🇹🇼 台湾·Hinet(原生·解锁)
+      - 🇫🇷 法国·01(住宅·原生)
+      - 🇩🇪 德国·01(住宅·原生)
+
+  - name: "自动选择"
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    proxies:
+      - 🇺🇸 美国·01
+      - 🇺🇸 美国·洛杉矶01(三网优化)
+      - 🇺🇸 美国·洛杉矶02(三网优化)
+      - 🇺🇸 美国·圣何塞(三网优化)
+      - 🇺🇸 美国·洛杉矶03(三网优化)
+      - 🇺🇸 美国(原生·解锁)
+      - 🇺🇸 美国·洛杉矶(住宅·原生)
+      - 🇭🇰 香港·01(移动优化·解锁)
+      - 🇭🇰 香港·02(解锁)
+      - 🇭🇰 香港·03(网页专用)
+      - 🇯🇵 日本·01
+      - 🇯🇵 日本·02(联通优化·解锁)
+      - 🇯🇵 日本·03(优化)
+      - 🇰🇷 韩国·01
+      - 🇰🇷 韩国·02(住宅·原生)
+      - 🇰🇷 韩国·03
+      - 🇯🇵 日本·03(优化)
+      - 🇹🇼 台湾·Hinet(原生·解锁)
+      - 🇫🇷 法国·01(住宅·原生)
+      - 🇩🇪 德国·01(住宅·原生)
+rules:
+  - GEOIP,CN,DIRECT
+  - MATCH,🚀 选择节点

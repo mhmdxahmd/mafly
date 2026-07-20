@@ -80,6 +80,8 @@ var index_config_default = {
       address: "https://kl.maflya.com"},
       {name: "📡快手直播源-[实时抓取]",
       address: "https://ks.kl.maflya.com"},
+      {name: "📡Twitch直播源-[实时抓取]",
+      address: "https://tw.kl.maflya.com"},   
     {name: "👖金牌影视",
       address: "https://banyeomni.780420.xyz:17777/api/tvbox/source/2070335666620731392?token=banye666"},
     {name: "👖瓜子影视",

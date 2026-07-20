@@ -2,20 +2,20 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>热气球节点提取 v2.8 - Permit + Session</title>
+    <title>热气球节点提取 v2.9 - 暴力提取</title>
     <style>
         body{font-family:system-ui,sans-serif;padding:20px;background:#f5f5f7;}
         .container{max-width:980px;margin:auto;background:white;padding:25px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.1);}
-        textarea{width:100%;height:220px;font-family:monospace;padding:12px;}
-        button{padding:14px 26px;margin:8px 8px 8px 0;border:none;border-radius:6px;font-weight:bold;cursor:pointer;background:#0071e3;color:white;}
+        textarea{width:100%;height:240px;font-family:monospace;padding:12px;}
+        button{padding:14px 26px;margin:10px 8px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;background:#0071e3;color:white;}
         .success{background:#28a745;}
         .status{padding:16px;border-radius:8px;margin:15px 0;white-space:pre-wrap;background:#f8f9fa;border:1px solid #ddd;}
-        .output-box{background:#f8f9fa;border:1px solid #ddd;padding:16px;border-radius:8px;max-height:600px;overflow:auto;white-space:pre-wrap;font-family:monospace;}
+        .output-box{background:#f8f9fa;border:1px solid #ddd;padding:16px;border-radius:8px;max-height:650px;overflow:auto;white-space:pre-wrap;font-family:monospace;}
     </style>
 </head>
 <body>
 <div class="container">
-    <h2>热气球节点提取 v2.8（已通 Catalog）</h2>
+    <h2>热气球节点提取 v2.9（暴力版）</h2>
 
     <div><label>代理</label>
         <select id="proxy">
@@ -26,16 +26,15 @@
 
     <div><label>Headers JSON</label><textarea id="headers"></textarea></div>
 
-    <button onclick="runPermit()">1. 执行 Permit 流程</button>
-    <button onclick="extractNodes()">2. 提取节点</button>
+    <button onclick="extractAll()">🚀 暴力提取所有节点</button>
 
-    <div id="status" class="status">Catalog 已通，下一步执行 Permit</div>
+    <div id="status" class="status">Catalog 已通，直接暴力提取</div>
     <div id="output" class="output-box"></div>
-    <button id="copyBtn" style="display:none;" class="success" onclick="copyResult()">复制节点</button>
+    <button id="copyBtn" style="display:none;" class="success" onclick="copyResult()">复制全部</button>
 </div>
 
 <script>
-async function call(path, method='GET', body=null) {
+async function call(path, method = 'GET', body = null) {
     const proxy = document.getElementById('proxy').value;
     const base = 'https://apic.ic1008.com/api/v1';
     const url = proxy + base + path;
@@ -53,45 +52,44 @@ async function call(path, method='GET', body=null) {
     return {status: res.status, data};
 }
 
-async function runPermit() {
-    const status = document.getElementById('status');
-    status.innerText = '执行 Permit 流程...\n';
-
-    await call('/connect/permit/challenge', 'GET');
-    await new Promise(r => setTimeout(r, 1000));
-
-    const watch = await call('/connect/permit/watch', 'POST', {});
-    status.innerText += `Permit 返回: ${JSON.stringify(watch.data)}\n`;
-
-    if (watch.status === 200) status.innerText += '✅ Permit 可能已通过，尝试提取节点';
-}
-
-async function extractNodes() {
+async function extractAll() {
     const status = document.getElementById('status');
     const output = document.getElementById('output');
     output.innerText = '';
     document.getElementById('copyBtn').style.display = 'none';
 
-    status.innerText = '获取目录...\n';
+    status.innerText = '获取节点目录...\n';
     const cat = await call('/nodes/catalog');
-    const nodes = cat.data.nodes || [];
+    if (cat.status !== 200) {
+        status.innerText = `目录失败 ${cat.status}`;
+        return;
+    }
 
+    const nodes = cat.data.nodes || [];
+    let successCount = 0;
     let uris = [];
-    for (let node of nodes) {
+
+    status.innerText += `共 ${nodes.length} 个节点，开始暴力请求 session...\n`;
+
+    for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
         const nodeId = node.id || node.node_id;
+        status.innerText += `(${i+1}/${nodes.length}) ${node.name || nodeId}\n`;
+
         const sess = await call('/nodes/session', 'POST', {node_id: nodeId});
         if (sess.status === 200 && sess.data && sess.data.uri) {
             uris.push(sess.data.uri);
+            successCount++;
             output.innerText = uris.join('\n');
         }
-        await new Promise(r => setTimeout(r, 550));
+        await new Promise(r => setTimeout(r, 700)); // 降低频率
     }
 
-    if (uris.length > 0) {
-        status.innerText = `✅ 成功 ${uris.length} 个节点！`;
+    if (successCount > 0) {
+        status.innerText = `✅ 成功提取 ${successCount} 个节点！`;
         document.getElementById('copyBtn').style.display = 'block';
     } else {
-        status.innerText = `仍 403 - 请先执行 Permit`;
+        status.innerText = `全部 403\n可能需要更完整的 Headers 或 VIP`;
     }
 }
 

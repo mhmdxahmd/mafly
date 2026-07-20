@@ -2,33 +2,32 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>热气球节点提取 v2.9 - 暴力提取</title>
+    <title>热气球 - 最终暴力版</title>
     <style>
         body{font-family:system-ui,sans-serif;padding:20px;background:#f5f5f7;}
         .container{max-width:980px;margin:auto;background:white;padding:25px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.1);}
-        textarea{width:100%;height:240px;font-family:monospace;padding:12px;}
+        textarea{width:100%;height:260px;font-family:monospace;padding:12px;}
         button{padding:14px 26px;margin:10px 8px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;background:#0071e3;color:white;}
         .success{background:#28a745;}
         .status{padding:16px;border-radius:8px;margin:15px 0;white-space:pre-wrap;background:#f8f9fa;border:1px solid #ddd;}
-        .output-box{background:#f8f9fa;border:1px solid #ddd;padding:16px;border-radius:8px;max-height:650px;overflow:auto;white-space:pre-wrap;font-family:monospace;}
+        .output-box{background:#f8f9fa;border:1px solid #ddd;padding:16px;border-radius:8px;max-height:700px;overflow:auto;white-space:pre-wrap;font-family:monospace;}
     </style>
 </head>
 <body>
 <div class="container">
-    <h2>热气球节点提取 v2.9（暴力版）</h2>
+    <h2>热气球节点提取 - 最终暴力版</h2>
 
     <div><label>代理</label>
         <select id="proxy">
             <option value="https://seep.eu.org/">seep.eu.org</option>
-            <option value="https://restless-rice-b2a2.ganpig.workers.dev/">ganpig</option>
         </select>
     </div>
 
     <div><label>Headers JSON</label><textarea id="headers"></textarea></div>
 
-    <button onclick="extractAll()">🚀 暴力提取所有节点</button>
+    <button onclick="extractNodes()">开始暴力提取</button>
 
-    <div id="status" class="status">Catalog 已通，直接暴力提取</div>
+    <div id="status" class="status">Catalog 已通，继续暴力 session</div>
     <div id="output" class="output-box"></div>
     <button id="copyBtn" style="display:none;" class="success" onclick="copyResult()">复制全部</button>
 </div>
@@ -39,7 +38,10 @@ async function call(path, method = 'GET', body = null) {
     const base = 'https://apic.ic1008.com/api/v1';
     const url = proxy + base + path;
 
-    let headers = {"Content-Type": "application/json"};
+    let headers = {
+        "Content-Type": "application/json",
+        "User-Agent": "HotAirBalloon/10.8.16 (Windows; Win64; x64)"
+    };
     const h = document.getElementById('headers').value.trim();
     if (h) headers = {...headers, ...JSON.parse(h)};
 
@@ -52,45 +54,34 @@ async function call(path, method = 'GET', body = null) {
     return {status: res.status, data};
 }
 
-async function extractAll() {
+async function extractNodes() {
     const status = document.getElementById('status');
     const output = document.getElementById('output');
     output.innerText = '';
     document.getElementById('copyBtn').style.display = 'none';
 
-    status.innerText = '获取节点目录...\n';
+    status.innerText = '获取目录...\n';
     const cat = await call('/nodes/catalog');
-    if (cat.status !== 200) {
-        status.innerText = `目录失败 ${cat.status}`;
-        return;
-    }
-
     const nodes = cat.data.nodes || [];
-    let successCount = 0;
+
+    let count = 0;
     let uris = [];
 
-    status.innerText += `共 ${nodes.length} 个节点，开始暴力请求 session...\n`;
-
-    for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i];
+    for (let node of nodes) {
         const nodeId = node.id || node.node_id;
-        status.innerText += `(${i+1}/${nodes.length}) ${node.name || nodeId}\n`;
+        status.innerText += `请求: ${node.name}\n`;
 
         const sess = await call('/nodes/session', 'POST', {node_id: nodeId});
         if (sess.status === 200 && sess.data && sess.data.uri) {
             uris.push(sess.data.uri);
-            successCount++;
+            count++;
             output.innerText = uris.join('\n');
         }
-        await new Promise(r => setTimeout(r, 700)); // 降低频率
+        await new Promise(r => setTimeout(r, 800));
     }
 
-    if (successCount > 0) {
-        status.innerText = `✅ 成功提取 ${successCount} 个节点！`;
-        document.getElementById('copyBtn').style.display = 'block';
-    } else {
-        status.innerText = `全部 403\n可能需要更完整的 Headers 或 VIP`;
-    }
+    status.innerText = `完成！成功 ${count} 个节点`;
+    if (count > 0) document.getElementById('copyBtn').style.display = 'block';
 }
 
 function copyResult() {

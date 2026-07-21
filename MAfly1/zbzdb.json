@@ -1,43 +1,91 @@
 [
-  {
-    "name": "⭐MaflyaTV直播",
-    "type": 1,
-    "url": "https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly1"
-  },
-  {
-    "name": "👖裤佬TV直播",
-    "url": "https://gh-proxy.org/https://raw.githubusercontent.com/Jsnzkpg/Jsnzkpg/Jsnzkpg/Jsnzkpg1"
-  },
-  {
-    "name": "👖日后TV直播",
-    "url": "http://rihou.cc:555/gggg.nzk"
-  },
-{
-    "name": "👖涛涛TV直播",
-    "url": "https://gh-proxy.org/https://raw.githubusercontent.com/taoBox2620/taoBox2620/refs/heads/main/log.png"
-  },
-{
-    "name": "👖咪咕TV直播",
-    "url": "https://seep.eu.org/develop202.github.io/migu_video/interface.txt"
-  },
-  {
-    "name": "👖宫殿TV直播",
-    "url": "https://gongdian.top/tv/iptv"
-  },
-{
-    "name": "👖虎牙TV直播",
-    "url": "https://yg.ygbox.de5.net/huya.php"
-  },
-{
-    "name": "👖JackTV直播{翻}",
-    "url": "https://php.946985.filegear-sg.me/jackTV.m3u"
-  },
-{
-    "name": "👖台湾TV直播{翻}",
-    "url": "https://ha.msbot.dpdns.org/4gtv_api.php"
-  },
-{
-    "name": "👖全球TV直播{翻}",
-    "url": "https://seep.eu.org/iptv-org.github.io/iptv/index.m3u"
-  }
+        {
+            "name": "⭐MaflyaTV直播",
+            "type": 1,
+            "url": "https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly1"
+        },
+         {
+            "name": "👖裤佬TV直播",
+            "type": 0,
+            "url": "https://live.445569.xyz/live.m3u"
+        },
+        {
+            "name": "👖裤佬体育直播",
+            "type": 0,
+            "url": "https://sports.445569.xyz/all.m3u"
+        },
+        {
+            "name": "👖裤佬快手直播",
+            "type": 0,
+            "url": "https://kuaishou.445569.xyz/list.m3u"
+        },
+        {
+            "name": "👖裤佬Twitch直播",
+            "type": 0,
+            "url": "https://twitch.445569.xyz/live.m3u"
+        },
+        {
+            "name": "👖裤佬TikTok直播{翻}",
+            "type": 0,
+            "url": "https://tiktok.445569.xyz/live.m3u"
+        },
+        {
+            "name": "🍿斗鱼TV直播",
+            "type": 1,
+            "url": "http://nn.7x9d.cn/xz/斗鱼.php"
+        },
+        {
+            "name": "👖潇雨TV直播",
+            "type": 1,
+            "url": "https://0701.tv1288.xyz"
+        },
+        {
+            "name": "👖日后TV直播",
+            "type": 0,
+            "url": "http://rihou.cc:555/gggg.nzk"
+        },
+        {
+            "name": "👖涛涛TV直播",
+            "type": 1,
+            "url": "https://gh-proxy.org/https://raw.githubusercontent.com/taoBox2620/taoBox2620/refs/heads/main/log.png"
+        },
+        {
+            "name": "👖咪咕TV直播",
+            "type": 0,
+            "url": "https://seep.eu.org/develop202.github.io/migu_video/interface.txt"
+        },
+        {
+            "name": "👖宫殿TV直播",
+            "type": 0,
+            "url": "https://gongdian.top/tv/iptv"
+        },
+        {
+            "name": "👖虎牙TV直播",
+            "type": 1,
+            "url": "https://yg.ygbox.de5.net/huya.php"
+        },
+        {
+            "name": "🍿歪歪TV直播",
+            "type": 1,
+            "url": "http://nn.7x9d.cn/xz/yy.php"
+        },
+        {
+            "name": "🍿俄罗斯TV直播",
+            "type": 0,
+            "url": "https://ilook.epg.one/5CM5SY98BF24PL/2"
+        },
+        {
+            "name": "👖JackTV直播{翻}",
+            "url": "https://php.946985.filegear-sg.me/jackTV.m3u"
+        },
+        {
+            "name": "👖台湾TV直播{翻}",
+            "type": 0,
+            "url": "https://ha.msbot.dpdns.org/4gtv_api.php"
+        },
+        {
+            "name": "👖全球TV直播{翻}",
+            "type": 0,
+            "url": "https://seep.eu.org/iptv-org.github.io/iptv/index.m3u"
+        }
 ]

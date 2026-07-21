@@ -75,8 +75,6 @@ var index_config_default = {
     {name: "✈️TG频道@flymaf",
       address: "http://bob2.hkt.net.cn/miraplay/dbo.php"},
       {name: "📡Maflya直播",
-      address: "https://t4.maflya.com"},
-      {name: "📡裤佬IPTV直播",
     {name: "👖金牌影视",
       address: "https://banyeomni.780420.xyz:17777/api/tvbox/source/2070335666620731392?token=banye666"},
     {name: "👖瓜子影视",

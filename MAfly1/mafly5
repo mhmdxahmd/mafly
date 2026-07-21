@@ -366,9 +366,9 @@
   "lives": {
     "1772637934627": {
       "key": "1772637934627",
-      "name": "裤佬 | ⚽2026美加墨世界杯",
-      "api": "https://jsnzkpg.us.ci/live.m3u",
-      "url": "https://jsnzkpg.us.ci/live.m3u",
+      "name": "MAFLYA | 电视直播",
+      "api": "https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly.m3u",
+      "url": "https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly.m3u",
       "ua": null,
       "epg": null,
       "from": "custom",

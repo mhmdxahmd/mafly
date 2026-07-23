@@ -1,5 +1,29 @@
 #EXTM3U url-tvg="https://jp-epg-26f0ce.gitlab.io/guide.xml.gz" tvg-shift=0 m3uautoload=1
 
+# === 港澳台直播[2] ===
+
+#EXTINF:-1 tvg-id="hdgd01" tvg-name="翡翠台4K(字幕)" tvg-logo="https://epg.112114.xyz/logo/%E7%BF%A1%E7%BF%A0%E5%8F%B04K(%E5%AD%97%E5%B9%95).png",翡翠台4K(字幕)
+https://cdn.qd.je/163189/fct4k
+
+#EXTINF:-1 tvg-id="hdgd02" tvg-name="凤凰中文" tvg-logo="https://epg.112114.xyz/logo/%E5%87%A4%E5%87%B0%E4%B8%AD%E6%96%87.png",凤凰中文
+https://cdn.qd.je/163189/fhzw
+
+#EXTINF:-1 tvg-id="hdgd03" tvg-name="CCTV1港澳版" tvg-logo="https://epg.112114.xyz/logo/CCTV1%E6%B8%AF%E6%BE%B3%E7%89%88.png",CCTV1港澳版
+https://cdn.qd.je/163189/cctv1
+
+#EXTINF:-1 tvg-id="hdgd06" tvg-name="CCTV13" tvg-logo="https://jp-epg-26f0ce.gitlab.io/logos/tv_asahi.png",CCTV13
+https://epg.112114.xyz/logo/CCTV13.png
+
+#EXTINF:-1 tvg-id="hdgd04" tvg-name="凤凰资讯" tvg-logo="https://jp-epg-26f0ce.gitlab.io/logos/tbs.png",凤凰资讯
+https://cdn.qd.je/163189/fhzx
+
+#EXTINF:-1 tvg-id="hdgd07" tvg-name="CCTV1" tvg-logo="https://jp-epg-26f0ce.gitlab.io/logos/tv_tokyo.png",CCTV1
+https://php.jdshipin.com/TVOD/iptv.php?id=cctv1
+
+# === TW Terrestrial ===
+#EXTINF:-1 tvg-id="hdgd05" tvg-name="豬哥亮歌廳秀" tvg-logo="https://4gtvimg2.4gtv.tv/4gtv-Image/Channel/mobile/logo_4gtv_4gtv-4gtv006_mobile.png",豬哥亮歌廳秀
+https://ha.msbot.dpdns.org/4gtv_api.php?id=113
+
 # === Tokyo Terrestrial ===
 
 #EXTINF:-1 tvg-id="NHK東京・総合_jp" tvg-name="NHK G" tvg-logo="https://jp-epg-26f0ce.gitlab.io/logos/nhk_g.png",NHK G

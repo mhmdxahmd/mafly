@@ -47,7 +47,7 @@ maflya-NODE
 代理软件打开是上网节点  
 
 https://sub.maflya.com  
-
+[![sub maflya](https://sub.maflya.com/api/pull-trend/svg)](https://sub.maflya.com)
 [![sub maflya](https://sub.maflya.com/api/online-stats/svg)](https://sub.maflya.com)
 
 全平台支持  

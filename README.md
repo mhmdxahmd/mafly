@@ -49,6 +49,7 @@ maflya-NODE
 https://sub.maflya.com  
 ![](https://sub.maflya.com/api/online-stats/svg)(https://sub.maflya.com)  
 
+[![sub Pulse](https://sub.maflya.com/api/online-stats/svg)](https://sub.maflya.com)
 
 全平台支持  
 软件下载  

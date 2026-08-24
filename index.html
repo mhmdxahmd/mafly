@@ -493,6 +493,10 @@
         .marquee-track:hover {
             animation-play-state: paused;
         }
+                @keyframes marqueeScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
     </style>
 </head>
 <body>

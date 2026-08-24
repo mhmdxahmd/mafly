@@ -440,7 +440,7 @@
             opacity: 1;
             transform: translateX(-50%) translateY(0);
         }
-                .container {
+         .container {
             width: 100%;
             max-width: 390px;
             transform-style: preserve-3d;
@@ -458,6 +458,40 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04), 0 0.5px 0 rgba(255, 255, 255, 0.8) inset;
             padding: 0 4px;
             transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+                .marquee-track {
+            display: flex;
+            white-space: nowrap;
+            animation: marqueeScroll 14s linear infinite;
+            width: max-content;
+            padding: 10px 0;
+            will-change: transform;
+        }
+        .marquee-track a {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #1d1d1f;
+            text-decoration: none;
+            padding: 0 20px;
+            letter-spacing: 0.2px;
+            background: linear-gradient(135deg, #1d1d1f 0%, #3a3a3e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: opacity 0.2s;
+        }
+        body.dark .marquee-track a {
+            background: linear-gradient(135deg, #f5f5f7 0%, #b0b0b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .marquee-track a:active {
+            opacity: 0.6;
+        }
+        .marquee-track:hover {
+            animation-play-state: paused;
         }
     </style>
 </head>

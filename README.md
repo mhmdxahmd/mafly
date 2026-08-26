@@ -45,10 +45,14 @@ maflya-NODE
 自适应节点订阅  
 浏览器打开是监测
 代理软件打开是上网节点  
+二维码直接代理软件扫码订阅  
+QRCODE FOR Subscription  
 
 https://sub.maflya.com  
-[![sub maflya](https://sub.maflya.com/api/pull-trend/svg)](https://sub.maflya.com)
-[![sub maflya](https://sub.maflya.com/api/online-stats/svg)](https://sub.maflya.com)
+
+![gifpicforsubnodepublic](./MAfly1/pic/subnodepublic.gif)(https://sub.maflya.com)  
+[![sub maflya](https://sub.maflya.com/api/pull-trend/svg)](https://sub.maflya.com)  
+[![sub maflya](https://sub.maflya.com/api/online-stats/svg)](https://sub.maflya.com)  
 
 全平台支持  
 软件下载  

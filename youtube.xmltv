@@ -1,44 +1,44 @@
 <tv generator-info-name="youtube-live-epg" generator-info-url="https://github.com/your-repo">
-  <channel id="CGTN.yt">
-    <display-name lang="en">CGTN LIVE</display-name>
+  <channel id="UN.yt">
+    <display-name lang="en">United Nations联合国</display-name>
   </channel>
-  <programme channel="CGTN.yt" start="20260804030000 +0100" stop="20260804060000 +0100">
-    <title lang="en">https://www.youtube.com/watch?v=BOy2xDU1LC8</title>
+  <programme channel="UN.yt" start="20260901040000 +0100" stop="20260901070000 +0100">
+    <title lang="en">https://www.youtube.com/watch?v=vYRfQo6JMxc</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>
   </programme>
-  <programme channel="CGTN.yt" start="20260804060000 +0100" stop="20260804090000 +0100">
-    <title lang="en">https://www.youtube.com/watch?v=BOy2xDU1LC8</title>
+  <programme channel="UN.yt" start="20260901070000 +0100" stop="20260901100000 +0100">
+    <title lang="en">https://www.youtube.com/watch?v=vYRfQo6JMxc</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>
   </programme>
-  <programme channel="CGTN.yt" start="20260804090000 +0100" stop="20260804120000 +0100">
-    <title lang="en">https://www.youtube.com/watch?v=BOy2xDU1LC8</title>
+  <programme channel="UN.yt" start="20260901100000 +0100" stop="20260901130000 +0100">
+    <title lang="en">https://www.youtube.com/watch?v=vYRfQo6JMxc</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>
   </programme>
-  <programme channel="CGTN.yt" start="20260804120000 +0100" stop="20260804150000 +0100">
-    <title lang="en">https://www.youtube.com/watch?v=BOy2xDU1LC8</title>
+  <programme channel="UN.yt" start="20260901130000 +0100" stop="20260901160000 +0100">
+    <title lang="en">https://www.youtube.com/watch?v=vYRfQo6JMxc</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>
   </programme>
-  <programme channel="CGTN.yt" start="20260804150000 +0100" stop="20260804180000 +0100">
-    <title lang="en">https://www.youtube.com/watch?v=BOy2xDU1LC8</title>
+  <programme channel="UN.yt" start="20260901160000 +0100" stop="20260901190000 +0100">
+    <title lang="en">https://www.youtube.com/watch?v=vYRfQo6JMxc</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>
   </programme>
-  <programme channel="CGTN.yt" start="20260804180000 +0100" stop="20260804210000 +0100">
-    <title lang="en">https://www.youtube.com/watch?v=BOy2xDU1LC8</title>
+  <programme channel="UN.yt" start="20260901190000 +0100" stop="20260901220000 +0100">
+    <title lang="en">https://www.youtube.com/watch?v=vYRfQo6JMxc</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>
   </programme>
-  <programme channel="CGTN.yt" start="20260804210000 +0100" stop="20260805000000 +0100">
-    <title lang="en">https://www.youtube.com/watch?v=BOy2xDU1LC8</title>
+  <programme channel="UN.yt" start="20260901220000 +0100" stop="20260902010000 +0100">
+    <title lang="en">https://www.youtube.com/watch?v=vYRfQo6JMxc</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>
   </programme>
-  <programme channel="CGTN.yt" start="20260805000000 +0100" stop="20260805030000 +0100">
-    <title lang="en">https://www.youtube.com/watch?v=BOy2xDU1LC8</title>
+  <programme channel="UN.yt" start="20260902010000 +0100" stop="20260902040000 +0100">
+    <title lang="en">https://www.youtube.com/watch?v=vYRfQo6JMxc</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>
   </programme>

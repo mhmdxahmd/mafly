@@ -36,7 +36,15 @@ TVBOX    https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/
 
 
 maflya-iptv  
+
 https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly.m3u  
+
+MAFly-youtube-iptv直播  
+
+https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/youtube.m3u
+
+MAFly-youtube-免翻直播  
+https://x.maflya.com/
 
 MAFly-IOS-猫源md5订阅  
 https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/index.js.md5  

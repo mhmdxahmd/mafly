@@ -2,42 +2,42 @@
   <channel id="CGTN.yt">
     <display-name lang="en">CGTN LIVE</display-name>
   </channel>
-  <programme channel="CGTN.yt" start="20260901100000 +0100" stop="20260901130000 +0100">
+  <programme channel="CGTN.yt" start="20260901150000 +0100" stop="20260901180000 +0100">
     <title lang="en">https://www.youtube.com/watch?v=IZK0QUeT2GA</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>
   </programme>
-  <programme channel="CGTN.yt" start="20260901130000 +0100" stop="20260901160000 +0100">
+  <programme channel="CGTN.yt" start="20260901180000 +0100" stop="20260901210000 +0100">
     <title lang="en">https://www.youtube.com/watch?v=IZK0QUeT2GA</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>
   </programme>
-  <programme channel="CGTN.yt" start="20260901160000 +0100" stop="20260901190000 +0100">
+  <programme channel="CGTN.yt" start="20260901210000 +0100" stop="20260902000000 +0100">
     <title lang="en">https://www.youtube.com/watch?v=IZK0QUeT2GA</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>
   </programme>
-  <programme channel="CGTN.yt" start="20260901190000 +0100" stop="20260901220000 +0100">
+  <programme channel="CGTN.yt" start="20260902000000 +0100" stop="20260902030000 +0100">
     <title lang="en">https://www.youtube.com/watch?v=IZK0QUeT2GA</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>
   </programme>
-  <programme channel="CGTN.yt" start="20260901220000 +0100" stop="20260902010000 +0100">
+  <programme channel="CGTN.yt" start="20260902030000 +0100" stop="20260902060000 +0100">
     <title lang="en">https://www.youtube.com/watch?v=IZK0QUeT2GA</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>
   </programme>
-  <programme channel="CGTN.yt" start="20260902010000 +0100" stop="20260902040000 +0100">
+  <programme channel="CGTN.yt" start="20260902060000 +0100" stop="20260902090000 +0100">
     <title lang="en">https://www.youtube.com/watch?v=IZK0QUeT2GA</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>
   </programme>
-  <programme channel="CGTN.yt" start="20260902040000 +0100" stop="20260902070000 +0100">
+  <programme channel="CGTN.yt" start="20260902090000 +0100" stop="20260902120000 +0100">
     <title lang="en">https://www.youtube.com/watch?v=IZK0QUeT2GA</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>
   </programme>
-  <programme channel="CGTN.yt" start="20260902070000 +0100" stop="20260902100000 +0100">
+  <programme channel="CGTN.yt" start="20260902120000 +0100" stop="20260902150000 +0100">
     <title lang="en">https://www.youtube.com/watch?v=IZK0QUeT2GA</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>

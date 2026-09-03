@@ -31,10 +31,6 @@ https://zhuiyun.shop/#/register?code=ItNiRvGw
 maflya-TVBOX  
 地址1：https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly2 
 
-maflya-TVBOX-json格式的  
-TVBOX    https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/tvbox.json  
-
-
 maflya-iptv  
 
 https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mafly.m3u  
@@ -62,9 +58,8 @@ QRCODE FOR Subscription
 
 https://sub.maflya.com  
 
-![gifpicforsubnodepublic](./MAfly1/pic/subnodepublic.gif)(https://sub.maflya.com)  
-[![sub maflya](https://sub.maflya.com/api/pull-trend/svg)](https://sub.maflya.com)  
-[![sub maflya](https://sub.maflya.com/api/online-stats/svg)](https://sub.maflya.com)  
+一键注册 自由航线
+https://jc.maflya.com  
 
 全平台支持  
 软件下载  

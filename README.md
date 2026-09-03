@@ -58,7 +58,8 @@ QRCODE FOR Subscription
 
 https://sub.maflya.com  
 
-一键注册 自由航线
+一键注册 自由航线  
+
 https://jc.maflya.com  
 
 全平台支持  

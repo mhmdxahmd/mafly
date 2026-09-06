@@ -62,18 +62,18 @@ https://sub.maflya.com
 
 https://cfip.maflya.com  
 
-Telegram 最新 WEB 代理协议！
+Telegram 最新 WEB 代理协议！  
 
-安卓手机需要用Telegram beat版本
+安卓手机需要用Telegram beat版本  
 
-安卓官方客户端地址 https://telegram.org/dl/android/apk-public-beta
-一键导入连接：3个TG内置WEB代理  一键链接
+安卓官方客户端地址 https://telegram.org/dl/android/apk-public-beta  
+一键导入连接：3个TG内置WEB代理  一键链接  
 
-tg://webproxy?server=webdl.maflya.com&secret=473ce5d4958eb5f968c87680a23854a0      maflya
+https://t.me/webproxy?server=webdl.maflya.com&secret=473ce5d4958eb5f968c87680a23854a0      maflya  
 
-tg://webproxy?server=tgweb.ehb.cc.cd&secret=473ce5d4958eb5f968c87680a23854a0    S5大佬
+https://t.me/webproxy?server=tgweb.ehb.cc.cd&secret=473ce5d4958eb5f968c87680a23854a0    S5大佬  
 
-https://t.me/webproxy?server=luckys.ekt.me&secret=5fe9173aea5203e80435f4a8fe138a59     AK大佬
+https://t.me/webproxy?server=luckys.ekt.me&secret=5fe9173aea5203e80435f4a8fe138a59     AK大佬  
 
 全平台支持  
 软件下载  

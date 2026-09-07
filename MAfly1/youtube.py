@@ -3,24 +3,21 @@ import re
 import json
 import time
 import requests
-from urllib.parse import quote, urljoin, urlparse
+from urllib.parse import quote, urljoin
 from base.spider import Spider as BaseSpider
 
 # ================== 配置区域 ==================
-# 固定频道列表（视频ID是直播的永久ID，新闻频道一般长期直播）
+# 固定频道列表（新闻直播一般长期有效）
 CHANNELS = [
     {"id": "vr3XyVCR4T0", "name": "中天新闻 24H直播"},
     {"id": "6IquAgfvYmc", "name": "寰宇新闻 24H直播"},
     {"id": "ylYJSBUgaMA", "name": "民视新闻 24H直播"},
 ]
 
-# 免翻代理前缀（只代理 Google/YouTube 相关域名）
-PROXY_BASE = 'https://x.maflya.com/api/proxy?target='
-
 # 是否启用本地 HLS 代理（强烈建议开启，解决跨域和防盗链）
 ENABLE_HLS_PROXY = True
 
-# 调试日志文件路径（可留空）
+# 调试日志文件路径（留空则禁用日志）
 DEBUG_LOG = '/sdcard/Download/ytb_live_debug.log'
 # ===========================================
 
@@ -41,49 +38,27 @@ def debug_log(message, data=None):
         pass
 
 
-def is_google_domain(url):
-    """判断 URL 是否属于 Google/YouTube 相关域名，需要走代理"""
-    try:
-        host = urlparse(url).hostname or ''
-        host = host.lower()
-        google_domains = [
-            'youtube.com', 'youtu.be', 'ytimg.com', 'googlevideo.com',
-            'googleapis.com', 'google.com', 'gstatic.com', 'googleusercontent.com'
-        ]
-        return any(host == d or host.endswith('.' + d) for d in google_domains)
-    except Exception:
-        return False
-
-
-def apply_proxy(url):
-    """如果 URL 是 Google 域名，加上代理前缀"""
-    if is_google_domain(url):
-        return PROXY_BASE + quote(url, safe='')
-    return url
-
-
 class YouTubeLiveExtractor:
-    """从 YouTube 页面提取直播 HLS 地址（使用代理）"""
+    """从 YouTube 页面提取直播 HLS 地址（直连）"""
     def __init__(self, session):
         self.session = session
 
     def extract_hls(self, video_id):
         """返回直播流的 master m3u8 地址"""
         watch_url = f'https://www.youtube.com/watch?v={video_id}'
-        proxied_watch = apply_proxy(watch_url)
         try:
-            resp = self.session.get(proxied_watch, timeout=15)
+            resp = self.session.get(watch_url, timeout=15)
             resp.raise_for_status()
             page = resp.text
 
-            # 优先从 ytInitialPlayerResponse 中提取 hlsManifestUrl
+            # 优先从正则匹配 hlsManifestUrl
             match = re.search(r'"hlsManifestUrl"\s*:\s*"(https:[^"]+)"', page)
             if match:
                 hls_url = match.group(1).replace(r'\/', '/')
                 debug_log('extract hls from page', {'video_id': video_id, 'hls_url': hls_url})
                 return hls_url
 
-            # 备用：尝试从 player_response 中提取
+            # 备用：从 ytInitialPlayerResponse 中提取
             match2 = re.search(r'ytInitialPlayerResponse\s*=\s*({.+?});', page, re.S)
             if match2:
                 try:
@@ -125,7 +100,7 @@ class Spider(BaseSpider):
             'media': 120,
             'media_retry': 120
         }
-        debug_log('spider init', {'enable_hls_proxy': ENABLE_HLS_PROXY, 'proxy_base': PROXY_BASE})
+        debug_log('spider init', {'enable_hls_proxy': ENABLE_HLS_PROXY})
 
     def homeContent(self, filter):
         return {
@@ -136,7 +111,6 @@ class Spider(BaseSpider):
         return self.categoryContent("fixed_live", "1", False, {})
 
     def categoryContent(self, tid, pg, filter, extend):
-        # 返回固定频道列表
         items = []
         for ch in CHANNELS:
             items.append({
@@ -155,7 +129,6 @@ class Spider(BaseSpider):
 
     def detailContent(self, ids):
         vid = ids[0]
-        # 查找频道名称
         name = vid
         for ch in CHANNELS:
             if ch["id"] == vid:
@@ -170,7 +143,6 @@ class Spider(BaseSpider):
         return {"list": [vod]}
 
     def playerContent(self, flag, pid, vipFlags):
-        # 从 pid 中提取 video_id
         raw_pid = pid.split('$')[-1]
         video_id = raw_pid.rsplit('@', 1)[0] if '@' in raw_pid else raw_pid
         debug_log('player start', {'video_id': video_id, 'pid': pid})
@@ -190,7 +162,7 @@ class Spider(BaseSpider):
         if ENABLE_HLS_PROXY:
             play_url = self._cache_hls_url(hls_url, video_id, 'master')
         else:
-            play_url = apply_proxy(hls_url)  # 直接代理原始 HLS（可能不完整）
+            play_url = hls_url  # 直连原始 HLS
 
         debug_log('return play url', {'video_id': video_id, 'url_len': len(play_url), 'proxy': ENABLE_HLS_PROXY})
         return {
@@ -201,7 +173,7 @@ class Spider(BaseSpider):
             "format": "application/x-mpegURL"
         }
 
-    # ========== 本地 HLS 代理（与完整版类似，简化但可靠） ==========
+    # ========== 本地 HLS 代理 ==========
     def _cache_hls_url(self, target_url, video_id='', kind='media'):
         self._prune_hls_cache()
         self.hls_key_seq += 1
@@ -233,14 +205,13 @@ class Spider(BaseSpider):
         target_url = item.get('url') or ''
         try:
             headers = self._hls_headers(item.get('kind'))
-            proxied_url = apply_proxy(target_url)  # 对原始 HLS 请求使用免翻代理
-            response = self.session.get(proxied_url, headers=headers, stream=True, timeout=15)
+            response = self.session.get(target_url, headers=headers, stream=True, timeout=15)
             retried = False
             if item.get('kind') == 'media' and response.status_code == 403:
                 retry_headers = self._hls_headers('media_retry')
                 response.close()
                 retried = True
-                response = self.session.get(proxied_url, headers=retry_headers, stream=True, timeout=15)
+                response = self.session.get(target_url, headers=retry_headers, stream=True, timeout=15)
             content_type = response.headers.get('content-type') or ''
             is_m3u8 = item.get('kind') in ('master', 'playlist') or 'mpegurl' in content_type.lower() or target_url.split('?')[0].endswith('.m3u8')
             debug_log('hls proxy response', {

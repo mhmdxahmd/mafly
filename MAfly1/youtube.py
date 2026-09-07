@@ -3,6 +3,7 @@ import re
 import json
 import time
 import requests
+from urllib.parse import quote, urlparse
 from base.spider import Spider as BaseSpider
 
 # ================== 配置区域 ==================
@@ -11,6 +12,9 @@ CHANNELS = [
     {"id": "6IquAgfvYmc", "name": "寰宇新闻 24H直播"},
     {"id": "ylYJSBUgaMA", "name": "民视新闻 24H直播"},
 ]
+
+# 您的 Cloudflare Worker 代理地址（请确保域名正确）
+PROXY_BASE = 'https://x.maflya.com/api/proxy?target='
 
 # 调试日志文件路径（留空则禁用日志）
 DEBUG_LOG = '/sdcard/Download/ytb_live_debug.log'
@@ -31,6 +35,21 @@ def debug_log(message, data=None):
     except Exception:
         pass
 
+def apply_proxy(url):
+    """对 Google/YouTube 域名自动添加代理前缀"""
+    google_domains = [
+        'youtube.com', 'youtu.be', 'ytimg.com', 'googlevideo.com',
+        'googleapis.com', 'google.com', 'gstatic.com', 'googleusercontent.com'
+    ]
+    try:
+        host = urlparse(url).hostname or ''
+        host = host.lower()
+        if any(host == d or host.endswith('.' + d) for d in google_domains):
+            return PROXY_BASE + quote(url, safe='')
+    except:
+        pass
+    return url
+
 class Spider(BaseSpider):
     def getName(self):
         return 'YouTube固定频道直播'
@@ -43,7 +62,7 @@ class Spider(BaseSpider):
         }
         self.session = requests.Session()
         self.session.headers.update(self.headers)
-        debug_log('spider init', {'channels': len(CHANNELS)})
+        debug_log('spider init', {'proxy_base': PROXY_BASE, 'channels': len(CHANNELS)})
 
     def homeContent(self, filter):
         return {"class": [{"type_id": "fixed_live", "type_name": "固定频道直播"}]}
@@ -57,7 +76,8 @@ class Spider(BaseSpider):
             items.append({
                 "vod_id": ch["id"],
                 "vod_name": ch["name"],
-                "vod_pic": f"https://i.ytimg.com/vi/{ch['id']}/hqdefault.jpg",
+                # 缩略图也通过代理，避免加载失败
+                "vod_pic": apply_proxy(f"https://i.ytimg.com/vi/{ch['id']}/hqdefault.jpg"),
                 "vod_remarks": "LIVE"
             })
         return {
@@ -88,23 +108,27 @@ class Spider(BaseSpider):
         video_id = raw_pid.rsplit('@', 1)[0] if '@' in raw_pid else raw_pid
         debug_log('player start', {'video_id': video_id})
 
-        watch_url = f'https://www.youtube.com/watch?v={video_id}'
+        # 通过 Worker 代理请求 YouTube 页面
+        watch_url = apply_proxy(f'https://www.youtube.com/watch?v={video_id}')
         try:
             resp = self.session.get(watch_url, timeout=12)
             page = resp.text
             hls_url = self._extract_hls(page)
             if hls_url:
-                debug_log('extract hls success', {'video_id': video_id, 'hls_url': hls_url})
+                # 对 HLS 地址应用代理，播放器请求的就是 Worker 地址
+                proxied_hls = apply_proxy(hls_url)
+                debug_log('extract hls success', {'video_id': video_id, 'proxied_hls_len': len(proxied_hls)})
                 return {
                     "parse": 0,
                     "jx": 0,
-                    "url": hls_url,
+                    "url": proxied_hls,
                     "header": self.headers,
                     "format": "application/x-mpegURL"
                 }
         except Exception as e:
             debug_log('extract hls error', {'video_id': video_id, 'error': repr(e)})
 
+        # 提取失败，回退到网页解析（也走代理）
         debug_log('hls not found, fallback to web', {'video_id': video_id})
         return {
             "parse": 1,

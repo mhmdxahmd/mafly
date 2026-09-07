@@ -1,30 +1,10 @@
 # coding=utf-8
 import re
 import requests
-from urllib.parse import quote, urlparse
-
 try:
     from base.spider import Spider as BaseSpider
 except Exception:
     BaseSpider = object
-
-# 您的 Cloudflare Worker 代理地址
-PROXY_BASE = 'https://x.maflya.com/api/proxy?target='
-
-def apply_proxy(url):
-    """对 Google/YouTube 域名自动添加代理前缀"""
-    google_domains = [
-        'youtube.com', 'youtu.be', 'ytimg.com', 'googlevideo.com',
-        'googleapis.com', 'google.com', 'gstatic.com', 'googleusercontent.com'
-    ]
-    try:
-        host = urlparse(url).hostname or ''
-        host = host.lower()
-        if any(host == d or host.endswith('.' + d) for d in google_domains):
-            return PROXY_BASE + quote(url, safe='')
-    except:
-        pass
-    return url
 
 class Spider(BaseSpider):
     def getName(self):
@@ -78,13 +58,11 @@ class Spider(BaseSpider):
         return {"list": [vod]}
 
     def playerContent(self, flag, id, vipFlags):
-        # 原始 YouTube 页面 URL
+        # 核心：请求页面，提取隐藏在 HTML 中的 m3u8 直链
         video_url = f"https://www.youtube.com/watch?v={id}"
-        # 通过代理请求页面
-        proxied_video_url = apply_proxy(video_url)
         m3u8_url = ""
         try:
-            res = requests.get(proxied_video_url, headers=self.headers, timeout=10)
+            res = requests.get(video_url, headers=self.headers, timeout=10)
             # 从网页中提取 hlsManifestUrl
             match = re.search(r'"hlsManifestUrl"\s*:\s*"(https:[^"]+)"', res.text)
             if match:
@@ -93,13 +71,11 @@ class Spider(BaseSpider):
             pass
 
         if m3u8_url:
-            # 对提取到的 HLS 地址也应用代理
-            proxied_m3u8 = apply_proxy(m3u8_url)
             return {
                 "parse": 0,  # 告诉 TVBox 这是直链，不用再走网页嗅探
-                "url": proxied_m3u8,
+                "url": m3u8_url,
                 "header": self.headers
             }
         
-        # 提取失败时的回退（通过代理打开网页）
-        return {"parse": 1, "url": proxied_video_url, "header": self.headers}
+        # 提取失败时的回退（通常是因为网络未连通科学环境）
+        return {"parse": 1, "url": video_url, "header": self.headers}

@@ -2,11 +2,6 @@
   <channel id="CGTN.yt">
     <display-name lang="en">CGTN LIVE</display-name>
   </channel>
-  <programme channel="CGTN.yt" start="20260907200000 +0100" stop="20260907230000 +0100">
-    <title lang="en">https://www.youtube.com/watch?v=IZK0QUeT2GA</title>
-    <desc lang="en">No description provided</desc>
-    <icon src=""/>
-  </programme>
   <programme channel="CGTN.yt" start="20260907230000 +0100" stop="20260908020000 +0100">
     <title lang="en">https://www.youtube.com/watch?v=IZK0QUeT2GA</title>
     <desc lang="en">No description provided</desc>
@@ -38,6 +33,11 @@
     <icon src=""/>
   </programme>
   <programme channel="CGTN.yt" start="20260908170000 +0100" stop="20260908200000 +0100">
+    <title lang="en">https://www.youtube.com/watch?v=IZK0QUeT2GA</title>
+    <desc lang="en">No description provided</desc>
+    <icon src=""/>
+  </programme>
+  <programme channel="CGTN.yt" start="20260908200000 +0100" stop="20260908230000 +0100">
     <title lang="en">https://www.youtube.com/watch?v=IZK0QUeT2GA</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>

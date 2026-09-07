@@ -96,8 +96,20 @@
       "ext": "https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/zbzdb.json"
     },
 	 {
-      "key": "⭐Maflya-油管固定直播",
-      "name": "⭐Maflya丨YouTube固定频道丨直播",
+      "key": "⭐Maflya-油管Flora",
+      "name": "⭐Maflya丨YouTube-F",
+      "type": 3,
+      "api": "https://kiki-4um.pages.dev/ms.py"
+    },	
+	 {
+      "key": "⭐Maflya-油管翻直播",
+      "name": "⭐Maflya丨YouTube翻固定频道丨直播",
+      "type": 3,
+      "api": "https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/youtube.py"
+    },			
+	 {
+      "key": "⭐Maflya-油管MF直播",
+      "name": "⭐Maflya丨YouTubeMF固定频道丨直播",
       "type": 3,
       "api": "https://x.maflya.com/api/proxy?target=https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/youtube.py"
     },		

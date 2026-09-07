@@ -7,10 +7,10 @@ import time
 import base64
 import hashlib
 import urllib.parse
-from Crypto.Cipher import AES
-from Crypto.Util.Padding import pad, unpad
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_v1_5
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives import padding as sym_padding
+from cryptography.hazmat.primitives.asymmetric import padding as asym_padding
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
 from base.spider import Spider
 
 sys.path.append('..')
@@ -313,8 +313,11 @@ class Spider(Spider):
         try:
             key_bytes = key.encode('utf-8')
             iv_bytes = iv.encode('utf-8')
-            cipher = AES.new(key_bytes, AES.MODE_CBC, iv_bytes)
-            encrypted = cipher.encrypt(pad(text.encode('utf-8'), AES.block_size))
+            padder = sym_padding.PKCS7(128).padder()
+            padded = padder.update(text.encode('utf-8')) + padder.finalize()
+            cipher = Cipher(algorithms.AES(key_bytes), modes.CBC(iv_bytes))  # nosemgrep: python.cryptography.security.mode-without-authentication.crypto-mode-without-authentication
+            encryptor = cipher.encryptor()
+            encrypted = encryptor.update(padded) + encryptor.finalize()
             return encrypted.hex().upper()
         except Exception as e:
             print(f"AES加密失败: {e}")
@@ -325,9 +328,12 @@ class Spider(Spider):
         try:
             key_bytes = key.encode('utf-8')
             iv_bytes = iv.encode('utf-8')
-            cipher = AES.new(key_bytes, AES.MODE_CBC, iv_bytes)
             encrypted_bytes = bytes.fromhex(text)
-            decrypted = unpad(cipher.decrypt(encrypted_bytes), AES.block_size)
+            cipher = Cipher(algorithms.AES(key_bytes), modes.CBC(iv_bytes))  # nosemgrep: python.cryptography.security.mode-without-authentication.crypto-mode-without-authentication
+            decryptor = cipher.decryptor()
+            padded = decryptor.update(encrypted_bytes) + decryptor.finalize()
+            unpadder = sym_padding.PKCS7(128).unpadder()
+            decrypted = unpadder.update(padded) + unpadder.finalize()
             return decrypted.decode('utf-8')
         except Exception as e:
             print(f"AES解密失败: {e}")
@@ -336,15 +342,9 @@ class Spider(Spider):
     def rsa_decrypt(self, encrypted_data, private_key):
         """RSA解密"""
         try:
-            # 解码base64数据
             encrypted_bytes = base64.b64decode(encrypted_data)
-            
-            # 导入私钥
-            rsa_key = RSA.import_key(private_key)
-            cipher = PKCS1_v1_5.new(rsa_key)
-            
-            # 解密
-            decrypted = cipher.decrypt(encrypted_bytes, None)
+            rsa_key = load_pem_private_key(private_key.encode('utf-8'), password=None)
+            decrypted = rsa_key.decrypt(encrypted_bytes, asym_padding.PKCS1v15())
             return decrypted.decode('utf-8') if decrypted else ""
         except Exception as e:
             print(f"RSA解密失败: {e}")
@@ -386,7 +386,7 @@ class Spider(Spider):
             t = str(int(time.time()))
             keys = "Qmxi5ciWXbQzkr7o+SUNiUuQxQEf8/AVyUWY4T/BGhcXBIUz4nOyHBGf9A4KbM0iKF3yp9M7WAY0rrs5PzdTAOB45plcS2zZ0wUibcXuGJ29VVGRWKGwE9zu2vLwhfgjTaaDpXo4rby+7GxXTktzJmxvneOUdYeHi+PZsThlvPI="
             sign_str = f"token_id=,token={self.token},phone_type=1,request_key={request_key},app_id=1,time={t},keys={keys}*&zvdvdvddbfikkkumtmdwqppp?|4Y!s!2br"
-            signature = hashlib.md5(sign_str.encode()).hexdigest()
+            signature = hashlib.sha256(sign_str.encode()).hexdigest()
             
             # 构建请求体
             body = {
@@ -464,8 +464,8 @@ t5lYKfpe8k83ZA==
             return None
 
     def get_md5(self, text):
-        """计算MD5"""
-        return hashlib.md5(text.encode()).hexdigest()
+        """计算SHA256"""
+        return hashlib.sha256(text.encode()).hexdigest()
 
 if __name__ == '__main__':
     pass

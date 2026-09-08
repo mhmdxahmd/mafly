@@ -30,9 +30,6 @@ HTTP_PROXIES = [
     'https://fan.973511.xyz:443',
 ]
 
-# Worker 代理（用于播放器转发 HLS）
-WORKER_PROXY = 'https://x.maflya.com/api/proxy?target='
-
 # 调试日志
 DEBUG_LOG = '/sdcard/Download/ytb_live_debug.log'
 # ===========================================
@@ -58,21 +55,6 @@ def get_proxy():
         return HTTP_PROXIES[int(time.time()) % len(HTTP_PROXIES)]
     return None
 
-def apply_worker_proxy(url):
-    """对 Google 域名添加 Worker 代理前缀"""
-    google_domains = [
-        'youtube.com', 'youtu.be', 'ytimg.com', 'googlevideo.com',
-        'googleapis.com', 'google.com', 'gstatic.com', 'googleusercontent.com'
-    ]
-    try:
-        host = urlparse(url).hostname or ''
-        host = host.lower()
-        if any(host == d or host.endswith('.' + d) for d in google_domains):
-            return WORKER_PROXY + quote(url, safe='')
-    except:
-        pass
-    return url
-
 class Spider(BaseSpider):
     def getName(self):
         return 'YouTube新闻直播'
@@ -85,7 +67,7 @@ class Spider(BaseSpider):
         }
         self.session = requests.Session()
         self.session.headers.update(self.headers)
-        debug_log('spider init', {'http_proxies': len(HTTP_PROXIES), 'worker_proxy': WORKER_PROXY})
+        debug_log('spider init', {'http_proxies': len(HTTP_PROXIES)})
 
     def homeContent(self, filter):
         return {"class": [{"type_id": "yt_live", "type_name": "新闻直播"}]}
@@ -99,7 +81,6 @@ class Spider(BaseSpider):
             items.append({
                 "vod_id": vid,
                 "vod_name": name,
-                # 缩略图直接用 YouTube 原始地址（通常可访问）
                 "vod_pic": f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg",
                 "vod_remarks": "LIVE"
             })
@@ -128,13 +109,13 @@ class Spider(BaseSpider):
         hls_url = self._fetch_hls_with_proxy(video_id)
         
         if hls_url:
-            # 用 Worker 代理转发 HLS 给播放器
-            play_url = apply_worker_proxy(hls_url)
-            debug_log('play url generated', {'video_id': video_id, 'play_url_len': len(play_url)})
+            debug_log('hls extracted', {'video_id': video_id, 'hls_url_len': len(hls_url)})
+            # 直接返回原始 HLS 地址（不经过任何转发）
+            # 播放器需要能直连 googlevideo.com（开全局代理时）
             return {
                 "parse": 0,
                 "jx": 0,
-                "url": play_url,
+                "url": hls_url,
                 "header": self.headers,
                 "format": "application/x-mpegURL"
             }
@@ -152,7 +133,7 @@ class Spider(BaseSpider):
         watch_url = f'https://www.youtube.com/watch?v={video_id}'
         
         # 尝试多个代理
-        for i in range(3):
+        for i in range(5):
             proxy = get_proxy()
             proxies = {'http': proxy, 'https': proxy} if proxy else None
             
@@ -162,7 +143,7 @@ class Spider(BaseSpider):
                 page = resp.text
                 hls_url = self._extract_hls(page)
                 if hls_url:
-                    debug_log('hls extracted', {'video_id': video_id, 'hls_len': len(hls_url)})
+                    debug_log('hls extracted with proxy', {'video_id': video_id, 'proxy': proxy})
                     return hls_url
             except Exception as e:
                 debug_log('proxy attempt failed', {'video_id': video_id, 'proxy': proxy, 'error': repr(e)})

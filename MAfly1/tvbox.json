@@ -104,13 +104,13 @@
     },	
 	 {
       "key": "⭐Maflya-油管固定频道",
-      "name": "⭐YouTube丨免翻固定频道",
+      "name": "⭐Maflya丨 YouTube丨免翻实时固定频道",
       "type": 3,
       "api": "https://x.maflya.com/api/proxy?target=https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/youtube.py"
     },			
 	 {
       "key": "⭐Maflya-油管直播",
-      "name": "⭐Maflya丨YouTube丨直播",
+      "name": "⭐Maflya丨YouTube丨需要翻|直播",
       "type": 3,
       "api": "https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/tvboxyoutube.py"
     },

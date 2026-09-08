@@ -7,7 +7,6 @@ from urllib.parse import quote, urlparse
 from base.spider import Spider as BaseSpider
 
 # ================== 配置区域 ==================
-# 固定视频ID频道列表（新闻台24小时直播）
 FIXED_CHANNELS = [
     ("vr3XyVCR4T0", "中天新闻 24H直播"),
     ("6IquAgfvYmc", "寰宇新闻 24H直播"),
@@ -15,18 +14,14 @@ FIXED_CHANNELS = [
     ("V1p33hqPrUk", "TVBS新闻 24H直播"),
     ("m_dhMSvUCIc", "东森新闻 24H直播"),
     ("fWlRLYXkVxY", "三立新闻 24H直播"),
-    ("Ry--eMIjYLQ", "台视新闻 24H直播"),
+    ("Ry--eMIjYLQ", "凤凰新闻 24H直播"),
 ]
 
-# 动态检测的频道ID列表（凤凰卫视）
 DYNAMIC_CHANNEL_IDS = [
     ("UC4vnLYInDvXtLKGOZieMeMw", "凤凰卫视"),
 ]
 
-# 您的 Cloudflare Worker 代理地址
 PROXY_BASE = 'https://x.maflya.com/api/proxy?target='
-
-# 调试日志文件路径（留空则禁用日志）
 DEBUG_LOG = '/sdcard/Download/ytb_live_debug.log'
 # ===========================================
 
@@ -46,7 +41,6 @@ def debug_log(message, data=None):
         pass
 
 def is_google_domain(url):
-    """判断 URL 是否属于 Google/YouTube 相关域名"""
     google_domains = [
         'youtube.com', 'youtu.be', 'ytimg.com', 'googlevideo.com',
         'googleapis.com', 'google.com', 'gstatic.com', 'googleusercontent.com'
@@ -59,7 +53,6 @@ def is_google_domain(url):
         return False
 
 def apply_proxy(url):
-    """对 Google 域名添加代理前缀"""
     if is_google_domain(url):
         return PROXY_BASE + quote(url, safe=':/?&=%')
     return url
@@ -76,11 +69,7 @@ class Spider(BaseSpider):
         }
         self.session = requests.Session()
         self.session.headers.update(self.headers)
-        debug_log('spider init', {
-            'proxy_base': PROXY_BASE,
-            'fixed_channels': len(FIXED_CHANNELS),
-            'dynamic_channels': len(DYNAMIC_CHANNEL_IDS)
-        })
+        debug_log('spider init', {'proxy_base': PROXY_BASE})
 
     def homeContent(self, filter):
         return {"class": [{"type_id": "yt_live", "type_name": "新闻直播"}]}
@@ -90,8 +79,6 @@ class Spider(BaseSpider):
 
     def categoryContent(self, tid, pg, filter, extend):
         items = []
-        
-        # 1. 添加固定视频ID频道
         for vid, name in FIXED_CHANNELS:
             items.append({
                 "vod_id": vid,
@@ -99,8 +86,6 @@ class Spider(BaseSpider):
                 "vod_pic": apply_proxy(f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg"),
                 "vod_remarks": "LIVE"
             })
-        
-        # 2. 动态检测频道是否在直播
         for channel_id, channel_name in DYNAMIC_CHANNEL_IDS:
             try:
                 live_video_id = self._get_live_video_from_channel(channel_id)
@@ -111,32 +96,23 @@ class Spider(BaseSpider):
                         "vod_pic": apply_proxy(f"https://i.ytimg.com/vi/{live_video_id}/hqdefault.jpg"),
                         "vod_remarks": "LIVE"
                     })
-                    debug_log('dynamic channel live found', {'channel_id': channel_id, 'video_id': live_video_id})
             except Exception as e:
                 debug_log('dynamic channel check error', {'channel_id': channel_id, 'error': repr(e)})
-        
         return {"list": items, "page": 1, "pagecount": 1, "limit": len(items), "total": len(items)}
 
     def detailContent(self, ids):
         vid = ids[0]
         name = vid
-        # 查找固定频道名称
         for ch_vid, ch_name in FIXED_CHANNELS:
             if ch_vid == vid:
                 name = ch_name
                 break
-        # 查找动态频道名称
-        for ch_id, ch_name in DYNAMIC_CHANNEL_IDS:
-            if ch_name in name:
-                name = f"{ch_name} 直播"
-                break
-        vod = {
+        return {"list": [{
             "vod_id": vid,
             "vod_name": name,
             "vod_play_from": "YouTube直播",
             "vod_play_url": f"直播线路${vid}@live"
-        }
-        return {"list": [vod]}
+        }]}
 
     def playerContent(self, flag, pid, vipFlags):
         raw_pid = pid.split('$')[-1]
@@ -150,11 +126,14 @@ class Spider(BaseSpider):
             page = resp.text
             hls_url = self._extract_hls(page)
             if hls_url:
-                # 对 HLS 地址应用代理
+                # 直接返回原始 HLS 地址，不要代理
+                # 让 Worker 代理处理 Referer
+                # 但直接原始地址可能无法访问
+                # 所以还是用代理，但 Worker 会设置正确 Referer
                 proxied_hls = apply_proxy(hls_url)
-                debug_log('play url generated', {'video_id': video_id, 'url_len': len(proxied_hls)})
+                debug_log('play url generated', {'video_id': video_id, 'proxied_hls': proxied_hls[:200]})
                 return {
-                    "parse": 1,
+                    "parse": 0,
                     "jx": 0,
                     "url": proxied_hls,
                     "header": self.headers,
@@ -163,27 +142,24 @@ class Spider(BaseSpider):
         except Exception as e:
             debug_log('extract error', {'video_id': video_id, 'error': repr(e)})
 
-        debug_log('hls not found, fallback to web', {'video_id': video_id})
-        return {"parse": 1, "url": watch_url, "header": self.headers}
+        # 回退：返回原始 YouTube 网页（不开代理，让 TVBox 自己处理）
+        debug_log('fallback to original youtube url', {'video_id': video_id})
+        return {
+            "parse": 1,
+            "url": f'https://www.youtube.com/watch?v={video_id}',
+            "header": self.headers
+        }
 
     def _get_live_video_from_channel(self, channel_id):
-        """从频道页面获取当前直播视频ID（通过代理）"""
         live_url = f'https://www.youtube.com/channel/{channel_id}/live'
         try:
             proxied_url = apply_proxy(live_url)
             resp = self.session.get(proxied_url, allow_redirects=False, timeout=10)
-            debug_log('channel live page', {
-                'channel_id': channel_id,
-                'status': resp.status_code,
-                'location': resp.headers.get('Location', '')
-            })
-            # 如果重定向到 watch?v=xxx
             if resp.status_code in (301, 302, 303, 307, 308):
                 location = resp.headers.get('Location', '')
                 match = re.search(r'[?&]v=([0-9A-Za-z_-]{11})', location)
                 if match:
                     return match.group(1)
-            # 如果返回200，尝试从页面提取
             if resp.status_code == 200:
                 html_text = resp.text
                 match = re.search(r'"videoId":"([0-9A-Za-z_-]{11})"', html_text)

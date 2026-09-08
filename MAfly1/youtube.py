@@ -12,7 +12,7 @@ FIXED_CHANNELS = [
     ("V1p33hqPrUk", "TVBS新闻 24H直播"),
     ("m_dhMSvUCIc", "东森新闻 24H直播"),
     ("fWlRLYXkVxY", "三立新闻 24H直播"),
-    ("Ry--eMIjYLQ", "凤凰新闻 24H直播"),
+    ("Ry--eMIjYLQ", "台视新闻 24H直播"),
 ]
 
 HTTP_PROXIES = [
@@ -43,11 +43,6 @@ def debug_log(message, data=None):
             f.write(line + '\n')
     except Exception:
         pass
-
-def get_proxy():
-    if HTTP_PROXIES:
-        return HTTP_PROXIES[int(time.time()) % len(HTTP_PROXIES)]
-    return None
 
 class Spider(BaseSpider):
     def getName(self):
@@ -98,14 +93,11 @@ class Spider(BaseSpider):
         video_id = raw_pid.rsplit('@', 1)[0] if '@' in raw_pid else raw_pid
         debug_log('player start', {'video_id': video_id})
 
-        # 通过 HTTP 代理请求 YouTube 页面
-        hls_url = self._fetch_hls_with_proxy(video_id)
+        # 轮询所有代理，找到可用的并提取 HLS
+        hls_url = self._fetch_hls_with_all_proxies(video_id)
         
         if hls_url:
             debug_log('hls extracted', {'video_id': video_id, 'hls_url_len': len(hls_url)})
-            
-            # 直接返回原始 HLS 地址，不经过本地代理
-            # 播放器需要能直连 googlevideo.com
             return {
                 "parse": 0,
                 "jx": 0,
@@ -117,41 +109,67 @@ class Spider(BaseSpider):
                 "format": "application/x-mpegURL"
             }
         
-        debug_log('hls not found', {'video_id': video_id})
+        debug_log('hls not found after trying all proxies', {'video_id': video_id})
         return {
             "parse": 1,
             "url": f'https://www.youtube.com/watch?v={video_id}',
             "header": self.headers
         }
 
-    def _fetch_hls_with_proxy(self, video_id):
+    def _fetch_hls_with_all_proxies(self, video_id):
+        """轮询所有 HTTP 代理，找到可用的并提取 HLS"""
         watch_url = f'https://www.youtube.com/watch?v={video_id}'
         
-        for i in range(5):
-            proxy = get_proxy()
-            proxies = {'http': proxy, 'https': proxy} if proxy else None
+        for i, proxy in enumerate(HTTP_PROXIES):
+            proxies = {'http': proxy, 'https': proxy}
             
             try:
-                debug_log('try proxy', {'video_id': video_id, 'proxy': proxy, 'attempt': i+1})
+                debug_log('try proxy', {'video_id': video_id, 'proxy': proxy, 'attempt': i+1, 'total': len(HTTP_PROXIES)})
+                
+                # 请求 YouTube 页面
                 resp = self.session.get(watch_url, proxies=proxies, timeout=15)
+                debug_log('page fetched', {
+                    'video_id': video_id,
+                    'proxy': proxy,
+                    'status': resp.status_code,
+                    'page_length': len(resp.text)
+                })
+                
                 page = resp.text
                 hls_url = self._extract_hls(page)
+                
                 if hls_url:
                     debug_log('hls extracted with proxy', {'video_id': video_id, 'proxy': proxy})
                     return hls_url
+                else:
+                    debug_log('hls not found in page', {
+                        'video_id': video_id,
+                        'proxy': proxy,
+                        'page_length': len(page)
+                    })
+                    
+            except requests.exceptions.ProxyError as e:
+                debug_log('proxy error', {'video_id': video_id, 'proxy': proxy, 'error': 'ProxyError'})
+                continue
+            except requests.exceptions.ConnectTimeout as e:
+                debug_log('proxy timeout', {'video_id': video_id, 'proxy': proxy, 'error': 'ConnectTimeout'})
+                continue
+            except requests.exceptions.ReadTimeout as e:
+                debug_log('proxy read timeout', {'video_id': video_id, 'proxy': proxy, 'error': 'ReadTimeout'})
+                continue
             except Exception as e:
-                debug_log('proxy attempt failed', {'video_id': video_id, 'proxy': proxy, 'error': repr(e)})
+                debug_log('proxy attempt failed', {'video_id': video_id, 'proxy': proxy, 'error': str(e)[:200]})
                 continue
         
         return ''
 
     def _extract_hls(self, page):
-        # 方法1
+        # 方法1：直接正则 hlsManifestUrl
         match = re.search(r'"hlsManifestUrl"\s*:\s*"(https:[^"]+)"', page)
         if match:
             return match.group(1).replace(r'\/', '/')
         
-        # 方法2
+        # 方法2：从 ytInitialPlayerResponse JSON 提取
         match2 = re.search(r'ytInitialPlayerResponse\s*=\s*({.+?});', page, re.S)
         if match2:
             try:
@@ -162,9 +180,14 @@ class Spider(BaseSpider):
             except:
                 pass
         
-        # 方法3
+        # 方法3：查找所有 m3u8 链接
         matches = re.findall(r'"(https://[^"]*?\.m3u8[^"]*)"', page)
         if matches:
             return matches[0].replace(r'\/', '/')
+        
+        # 方法4：查找 googlevideo.com 链接
+        matches2 = re.findall(r'"(https://[^"]*googlevideo[^"]*)"', page)
+        if matches2:
+            return matches2[0].replace(r'\/', '/')
         
         return ''

@@ -3,7 +3,6 @@ import re
 import json
 import time
 import requests
-from urllib.parse import quote, urlparse
 from base.spider import Spider as BaseSpider
 
 # ================== 配置区域 ==================
@@ -22,9 +21,6 @@ FIXED_CHANNELS = [
 DYNAMIC_CHANNEL_IDS = [
     ("UC4vnLYInDvXtLKGOZieMeMw", "凤凰卫视"),
 ]
-
-# 您的 Cloudflare Worker 代理地址
-PROXY_BASE = 'https://x.maflya.com/api/proxy?target='
 
 # 调试日志文件路径（留空则禁用日志）
 DEBUG_LOG = '/sdcard/Download/ytb_live_debug.log'
@@ -45,23 +41,6 @@ def debug_log(message, data=None):
     except Exception:
         pass
 
-def is_google_domain(url):
-    google_domains = [
-        'youtube.com', 'youtu.be', 'ytimg.com', 'googlevideo.com',
-        'googleapis.com', 'google.com', 'gstatic.com', 'googleusercontent.com'
-    ]
-    try:
-        host = urlparse(url).hostname or ''
-        host = host.lower()
-        return any(host == d or host.endswith('.' + d) for d in google_domains)
-    except:
-        return False
-
-def apply_proxy(url):
-    if is_google_domain(url):
-        return PROXY_BASE + quote(url, safe=':/?&=%')
-    return url
-
 class Spider(BaseSpider):
     def getName(self):
         return 'YouTube新闻直播'
@@ -74,7 +53,7 @@ class Spider(BaseSpider):
         }
         self.session = requests.Session()
         self.session.headers.update(self.headers)
-        debug_log('spider init', {'proxy_base': PROXY_BASE, 'fixed_channels': len(FIXED_CHANNELS), 'dynamic_channels': len(DYNAMIC_CHANNEL_IDS)})
+        debug_log('spider init', {'fixed_channels': len(FIXED_CHANNELS), 'dynamic_channels': len(DYNAMIC_CHANNEL_IDS)})
 
     def homeContent(self, filter):
         return {"class": [{"type_id": "yt_live", "type_name": "新闻直播"}]}
@@ -90,7 +69,7 @@ class Spider(BaseSpider):
             items.append({
                 "vod_id": vid,
                 "vod_name": name,
-                "vod_pic": apply_proxy(f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg"),
+                "vod_pic": f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg",
                 "vod_remarks": "LIVE"
             })
         
@@ -102,7 +81,7 @@ class Spider(BaseSpider):
                     items.append({
                         "vod_id": live_video_id,
                         "vod_name": f"{channel_name} 直播",
-                        "vod_pic": apply_proxy(f"https://i.ytimg.com/vi/{live_video_id}/hqdefault.jpg"),
+                        "vod_pic": f"https://i.ytimg.com/vi/{live_video_id}/hqdefault.jpg",
                         "vod_remarks": "LIVE"
                     })
                     debug_log('dynamic channel live found', {'channel_id': channel_id, 'video_id': live_video_id})
@@ -121,7 +100,7 @@ class Spider(BaseSpider):
                 break
         # 查找动态频道名称
         for ch_id, ch_name in DYNAMIC_CHANNEL_IDS:
-            if vid and ch_name in name:
+            if ch_name in name:
                 name = f"{ch_name} 直播"
                 break
         vod = {
@@ -137,18 +116,17 @@ class Spider(BaseSpider):
         video_id = raw_pid.rsplit('@', 1)[0] if '@' in raw_pid else raw_pid
         debug_log('player start', {'video_id': video_id})
 
-        watch_url = apply_proxy(f'https://www.youtube.com/watch?v={video_id}')
+        watch_url = f'https://www.youtube.com/watch?v={video_id}'
         try:
             resp = self.session.get(watch_url, timeout=12)
             page = resp.text
             hls_url = self._extract_hls(page)
             if hls_url:
-                proxied_hls = apply_proxy(hls_url)
-                debug_log('play url generated', {'video_id': video_id, 'url_len': len(proxied_hls)})
+                debug_log('play url generated', {'video_id': video_id, 'url_len': len(hls_url)})
                 return {
                     "parse": 0,
                     "jx": 0,
-                    "url": proxied_hls,
+                    "url": hls_url,
                     "header": self.headers,
                     "format": "application/x-mpegURL"
                 }
@@ -162,8 +140,7 @@ class Spider(BaseSpider):
         """从频道页面获取当前直播视频ID（无API Key）"""
         live_url = f'https://www.youtube.com/channel/{channel_id}/live'
         try:
-            proxied_url = apply_proxy(live_url)
-            resp = self.session.get(proxied_url, allow_redirects=False, timeout=10)
+            resp = self.session.get(live_url, allow_redirects=False, timeout=10)
             debug_log('channel live page', {
                 'channel_id': channel_id,
                 'status': resp.status_code,

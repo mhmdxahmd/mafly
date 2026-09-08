@@ -7,184 +7,174 @@ from urllib.parse import quote, urljoin
 from base.spider import Spider as BaseSpider
 
 # ================== 配置区域 ==================
-# 所有频道列表
+# 所有频道列表（带分组）
 FIXED_CHANNELS = [
     # 国际新闻
-    ("IZK0QUeT2GA", "CGTN LIVE"),
-    ("vYRfQo6JMxc", "United Nations联合国"),
-    ("yMMTtY_L-y0", "BBC Earth"),
-    ("gCNeDWCI0vo", "Al Jazeera English"),
-    ("LuKwFajn37U", "DW News"),
-    ("vNVp6bxkL1c", "CCTV中文国际"),
-    ("Ry--eMIjYLQ", "凤凰卫视"),
+    ("IZK0QUeT2GA", "CGTN LIVE", "国际新闻"),
+    ("vYRfQo6JMxc", "United Nations联合国", "国际新闻"),
+    ("yMMTtY_L-y0", "BBC Earth", "国际新闻"),
+    ("gCNeDWCI0vo", "Al Jazeera English", "国际新闻"),
+    ("LuKwFajn37U", "DW News", "国际新闻"),
+    ("vNVp6bxkL1c", "CCTV中文国际", "国际新闻"),
+    ("Ry--eMIjYLQ", "凤凰卫视", "国际新闻"),
     
-    # 实时监测/直播流
-    ("z_fY1pj1VBw", "象山看台北"),
-    ("215ahZ_0rTg", "猫空指南宫"),
-    ("_hx5akJfzso", "高雄國際機場"),
-    ("My-tDEttvXg", "桃園機場北跑道"),
-    ("91PfFoqvuUk", "桃园国际机场即时影像"),
-    ("NOZVUBsCDEI", "臺灣桃園國際機場"),
-    ("vXvblXi-PGo", "臺北松山機場"),
-    ("ygC5wni2DMQ", "香港國際機場即時"),
-    ("qQoBmgDKZiI", "東京羽田 3D空港"),
-    ("KyT4qSK8lJo", "台灣地震監視"),
-    ("ADZTiqEGT8g", "台灣天氣即時監測"),
-    ("rvtygG4n6ew", "Live Earthquake"),
-    ("iws3rh5vLAQ", "Kilauea Volcano Livestream"),
-    ("0FBiyFpV__g", "International Space Station"),
-    ("3F0XlKxaqbk", "WorldCam"),
+    # 实时监测
+    ("z_fY1pj1VBw", "象山看台北", "实时监测"),
+    ("215ahZ_0rTg", "猫空指南宫", "实时监测"),
+    ("_hx5akJfzso", "高雄國際機場", "实时监测"),
+    ("My-tDEttvXg", "桃園機場北跑道", "实时监测"),
+    ("91PfFoqvuUk", "桃园国际机场即时影像", "实时监测"),
+    ("NOZVUBsCDEI", "臺灣桃園國際機場", "实时监测"),
+    ("vXvblXi-PGo", "臺北松山機場", "实时监测"),
+    ("ygC5wni2DMQ", "香港國際機場即時", "实时监测"),
+    ("qQoBmgDKZiI", "東京羽田 3D空港", "实时监测"),
+    ("KyT4qSK8lJo", "台灣地震監視", "实时监测"),
+    ("ADZTiqEGT8g", "台灣天氣即時監測", "实时监测"),
+    ("rvtygG4n6ew", "Live Earthquake", "实时监测"),
+    ("iws3rh5vLAQ", "Kilauea Volcano Livestream", "实时监测"),
+    ("0FBiyFpV__g", "International Space Station", "实时监测"),
+    ("3F0XlKxaqbk", "WorldCam", "实时监测"),
     
     # 游戏
-    ("92IaqdAkYO0", "Zelda: Breath Of The Wild"),
+    ("92IaqdAkYO0", "Zelda: Breath Of The Wild", "游戏"),
     
     # 儿童动画
-    ("Fl-WGssGnak", "金刚战士Mighty Morphin Power Rangers"),
-    ("bK03WDeq5SI", "啄木鸟Pica-Pau"),
-    ("DWPcQ4VlauY", "Shrek 1 - 4 Extended"),
-    ("iiRNq1sxr0U", "Rick and Morty"),
-    ("L0VqY0s7-5k", "功夫熊猫Kung Fu Panda"),
-    ("btP-bWKDVik", "MiniMoments"),
-    ("jLzdH2bvle4", "小黄人1-4"),
-    ("2Vf5RcQ84z0", "加菲猫"),
-    ("q5xC6wv9Ut0", "Nat Geo Kids"),
-    ("UavAcv2CBfc", "Shaun the Sheep & Friends"),
-    ("rEKifG2XUZg", "TOM and JERRY"),
-    ("hNf5__nxw5s", "Marvel HQ"),
-    ("SiflAbFG_HI", "Johnny Test - WildBrain"),
-    ("RXoDbwZmXV8", "We Bare Bears"),
-    ("8B7HWfZ4B9g", "Timmy & Friends"),
-    ("JCxdBLVj57g", "Die Schlümpfe • Auf Deutsch"),
-    ("uZkaJ3e9nfY", "Adventure Time"),
-    ("XfZetbS9084", "Cartoonito"),
-    ("OaLXmRtCWO8", "Peppa's Best Bites"),
+    ("Fl-WGssGnak", "金刚战士Mighty Morphin Power Rangers", "儿童动画"),
+    ("bK03WDeq5SI", "啄木鸟Pica-Pau", "儿童动画"),
+    ("DWPcQ4VlauY", "Shrek 1 - 4 Extended", "儿童动画"),
+    ("iiRNq1sxr0U", "Rick and Morty", "儿童动画"),
+    ("L0VqY0s7-5k", "功夫熊猫Kung Fu Panda", "儿童动画"),
+    ("btP-bWKDVik", "MiniMoments", "儿童动画"),
+    ("jLzdH2bvle4", "小黄人1-4", "儿童动画"),
+    ("2Vf5RcQ84z0", "加菲猫", "儿童动画"),
+    ("q5xC6wv9Ut0", "Nat Geo Kids", "儿童动画"),
+    ("UavAcv2CBfc", "Shaun the Sheep & Friends", "儿童动画"),
+    ("rEKifG2XUZg", "TOM and JERRY", "儿童动画"),
+    ("hNf5__nxw5s", "Marvel HQ", "儿童动画"),
+    ("SiflAbFG_HI", "Johnny Test - WildBrain", "儿童动画"),
+    ("RXoDbwZmXV8", "We Bare Bears", "儿童动画"),
+    ("8B7HWfZ4B9g", "Timmy & Friends", "儿童动画"),
+    ("JCxdBLVj57g", "Die Schlümpfe • Auf Deutsch", "儿童动画"),
+    ("uZkaJ3e9nfY", "Adventure Time", "儿童动画"),
+    ("XfZetbS9084", "Cartoonito", "儿童动画"),
+    ("OaLXmRtCWO8", "Peppa's Best Bites", "儿童动画"),
     
-    # 儿歌/音乐
-    ("m0TPzUkL57E", "Lalafun - Nursery Rhymes"),
-    ("BgAwztE_7hw", "海洋之夜氛围与舒缓睡眠音效"),
-    ("q8hw5oKCDp4", "周杰倫24H音樂時光機"),
-    ("R62E7cFWX6o", "五月天"),
-    ("B7EliniYUrQ", "告五人唱出你的人生BGM"),
-    ("SIYoSJ-KvHQ", "YOASOBI - STATION"),
-    ("ouGgxvUNhok", "432Hz + 963Hz + 528Hz 深层疗愈"),
-    ("PUqkUzXEtuI", "黃明志千萬點閱神曲精選"),
+    # 音乐
+    ("m0TPzUkL57E", "Lalafun - Nursery Rhymes", "音乐"),
+    ("BgAwztE_7hw", "海洋之夜氛围与舒缓睡眠音效", "音乐"),
+    ("q8hw5oKCDp4", "周杰倫24H音樂時光機", "音乐"),
+    ("R62E7cFWX6o", "五月天", "音乐"),
+    ("B7EliniYUrQ", "告五人唱出你的人生BGM", "音乐"),
+    ("SIYoSJ-KvHQ", "YOASOBI - STATION", "音乐"),
+    ("ouGgxvUNhok", "432Hz + 963Hz + 528Hz 深层疗愈", "音乐"),
+    ("PUqkUzXEtuI", "黃明志千萬點閱神曲精選", "音乐"),
     
-    # 台湾新闻/财经/宗教
-    ("wIicpuUDgv4", "正德电视台"),
-    ("dVkQNH3IfME", "生命电视台"),
-    ("m_dhMSvUCIc", "TVBS NEWS"),
-    ("o_-hSMgpAzs", "TVBS NEWS1"),
-    ("2mCSYvcfhtc", "TVBS 新闻HD"),
-    ("kMwoV2js-B4", "三立财经"),
-    ("E0zhe2gkXBs", "东森LIVE"),
-    ("V1p33hqPrUk", "东森新闻"),
-    ("1I2iq41Akmo", "东森财经"),
-    ("vr3XyVCR4T0", "中天新闻"),
-    ("quwqlazU-c8", "公视新闻"),
-    ("wM0g8EoUZ_E", "华视新闻"),
-    ("IfRLIAc2HN8", "台视新闻"),
-    ("ylYJSBUgaMA", "民视新闻"),
-    ("yeYC0mbSIOo", "三立新闻网"),
-    ("6IquAgfvYmc", "环宇新闻"),
-    ("w87VGpgd90U", "环宇新闻台湾台"),
-    ("yAUQQ0DhPxI", "环宇财经"),
-    ("5n0y6b0Q25o", "镜新闻"),
-    ("xLqt2p6Dowo", "非凡财经"),
+    # 台湾新闻
+    ("wIicpuUDgv4", "正德电视台", "台湾新闻"),
+    ("dVkQNH3IfME", "生命电视台", "台湾新闻"),
+    ("m_dhMSvUCIc", "TVBS NEWS", "台湾新闻"),
+    ("o_-hSMgpAzs", "TVBS NEWS1", "台湾新闻"),
+    ("2mCSYvcfhtc", "TVBS 新闻HD", "台湾新闻"),
+    ("kMwoV2js-B4", "三立财经", "台湾新闻"),
+    ("E0zhe2gkXBs", "东森LIVE", "台湾新闻"),
+    ("V1p33hqPrUk", "东森新闻", "台湾新闻"),
+    ("1I2iq41Akmo", "东森财经", "台湾新闻"),
+    ("vr3XyVCR4T0", "中天新闻", "台湾新闻"),
+    ("quwqlazU-c8", "公视新闻", "台湾新闻"),
+    ("wM0g8EoUZ_E", "华视新闻", "台湾新闻"),
+    ("IfRLIAc2HN8", "台视新闻", "台湾新闻"),
+    ("ylYJSBUgaMA", "民视新闻", "台湾新闻"),
+    ("yeYC0mbSIOo", "三立新闻网", "台湾新闻"),
+    ("6IquAgfvYmc", "环宇新闻", "台湾新闻"),
+    ("w87VGpgd90U", "环宇新闻台湾台", "台湾新闻"),
+    ("yAUQQ0DhPxI", "环宇财经", "台湾新闻"),
+    ("5n0y6b0Q25o", "镜新闻", "台湾新闻"),
+    ("xLqt2p6Dowo", "非凡财经", "台湾新闻"),
     
     # 电视剧
-    ("2nhLErwKwbw", "琅琊榜Nirvana in Fire"),
-    ("AfaGwTbKH0A", "China Zone 流金岁月"),
-    ("eyZ55jMTyMQ", "甄嬛传 24小时"),
-    ("et4SqnkNSFo", "潜伏 全集"),
-    ("RGCaUT6-hqU", "雍正王朝"),
-    ("QF6VpFjkFjw", "康熙王朝"),
-    ("wkdREigxTy4", "神断狄仁杰"),
-    ("UgOi92IvONg", "86版 西游记"),
-    ("G43NInZfoPE", "华纳兄弟"),
-    ("89c4owSHL2E", "真人快打MortalKombat"),
-    ("sh4N79JlDRo", "变相怪杰TheMask"),
-    ("WXbPdjQuCd4", "速度与激情"),
-    ("XghNs0Cx6JQ", "尖峰时刻RushHour"),
-    ("WVwP298MU7I", "哈利波特HarryPotte"),
-    ("5PaRAsJ6gI0", "黑客帝国The Matrix Trilogy"),
-    ("AAWoKmDJRaw", "TVB 经典 Sitcom 马拉松"),
-    ("HEYnMz9zGhY", "楊麗花歌仔戲24小時"),
+    ("2nhLErwKwbw", "琅琊榜Nirvana in Fire", "电视剧"),
+    ("AfaGwTbKH0A", "China Zone 流金岁月", "电视剧"),
+    ("eyZ55jMTyMQ", "甄嬛传 24小时", "电视剧"),
+    ("et4SqnkNSFo", "潜伏 全集", "电视剧"),
+    ("RGCaUT6-hqU", "雍正王朝", "电视剧"),
+    ("QF6VpFjkFjw", "康熙王朝", "电视剧"),
+    ("wkdREigxTy4", "神断狄仁杰", "电视剧"),
+    ("UgOi92IvONg", "86版 西游记", "电视剧"),
+    ("G43NInZfoPE", "华纳兄弟", "电视剧"),
+    ("89c4owSHL2E", "真人快打MortalKombat", "电视剧"),
+    ("sh4N79JlDRo", "变相怪杰TheMask", "电视剧"),
+    ("WXbPdjQuCd4", "速度与激情", "电视剧"),
+    ("XghNs0Cx6JQ", "尖峰时刻RushHour", "电视剧"),
+    ("WVwP298MU7I", "哈利波特HarryPotte", "电视剧"),
+    ("5PaRAsJ6gI0", "黑客帝国The Matrix Trilogy", "电视剧"),
+    ("AAWoKmDJRaw", "TVB 经典 Sitcom 马拉松", "电视剧"),
+    ("HEYnMz9zGhY", "楊麗花歌仔戲24小時", "电视剧"),
     
-    # 台湾电视剧/综艺
-    ("65bIk97v35Q", "新兵日记"),
-    ("NyrdWXddfR4", "台湾奇案"),
-    ("K2qsju6byIg", "藍色水玲瓏"),
-    ("DSnwGChyQ7M", "我愛我妻我愛子"),
-    ("0ePhPlTJbGo", "天才衝衝衝"),
-    ("OhA_G0s9pqw", "現代嘉慶君"),
-    ("CWT2LdX0H-g", "神機妙算劉伯溫"),
-    ("GjXBXz5dl6E", "親戚不計較"),
-    ("FOrcD6iEUso", "我的老師叫小賀"),
-    ("4PAlNX05N64", "包青天"),
-    ("OxL_MrnaHOY", "戲說台灣"),
-    ("6ZowCmLBcMY", "台灣靈異事件"),
-    ("B4-L2nfGcuE", "BigBearBaldEagleNest老鹰鸟巢"),
-    ("S_71wzZMf0M", "憨豆先生Mr Bean"),
+    # 台湾综艺
+    ("65bIk97v35Q", "新兵日记", "台湾综艺"),
+    ("NyrdWXddfR4", "台湾奇案", "台湾综艺"),
+    ("K2qsju6byIg", "藍色水玲瓏", "台湾综艺"),
+    ("DSnwGChyQ7M", "我愛我妻我愛子", "台湾综艺"),
+    ("0ePhPlTJbGo", "天才衝衝衝", "台湾综艺"),
+    ("OhA_G0s9pqw", "現代嘉慶君", "台湾综艺"),
+    ("CWT2LdX0H-g", "神機妙算劉伯溫", "台湾综艺"),
+    ("GjXBXz5dl6E", "親戚不計較", "台湾综艺"),
+    ("FOrcD6iEUso", "我的老師叫小賀", "台湾综艺"),
+    ("4PAlNX05N64", "包青天", "台湾综艺"),
+    ("OxL_MrnaHOY", "戲說台灣", "台湾综艺"),
+    ("6ZowCmLBcMY", "台灣靈異事件", "台湾综艺"),
+    ("B4-L2nfGcuE", "BigBearBaldEagleNest老鹰鸟巢", "台湾综艺"),
+    ("S_71wzZMf0M", "憨豆先生Mr Bean", "台湾综艺"),
     
     # 科技分享
-    ("FS7IPxmfEms", "不良林"),
-    ("epaQ9FmRooc", "jc-nf那坨"),
-    ("u66ExGpIL-s", "爱分享的小企鹅"),
+    ("FS7IPxmfEms", "不良林", "科技分享"),
+    ("epaQ9FmRooc", "jc-nf那坨", "科技分享"),
+    ("u66ExGpIL-s", "爱分享的小企鹅", "科技分享"),
     
-    # 宗教/佛经
-    ("vWzNi6wDTGI", "華藏衛視"),
-    ("xnGL8UoHJYs", "華藏網路念佛堂"),
-    ("JCIVsura-0A", "淨空老法師講經直播台"),
-    ("XWQTHTOj6VU", "悟道法師講經直播台"),
-    ("m5mqdL9704w", "北靈巖山寺"),
-    ("oDFtxATBSgY", "淨化音樂"),
-    ("Y_OIcysppaA", "大悲咒"),
-    ("KSIwUaDOl3A", "心经 The Heart Sutra"),
-    ("xJv_2lF1eb4", "地藏菩薩本願經"),
-    ("pOFljdLI-M0", "地藏經讀誦2小時18分版本"),
-    ("jgUdjPLf2tY", "地藏王菩薩心咒"),
-    ("180E05O2xWk", "南無地藏王菩薩聖號"),
-    ("xCHeilSLxHU", "綠度母心咒 108遍"),
-    ("5SFn0nk_mL8", "金刚经-王菲"),
-    ("3UyZFJXQ5Is", "《觀世音菩薩普門品》念誦"),
-    ("X6Xw4Ht5-yE", "普庵咒（台語課誦版）"),
-    ("aAZ3-OZb5K4", "安土地真言108遍"),
-    ("gahE0BDf_uc", "金剛薩埵百字明咒21遍"),
-    ("8TBKZE3rd1Y", "九天應元雷聲普化天尊"),
-    ("r6Hj2HeP5kY", "金光神咒｜吳政憲道長"),
-    ("Bn7GsaDY614", "《八大神咒》孟圆辉"),
-    ("9m-_A7ubjLQ", "妙觉 24/7 佛曲电台"),
-    ("Oc51BmM0dq0", "齊豫 清淨心靈 經典佛曲"),
+    # 宗教
+    ("vWzNi6wDTGI", "華藏衛視", "宗教"),
+    ("xnGL8UoHJYs", "華藏網路念佛堂", "宗教"),
+    ("JCIVsura-0A", "淨空老法師講經直播台", "宗教"),
+    ("XWQTHTOj6VU", "悟道法師講經直播台", "宗教"),
+    ("m5mqdL9704w", "北靈巖山寺", "宗教"),
+    ("oDFtxATBSgY", "淨化音樂", "宗教"),
+    ("Y_OIcysppaA", "大悲咒", "宗教"),
+    ("KSIwUaDOl3A", "心经 The Heart Sutra", "宗教"),
+    ("xJv_2lF1eb4", "地藏菩薩本願經", "宗教"),
+    ("pOFljdLI-M0", "地藏經讀誦2小時18分版本", "宗教"),
+    ("jgUdjPLf2tY", "地藏王菩薩心咒", "宗教"),
+    ("180E05O2xWk", "南無地藏王菩薩聖號", "宗教"),
+    ("xCHeilSLxHU", "綠度母心咒 108遍", "宗教"),
+    ("5SFn0nk_mL8", "金刚经-王菲", "宗教"),
+    ("3UyZFJXQ5Is", "《觀世音菩薩普門品》念誦", "宗教"),
+    ("X6Xw4Ht5-yE", "普庵咒（台語課誦版）", "宗教"),
+    ("aAZ3-OZb5K4", "安土地真言108遍", "宗教"),
+    ("gahE0BDf_uc", "金剛薩埵百字明咒21遍", "宗教"),
+    ("8TBKZE3rd1Y", "九天應元雷聲普化天尊", "宗教"),
+    ("r6Hj2HeP5kY", "金光神咒｜吳政憲道長", "宗教"),
+    ("Bn7GsaDY614", "《八大神咒》孟圆辉", "宗教"),
+    ("9m-_A7ubjLQ", "妙觉 24/7 佛曲电台", "宗教"),
+    ("Oc51BmM0dq0", "齊豫 清淨心靈 經典佛曲", "宗教"),
     
-    # AI制作-Ai漫剧
-    ("ri9DQpGs4vk", "第一集：凌霄法会 马耳大王毙命"),
-    ("SN37dVZyQno", "第二集：华光降世，妙吉祥被如来贬下界？"),
-    ("DS5KoPJy0ZI", "第三集：灵光除龙王，灵耀转世斗牛宫！"),
-    ("5iF_bqQidgI", "第四集：灵耀被封 火部兵马大元帅"),
-    ("sqmd0GZ7_RA", "第五集：华光大闹琼花会"),
-    ("oMLfz35cC98", "第六集：真武大帝（玄天上帝）出旗"),
-    ("1qMuAel0DaI", "第七集：华光收服千里眼 顺风眼"),
-    ("zXelKt_Nx2Y", "第八集：华光投萧家庄，五显华光降世！"),
-    ("3PbqdssVy40", "第十集：华光收火鸦，如来给玉帝献策！"),
-    ("VIH7Ar0Mq4w", "第十一集：华光化观音，大斗法！"),
-    ("vJ4MvDPRJ34", "第十二集：哪吒三太子大斗华光"),
-    ("aiwr2vdyPO8", "第十三集：华光迎娶铁扇公主"),
-    ("O7IgJfqiV2U", "第十四集：华光大闹阴司"),
-    ("4liYdHJHGe8", "第十五集：华光结义孙悟空"),
+    # AI漫剧
+    ("ri9DQpGs4vk", "第一集：凌霄法会 马耳大王毙命", "AI漫剧"),
+    ("SN37dVZyQno", "第二集：华光降世", "AI漫剧"),
+    ("DS5KoPJy0ZI", "第三集：灵光除龙王", "AI漫剧"),
+    ("5iF_bqQidgI", "第四集：灵耀被封", "AI漫剧"),
+    ("sqmd0GZ7_RA", "第五集：华光大闹琼花会", "AI漫剧"),
+    ("oMLfz35cC98", "第六集：真武大帝出旗", "AI漫剧"),
+    ("1qMuAel0DaI", "第七集：华光收服千里眼", "AI漫剧"),
+    ("zXelKt_Nx2Y", "第八集：华光投萧家庄", "AI漫剧"),
+    ("3PbqdssVy40", "第十集：华光收火鸦", "AI漫剧"),
+    ("VIH7Ar0Mq4w", "第十一集：华光化观音", "AI漫剧"),
+    ("vJ4MvDPRJ34", "第十二集：哪吒三太子大斗华光", "AI漫剧"),
+    ("aiwr2vdyPO8", "第十三集：华光迎娶铁扇公主", "AI漫剧"),
+    ("O7IgJfqiV2U", "第十四集：华光大闹阴司", "AI漫剧"),
+    ("4liYdHJHGe8", "第十五集：华光结义孙悟空", "AI漫剧"),
 ]
 
-# HTTP 代理列表
-HTTP_PROXIES = [
-    'https://fan.240104.xyz:443',
-    'https://fan.891058.xyz:443',
-    'https://fan.596189.xyz:443',
-    'https://fan.226278.xyz:443',
-    'https://fan.587475.xyz:443',
-    'https://fan.571589.xyz:443',
-    'https://fan.572609.xyz:443',
-    'https://fan.212800.xyz:443',
-    'https://fan.973511.xyz:443',
-]
+# 默认代理列表（留空，从 extend 参数读取）
+DEFAULT_PROXIES = []
 
 DEBUG_LOG = '/sdcard/Download/ytb_live_debug.log'
 
@@ -203,16 +193,34 @@ def debug_log(message, data=None):
     except Exception:
         pass
 
-def get_proxy():
-    if HTTP_PROXIES:
-        return HTTP_PROXIES[int(time.time()) % len(HTTP_PROXIES)]
-    return None
-
 class Spider(BaseSpider):
     def getName(self):
         return 'YouTube直播'
 
     def init(self, extend=""):
+        # 解析 extend 参数
+        self.extendDict = {}
+        try:
+            if extend:
+                if isinstance(extend, str):
+                    self.extendDict = json.loads(extend)
+                elif isinstance(extend, dict):
+                    self.extendDict = extend
+        except:
+            pass
+        
+        # 从 extend 参数读取代理列表
+        proxy_str = self.extendDict.get('proxies', '')
+        if proxy_str:
+            if isinstance(proxy_str, str):
+                self.HTTP_PROXIES = [p.strip() for p in proxy_str.split(',') if p.strip()]
+            elif isinstance(proxy_str, list):
+                self.HTTP_PROXIES = [str(p).strip() for p in proxy_str if str(p).strip()]
+            else:
+                self.HTTP_PROXIES = DEFAULT_PROXIES
+        else:
+            self.HTTP_PROXIES = DEFAULT_PROXIES
+        
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36',
             'Accept-Language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7',
@@ -228,29 +236,51 @@ class Spider(BaseSpider):
             'playlist': 6 * 3600,
             'media': 120,
         }
-        debug_log('spider init', {'channels': len(FIXED_CHANNELS), 'http_proxies': len(HTTP_PROXIES)})
+        debug_log('spider init', {'channels': len(FIXED_CHANNELS), 'http_proxies': len(self.HTTP_PROXIES)})
+
+    def get_proxy(self):
+        if self.HTTP_PROXIES:
+            return self.HTTP_PROXIES[int(time.time()) % len(self.HTTP_PROXIES)]
+        return None
 
     def homeContent(self, filter):
-        return {"class": [{"type_id": "yt_live", "type_name": "YouTube直播"}]}
+        """返回分组列表"""
+        # 提取所有唯一分组
+        categories = []
+        seen = set()
+        for vid, name, category in FIXED_CHANNELS:
+            if category not in seen:
+                seen.add(category)
+                categories.append({
+                    "type_id": category,
+                    "type_name": category
+                })
+        
+        return {"class": categories}
 
     def homeVideoContent(self):
-        return self.categoryContent("yt_live", "1", False, {})
+        # 默认显示第一个分组
+        if FIXED_CHANNELS:
+            return self.categoryContent(FIXED_CHANNELS[0][2], "1", False, {})
+        return {"list": [], "page": 1, "pagecount": 1, "limit": 0, "total": 0}
 
     def categoryContent(self, tid, pg, filter, extend):
+        """返回指定分组的频道列表"""
         items = []
-        for vid, name in FIXED_CHANNELS:
-            items.append({
-                "vod_id": vid,
-                "vod_name": name,
-                "vod_pic": f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg",
-                "vod_remarks": "LIVE"
-            })
+        for vid, name, category in FIXED_CHANNELS:
+            if category == tid:
+                items.append({
+                    "vod_id": vid,
+                    "vod_name": name,
+                    "vod_pic": f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg",
+                    "vod_remarks": "LIVE"
+                })
         return {"list": items, "page": 1, "pagecount": 1, "limit": len(items), "total": len(items)}
 
     def detailContent(self, ids):
         vid = ids[0]
         name = vid
-        for ch_vid, ch_name in FIXED_CHANNELS:
+        for ch_vid, ch_name, ch_category in FIXED_CHANNELS:
             if ch_vid == vid:
                 name = ch_name
                 break
@@ -260,6 +290,85 @@ class Spider(BaseSpider):
             "vod_play_from": "YouTube直播",
             "vod_play_url": f"直播线路${vid}@live"
         }]}
+
+    def searchContent(self, key, quick, pg=1):
+        """搜索 YouTube 视频（免翻）"""
+        debug_log('search start', {'key': key, 'page': pg})
+        
+        search_url = f'https://www.youtube.com/results?search_query={quote(key)}&sp=EgJAAQ%253D%253D'
+        
+        for proxy in self.HTTP_PROXIES:
+            proxies = {'http': proxy, 'https': proxy}
+            try:
+                resp = self.session.get(search_url, proxies=proxies, timeout=15)
+                page = resp.text
+                
+                videos = self._extract_search_results(page)
+                if videos:
+                    debug_log('search success', {'key': key, 'proxy': proxy, 'count': len(videos)})
+                    return {
+                        'list': videos,
+                        'page': int(pg),
+                        'pagecount': 1,
+                        'limit': len(videos),
+                        'total': len(videos)
+                    }
+            except Exception as e:
+                debug_log('search proxy failed', {'proxy': proxy, 'error': str(e)[:100]})
+                continue
+        
+        return {'list': [], 'page': 1, 'pagecount': 1, 'limit': 0, 'total': 0}
+
+    def _extract_search_results(self, page):
+        videos = []
+        seen = set()
+        
+        match = re.search(r'ytInitialData\s*=\s*({.+?});', page, re.S)
+        if not match:
+            return videos
+        
+        try:
+            data = json.loads(match.group(1))
+            
+            def scan(obj):
+                if len(videos) >= 30:
+                    return
+                if isinstance(obj, dict):
+                    if 'videoRenderer' in obj:
+                        renderer = obj['videoRenderer']
+                        video_id = renderer.get('videoId', '')
+                        title = ''
+                        title_obj = renderer.get('title', {})
+                        if 'runs' in title_obj:
+                            title = ''.join([r.get('text', '') for r in title_obj['runs']])
+                        elif 'simpleText' in title_obj:
+                            title = title_obj['simpleText']
+                        
+                        is_live = False
+                        badges = json.dumps(renderer.get('badges', []))
+                        if 'LIVE' in badges or 'live' in badges.lower():
+                            is_live = True
+                        
+                        if video_id and video_id not in seen and title:
+                            seen.add(video_id)
+                            videos.append({
+                                'vod_id': video_id,
+                                'vod_name': title,
+                                'vod_pic': f'https://i.ytimg.com/vi/{video_id}/hqdefault.jpg',
+                                'vod_remarks': 'LIVE' if is_live else '视频'
+                            })
+                    
+                    for value in obj.values():
+                        scan(value)
+                elif isinstance(obj, list):
+                    for item in obj:
+                        scan(item)
+            
+            scan(data)
+        except Exception as e:
+            debug_log('search parse error', {'error': repr(e)})
+        
+        return videos[:30]
 
     def playerContent(self, flag, pid, vipFlags):
         raw_pid = pid.split('$')[-1]
@@ -290,7 +399,7 @@ class Spider(BaseSpider):
     def _get_hls_with_proxy(self, video_id):
         watch_url = f'https://www.youtube.com/watch?v={video_id}'
         
-        for i, proxy in enumerate(HTTP_PROXIES):
+        for i, proxy in enumerate(self.HTTP_PROXIES):
             proxies = {'http': proxy, 'https': proxy}
             
             try:
@@ -419,7 +528,7 @@ class Spider(BaseSpider):
         
         try:
             headers = self._hls_headers(item.get('kind'))
-            proxy = get_proxy()
+            proxy = self.get_proxy()
             proxies = {'http': proxy, 'https': proxy}
             
             response = self.session.get(target_url, headers=headers, proxies=proxies, stream=True, timeout=20)

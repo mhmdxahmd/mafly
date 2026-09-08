@@ -16,6 +16,18 @@ FIXED_CHANNELS = [
     ("Ry--eMIjYLQ", "台视新闻 24H直播"),
 ]
 
+HTTP_PROXIES = [
+    'https://fan.240104.xyz:443',
+    'https://fan.891058.xyz:443',
+    'https://fan.596189.xyz:443',
+    'https://fan.226278.xyz:443',
+    'https://fan.587475.xyz:443',
+    'https://fan.571589.xyz:443',
+    'https://fan.572609.xyz:443',
+    'https://fan.212800.xyz:443',
+    'https://fan.973511.xyz:443',
+]
+
 DEBUG_LOG = '/sdcard/Download/ytb_live_debug.log'
 
 def debug_log(message, data=None):
@@ -33,6 +45,11 @@ def debug_log(message, data=None):
     except Exception:
         pass
 
+def get_proxy():
+    if HTTP_PROXIES:
+        return HTTP_PROXIES[int(time.time()) % len(HTTP_PROXIES)]
+    return None
+
 class Spider(BaseSpider):
     def getName(self):
         return 'YouTube新闻直播'
@@ -41,10 +58,12 @@ class Spider(BaseSpider):
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36',
             'Accept-Language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+            'Referer': 'https://www.youtube.com/'
         }
         self.session = requests.Session()
         self.session.headers.update(self.headers)
         
+        # 本地代理缓存
         self.hls_cache = {}
         self.hls_key_seq = 0
         self.hls_ttl = {
@@ -52,7 +71,7 @@ class Spider(BaseSpider):
             'playlist': 6 * 3600,
             'media': 120,
         }
-        debug_log('spider init', {'channels': len(FIXED_CHANNELS)})
+        debug_log('spider init', {'http_proxies': len(HTTP_PROXIES)})
 
     def homeContent(self, filter):
         return {"class": [{"type_id": "yt_live", "type_name": "新闻直播"}]}
@@ -90,41 +109,132 @@ class Spider(BaseSpider):
         video_id = raw_pid.rsplit('@', 1)[0] if '@' in raw_pid else raw_pid
         debug_log('player start', {'video_id': video_id})
 
-        # 请求 YouTube 页面（直连，因为开梯子时能访问）
-        watch_url = f'https://www.youtube.com/watch?v={video_id}'
-        try:
-            resp = self.session.get(watch_url, timeout=15)
-            page = resp.text
-            hls_url = self._extract_hls(page)
+        # 通过 HTTP 代理获取 HLS
+        hls_url = self._get_hls_with_proxy(video_id)
+        
+        if hls_url:
+            debug_log('hls obtained', {'video_id': video_id, 'hls_url_len': len(hls_url)})
             
-            if hls_url:
-                debug_log('hls extracted', {'video_id': video_id, 'hls_url_len': len(hls_url)})
-                
-                # 缓存 HLS，返回本地代理地址
-                play_url = self._cache_hls_url(hls_url, video_id, 'master')
-                debug_log('local proxy url', {'video_id': video_id, 'play_url': play_url})
-                
-                return {
-                    "parse": 0,
-                    "jx": 0,
-                    "url": play_url,
-                    "header": self.headers,
-                    "format": "application/x-mpegURL"
-                }
-        except Exception as e:
-            debug_log('extract error', {'video_id': video_id, 'error': repr(e)})
-
+            # 缓存并返回本地代理地址
+            play_url = self._cache_hls_url(hls_url, video_id, 'master')
+            debug_log('local proxy url', {'video_id': video_id, 'play_url': play_url})
+            
+            return {
+                "parse": 0,
+                "jx": 0,
+                "url": play_url,
+                "header": self.headers,
+                "format": "application/x-mpegURL"
+            }
+        
+        debug_log('hls not found', {'video_id': video_id})
         return {
             "parse": 1,
-            "url": watch_url,
+            "url": f'https://www.youtube.com/watch?v={video_id}',
             "header": self.headers
         }
 
-    def _extract_hls(self, page):
+    def _get_hls_with_proxy(self, video_id):
+        """通过 HTTP 代理获取 HLS 地址"""
+        watch_url = f'https://www.youtube.com/watch?v={video_id}'
+        
+        for i, proxy in enumerate(HTTP_PROXIES):
+            proxies = {'http': proxy, 'https': proxy}
+            
+            try:
+                debug_log('try proxy', {'video_id': video_id, 'proxy': proxy, 'attempt': i+1})
+                
+                # 使用不同的客户端尝试
+                for client_name in ['web', 'android', 'ios']:
+                    try:
+                        hls = self._try_player_api(video_id, watch_url, proxy, proxies, client_name)
+                        if hls:
+                            debug_log('hls from api', {'video_id': video_id, 'proxy': proxy, 'client': client_name})
+                            return hls
+                    except Exception as e:
+                        debug_log('api client failed', {'client': client_name, 'error': str(e)[:100]})
+                        continue
+                
+                # 如果 API 失败，尝试直接解析页面
+                resp = self.session.get(watch_url, proxies=proxies, timeout=15)
+                page = resp.text
+                hls = self._extract_hls_from_page(page)
+                if hls:
+                    debug_log('hls from page', {'video_id': video_id, 'proxy': proxy})
+                    return hls
+                    
+            except Exception as e:
+                debug_log('proxy failed', {'video_id': video_id, 'proxy': proxy, 'error': str(e)[:200]})
+                continue
+        
+        return ''
+
+    def _try_player_api(self, video_id, watch_url, proxy, proxies, client_name):
+        """尝试使用 YouTube Internal API 获取 HLS"""
+        # 先获取页面获取 api_key
+        resp = self.session.get(watch_url, proxies=proxies, timeout=15)
+        page = resp.text
+        
+        # 提取 api_key
+        api_key_match = re.search(r'"INNERTUBE_API_KEY":"([^"]+)"', page)
+        if not api_key_match:
+            return ''
+        api_key = api_key_match.group(1)
+        
+        # 提取 context
+        context_match = re.search(r'ytcfg\.set\(({.+?})\);', page, re.S)
+        context = {}
+        if context_match:
+            try:
+                context = json.loads(context_match.group(1))
+            except:
+                pass
+        
+        # 构建 API 请求
+        api_url = f'https://www.youtube.com/youtubei/v1/player?key={api_key}'
+        
+        client_configs = {
+            'web': {'clientName': 'WEB', 'clientVersion': '2.20240310.01.00'},
+            'android': {'clientName': 'ANDROID', 'clientVersion': '21.02.35', 'androidSdkVersion': 30},
+            'ios': {'clientName': 'IOS', 'clientVersion': '21.02.3'},
+        }
+        
+        client_config = client_configs.get(client_name, client_configs['web'])
+        client = {
+            'clientName': client_config['clientName'],
+            'clientVersion': client_config['clientVersion'],
+            'hl': 'en',
+            'gl': 'US'
+        }
+        if 'androidSdkVersion' in client_config:
+            client['androidSdkVersion'] = client_config['androidSdkVersion']
+        
+        payload = {
+            'context': {'client': client},
+            'videoId': video_id,
+            'contentCheckOk': True,
+            'racyCheckOk': True,
+        }
+        
+        headers = {
+            'Content-Type': 'application/json',
+            'Origin': 'https://www.youtube.com',
+            'Referer': watch_url,
+        }
+        
+        api_resp = self.session.post(api_url, json=payload, headers=headers, proxies=proxies, timeout=15)
+        data = api_resp.json()
+        
+        hls = data.get('streamingData', {}).get('hlsManifestUrl', '')
+        return hls
+
+    def _extract_hls_from_page(self, page):
+        # 方法1
         match = re.search(r'"hlsManifestUrl"\s*:\s*"(https:[^"]+)"', page)
         if match:
             return match.group(1).replace(r'\/', '/')
         
+        # 方法2
         match2 = re.search(r'ytInitialPlayerResponse\s*=\s*({.+?});', page, re.S)
         if match2:
             try:
@@ -135,6 +245,7 @@ class Spider(BaseSpider):
             except:
                 pass
         
+        # 方法3
         matches = re.findall(r'"(https://[^"]*?\.m3u8[^"]*)"', page)
         if matches:
             return matches[0].replace(r'\/', '/')
@@ -167,15 +278,12 @@ class Spider(BaseSpider):
         
         try:
             headers = self._hls_headers(item.get('kind'))
+            proxy = get_proxy()
+            proxies = {'http': proxy, 'https': proxy}
             
-            debug_log('local proxy request', {
-                'key': key,
-                'kind': item.get('kind'),
-                'url_tail': target_url[-80:]
-            })
+            debug_log('local proxy request', {'kind': item.get('kind'), 'proxy': proxy, 'url_tail': target_url[-80:]})
             
-            # 直连请求 HLS（开梯子时能访问）
-            response = self.session.get(target_url, headers=headers, stream=True, timeout=20)
+            response = self.session.get(target_url, headers=headers, proxies=proxies, stream=True, timeout=20)
             
             content_type = response.headers.get('content-type') or ''
             is_m3u8 = item.get('kind') in ('master', 'playlist') or 'mpegurl' in content_type.lower() or target_url.endswith('.m3u8')
@@ -197,7 +305,7 @@ class Spider(BaseSpider):
                     {'Content-Type': content_type or 'application/octet-stream', 'Cache-Control': 'no-cache'}
                 ]
         except Exception as e:
-            debug_log('local proxy error', {'key': key, 'error': repr(e)})
+            debug_log('local proxy error', {'key': key, 'error': str(e)[:200]})
             return [500, 'text/plain', f'HLS 代理失败: {str(e)}']
 
     def _hls_headers(self, kind=None):

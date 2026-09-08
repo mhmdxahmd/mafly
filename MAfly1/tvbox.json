@@ -103,19 +103,19 @@
       "api": "https://kiki-4um.pages.dev/ms.py"
     },	
 	 {
-      "key": "⭐Maflya-油管固定频道",
+      "key": "⭐Maflya-SEEP油管固定频道",
       "name": "⭐Maflya-SEEP丨 YouTube丨免翻实时固定频道",
       "type": 3,
       "api": "http://seep.eu.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/youtube.py"
     },	
 	 {
-      "key": "⭐Maflya-油管固定频道",
+      "key": "⭐Maflya--kd代理油管固定频道",
       "name": "⭐Maflya-kd丨 YouTube丨免翻实时固定频道",
       "type": 3,
       "api": "https://cf.subcf.kdns.fr/api/proxy?target=https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/youtube.py"
     },		
 	 {
-      "key": "⭐Maflya-油管固定频道",
+      "key": "⭐Maflya-X代理油管固定频道",
       "name": "⭐Maflya-X丨 YouTube丨免翻实时固定频道",
       "type": 3,
       "api": "https://x.maflya.com/api/proxy?target=https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/youtube.py"

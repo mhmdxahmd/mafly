@@ -98,15 +98,15 @@
     },
 	 {
       "key": "⭐Flora-Flora",
-      "name": "⭐Maflya丨YouTube-F",
+      "name": "⭐Maflya丨Flora-YouTube",
       "type": 3,
       "api": "https://kiki-4um.pages.dev/ms.py"
     },	
 	 {
       "key": "⭐Maflya-油管固定频道",
-      "name": "⭐Maflya丨YouTube固定频道丨直播",
+      "name": "⭐YouTube丨免翻固定频道",
       "type": 3,
-      "api": "https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/youtube.py"
+      "api": "https://x.maflya.com/api/proxy?target=https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/youtube.py"
     },			
 	 {
       "key": "⭐Maflya-油管直播",

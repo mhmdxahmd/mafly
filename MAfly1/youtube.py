@@ -154,7 +154,7 @@ class Spider(BaseSpider):
                 proxied_hls = apply_proxy(hls_url)
                 debug_log('play url generated', {'video_id': video_id, 'url_len': len(proxied_hls)})
                 return {
-                    "parse": 0,
+                    "parse": 1,
                     "jx": 0,
                     "url": proxied_hls,
                     "header": self.headers,

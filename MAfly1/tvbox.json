@@ -1,5 +1,4 @@
 {
-  "spider": "http://oss4liview.moji.com/thd_file/2026/09/06/c9b7ce360a5900c3d089681cf0af7b35.jpg;md5;9f55040b32bfe4a5c9a2353cdef51544",
   "wallpaper": "https://seep.eu.org/https://www.maflya.com/MAfly1/pic/mountain.png",
   "logo": "https://www.maflya.com/MAfly1/pic/alien_8bit.gif",
 	"lives": [
@@ -34,7 +33,7 @@
     },
 	{
       "key": "Doubanaaaa",
-      "name": "⭐更新日期:20260818⭐",
+      "name": "⭐更新日期:20260908⭐",
       "type": 3,
       "api": "csp_NewDouBanGuard_1",
 	  "indexs":1,

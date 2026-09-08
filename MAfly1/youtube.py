@@ -6,6 +6,7 @@ import requests
 from urllib.parse import quote, urlparse
 from base.spider import Spider as BaseSpider
 
+# ================== 配置区域 ==================
 FIXED_CHANNELS = [
     ("vr3XyVCR4T0", "中天新闻 24H直播"),
     ("6IquAgfvYmc", "寰宇新闻 24H直播"),
@@ -16,15 +17,58 @@ FIXED_CHANNELS = [
     ("Ry--eMIjYLQ", "台视新闻 24H直播"),
 ]
 
-PROXY_BASE = 'https://x.maflya.com/api/proxy?target='
+# HTTP 代理列表（用于 Python 请求 YouTube）
+HTTP_PROXIES = [
+    'https://fan.240104.xyz:443',
+    'https://fan.891058.xyz:443',
+    'https://fan.596189.xyz:443',
+    'https://fan.226278.xyz:443',
+    'https://fan.587475.xyz:443',
+    'https://fan.571589.xyz:443',
+    'https://fan.572609.xyz:443',
+    'https://fan.212800.xyz:443',
+    'https://fan.973511.xyz:443',
+]
 
-def apply_proxy(url):
-    """对 Google 域名添加代理，使用最小编码"""
+# Worker 代理（用于播放器转发 HLS）
+WORKER_PROXY = 'https://x.maflya.com/api/proxy?target='
+
+# 调试日志
+DEBUG_LOG = '/sdcard/Download/ytb_live_debug.log'
+# ===========================================
+
+def debug_log(message, data=None):
+    if not DEBUG_LOG:
+        return
+    try:
+        line = f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {message}"
+        if data is not None:
+            if isinstance(data, (dict, list)):
+                line += ' ' + json.dumps(data, ensure_ascii=False, default=str)
+            else:
+                line += ' ' + str(data)
+        with open(DEBUG_LOG, 'a', encoding='utf-8') as f:
+            f.write(line + '\n')
+    except Exception:
+        pass
+
+def get_proxy():
+    """轮询获取 HTTP 代理"""
+    if HTTP_PROXIES:
+        return HTTP_PROXIES[int(time.time()) % len(HTTP_PROXIES)]
+    return None
+
+def apply_worker_proxy(url):
+    """对 Google 域名添加 Worker 代理前缀"""
+    google_domains = [
+        'youtube.com', 'youtu.be', 'ytimg.com', 'googlevideo.com',
+        'googleapis.com', 'google.com', 'gstatic.com', 'googleusercontent.com'
+    ]
     try:
         host = urlparse(url).hostname or ''
-        if 'youtube.com' in host or 'googlevideo.com' in host or 'ytimg.com' in host:
-            # 不做任何编码，直接拼接
-            return PROXY_BASE + url
+        host = host.lower()
+        if any(host == d or host.endswith('.' + d) for d in google_domains):
+            return WORKER_PROXY + quote(url, safe='')
     except:
         pass
     return url
@@ -37,9 +81,11 @@ class Spider(BaseSpider):
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36',
             'Accept-Language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+            'Referer': 'https://www.youtube.com/'
         }
         self.session = requests.Session()
         self.session.headers.update(self.headers)
+        debug_log('spider init', {'http_proxies': len(HTTP_PROXIES), 'worker_proxy': WORKER_PROXY})
 
     def homeContent(self, filter):
         return {"class": [{"type_id": "yt_live", "type_name": "新闻直播"}]}
@@ -53,6 +99,7 @@ class Spider(BaseSpider):
             items.append({
                 "vod_id": vid,
                 "vod_name": name,
+                # 缩略图直接用 YouTube 原始地址（通常可访问）
                 "vod_pic": f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg",
                 "vod_remarks": "LIVE"
             })
@@ -75,39 +122,53 @@ class Spider(BaseSpider):
     def playerContent(self, flag, pid, vipFlags):
         raw_pid = pid.split('$')[-1]
         video_id = raw_pid.rsplit('@', 1)[0] if '@' in raw_pid else raw_pid
+        debug_log('player start', {'video_id': video_id})
+
+        # 使用 HTTP 代理请求 YouTube 页面
+        hls_url = self._fetch_hls_with_proxy(video_id)
         
-        # 通过代理请求 YouTube 页面
-        watch_url = apply_proxy(f'https://www.youtube.com/watch?v={video_id}')
+        if hls_url:
+            # 用 Worker 代理转发 HLS 给播放器
+            play_url = apply_worker_proxy(hls_url)
+            debug_log('play url generated', {'video_id': video_id, 'play_url_len': len(play_url)})
+            return {
+                "parse": 0,
+                "jx": 0,
+                "url": play_url,
+                "header": self.headers,
+                "format": "application/x-mpegURL"
+            }
         
-        try:
-            # 请求 YouTube 页面（通过代理）
-            resp = self.session.get(watch_url, timeout=15)
-            page = resp.text
-            
-            # 提取 HLS 地址
-            hls_url = self._extract_hls(page)
-            
-            if hls_url:
-                # 直接返回原始 HLS 地址（不通过代理）
-                # 让播放器直接请求，如果设备开了全局代理就能播放
-                return {
-                    "parse": 0,
-                    "jx": 0,
-                    "url": hls_url,
-                    "header": {
-                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
-                        "Referer": "https://www.youtube.com/"
-                    }
-                }
-        except Exception as e:
-            pass
-        
-        # 回退：返回原始 YouTube 网页
+        # 回退
+        debug_log('hls not found, fallback', {'video_id': video_id})
         return {
             "parse": 1,
             "url": f'https://www.youtube.com/watch?v={video_id}',
             "header": self.headers
         }
+
+    def _fetch_hls_with_proxy(self, video_id):
+        """使用 HTTP 代理请求 YouTube 页面并提取 HLS"""
+        watch_url = f'https://www.youtube.com/watch?v={video_id}'
+        
+        # 尝试多个代理
+        for i in range(3):
+            proxy = get_proxy()
+            proxies = {'http': proxy, 'https': proxy} if proxy else None
+            
+            try:
+                debug_log('try proxy', {'video_id': video_id, 'proxy': proxy, 'attempt': i+1})
+                resp = self.session.get(watch_url, proxies=proxies, timeout=15)
+                page = resp.text
+                hls_url = self._extract_hls(page)
+                if hls_url:
+                    debug_log('hls extracted', {'video_id': video_id, 'hls_len': len(hls_url)})
+                    return hls_url
+            except Exception as e:
+                debug_log('proxy attempt failed', {'video_id': video_id, 'proxy': proxy, 'error': repr(e)})
+                continue
+        
+        return ''
 
     def _extract_hls(self, page):
         # 方法1：直接正则

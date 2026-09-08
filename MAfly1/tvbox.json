@@ -1,7 +1,8 @@
 {
-  "spider": "https://maflya.com/MAfly1/box.jar"
+  "spider": "https://maflya.com/MAfly1/box.jar",
   "wallpaper": "https://seep.eu.org/https://www.maflya.com/MAfly1/pic/mountain.png",
   "logo": "https://www.maflya.com/MAfly1/pic/alien_8bit.gif",
+	
 	"lives": [
     {
       "name": "⭐MaflyaTV直播",

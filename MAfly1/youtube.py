@@ -4,6 +4,8 @@ import json
 import time
 import base64
 import requests
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.parse import quote, urljoin
 from base.spider import Spider as BaseSpider
 
@@ -185,7 +187,12 @@ CHANNEL_GROUPS = {
     ],
 }
 
+# ============================================================
+# 🌐 代理配置（支持 HTTP/HTTPS/SOCKS5）
+# ============================================================
 HTTP_PROXIES = [
+    'http://114.37.235.105:443',   # 家宽直连
+    'http://211.75.210.32:443',    # 家宽动态
     'https://fan.240104.xyz:443',
     'https://fan.891058.xyz:443',
     'https://fan.596189.xyz:443',
@@ -196,6 +203,16 @@ HTTP_PROXIES = [
     'https://fan.212800.xyz:443',
     'https://fan.973511.xyz:443',
 ]
+
+# SOCKS5 代理（可选）
+SOCKS5_PROXIES = [
+    # 'socks5://user:password@host:port',
+    # 'socks5://host:port',
+    # 'socks5h://host:port',  # 通过代理解析 DNS
+]
+
+# 合并所有代理
+ALL_PROXIES = HTTP_PROXIES + SOCKS5_PROXIES
 
 DEBUG_LOG = '/sdcard/Download/ytb_live_debug.log'
 
@@ -214,10 +231,11 @@ def debug_log(message, data=None):
     except Exception:
         pass
 
-def get_proxy():
-    if HTTP_PROXIES:
-        return HTTP_PROXIES[int(time.time()) % len(HTTP_PROXIES)]
-    return None
+def get_proxies_dict(proxy):
+    """根据代理字符串返回 requests 用的 proxies 字典"""
+    if not proxy:
+        return None
+    return {'http': proxy, 'https': proxy}
 
 class Spider(BaseSpider):
     def getName(self):
@@ -231,7 +249,7 @@ class Spider(BaseSpider):
         }
         self.session = requests.Session()
         self.session.headers.update(self.headers)
-        
+
         # 本地代理缓存
         self.hls_cache = {}
         self.hls_key_seq = 0
@@ -241,23 +259,116 @@ class Spider(BaseSpider):
             'media': 120,
             'pic': 3600,
         }
-        debug_log('spider init', {'http_proxies': len(HTTP_PROXIES), 'groups': len(CHANNEL_GROUPS)})
 
+        # 代理管理
+        self.failed_proxies = set()
+        self.available_proxies = []  # 按延迟排序的可用代理列表
+
+        # 启动异步代理检测
+        threading.Thread(target=self._check_proxies_async, daemon=True).start()
+        # 可选：定期刷新代理延迟（每5分钟）
+        threading.Thread(target=self._refresh_proxies_periodically, daemon=True).start()
+
+        debug_log('spider init', {
+            'total_proxies': len(ALL_PROXIES),
+            'http_proxies': len(HTTP_PROXIES),
+            'socks5_proxies': len(SOCKS5_PROXIES),
+        })
+
+    # ---------- 代理健康检查 ----------
+    def _check_proxies_async(self):
+        """并发检测所有代理的延迟，按延迟排序存入 available_proxies"""
+        try:
+            results = []
+            with ThreadPoolExecutor(max_workers=10) as executor:
+                future_to_proxy = {executor.submit(self._test_proxy, proxy): proxy for proxy in ALL_PROXIES}
+                for future in as_completed(future_to_proxy, timeout=10):
+                    proxy = future_to_proxy[future]
+                    try:
+                        latency = future.result(timeout=5)
+                        if latency is not None:
+                            results.append((latency, proxy))
+                    except Exception:
+                        pass
+
+            # 按延迟排序（低延迟在前）
+            results.sort(key=lambda x: x[0])
+            self.available_proxies = [proxy for _, proxy in results]
+
+            debug_log('proxy check completed', {
+                'total_checked': len(ALL_PROXIES),
+                'available': len(self.available_proxies),
+                'best': self.available_proxies[0] if self.available_proxies else None,
+            })
+        except Exception as e:
+            debug_log('proxy check error', {'error': str(e)})
+
+    def _test_proxy(self, proxy):
+        """测试单个代理的连通性和延迟，返回延迟秒数或 None"""
+        try:
+            start = time.time()
+            proxies = get_proxies_dict(proxy)
+            # 使用 YouTube 的 generate_204 端点，速度快
+            test_url = 'https://www.youtube.com/generate_204'
+            resp = self.session.get(test_url, proxies=proxies, timeout=5)
+            if resp.status_code == 204:
+                latency = time.time() - start
+                return latency
+            return None
+        except Exception:
+            return None
+
+    def _refresh_proxies_periodically(self):
+        """定期刷新代理检测（每5分钟）"""
+        while True:
+            time.sleep(300)
+            try:
+                self._check_proxies_async()
+            except Exception:
+                pass
+
+    def _get_working_proxy(self, exclude=None):
+        """
+        获取最佳可用代理：
+        - 优先使用延迟排序后的 available_proxies
+        - 跳过失败的代理（在 failed_proxies 中）
+        - 如果全部失败，清空失败列表并回退到可用列表
+        """
+        proxy_pool = self.available_proxies if self.available_proxies else ALL_PROXIES
+        available = [p for p in proxy_pool if p not in self.failed_proxies]
+        if exclude:
+            available = [p for p in available if p != exclude]
+
+        if not available:
+            # 如果所有代理都标记失败，重置失败集合
+            self.failed_proxies.clear()
+            available = proxy_pool
+
+        # 返回延迟最低的代理
+        return available[0] if available else None
+
+    def _mark_proxy_failed(self, proxy):
+        """将代理标记为失败"""
+        self.failed_proxies.add(proxy)
+        debug_log('proxy marked as failed', {'proxy': proxy, 'failed_count': len(self.failed_proxies)})
+
+        # 如果失败代理数量达到总代理数，清空（避免全部不可用）
+        if len(self.failed_proxies) >= len(ALL_PROXIES):
+            self.failed_proxies.clear()
+            debug_log('all proxies failed, cleared failure list')
+
+    # ---------- 内容加载 ----------
     def homeContent(self, filter):
-        classes = []
-        for group_name in CHANNEL_GROUPS.keys():
-            classes.append({"type_id": group_name, "type_name": group_name})
+        classes = [{"type_id": name, "type_name": name} for name in CHANNEL_GROUPS.keys()]
         return {"class": classes}
 
     def homeVideoContent(self):
-        # 默认显示第一个分组
         first_group = list(CHANNEL_GROUPS.keys())[0]
         return self.categoryContent(first_group, "1", False, {})
 
     def categoryContent(self, tid, pg, filter, extend):
         items = []
         channels = CHANNEL_GROUPS.get(tid, [])
-        
         for vid, name in channels:
             items.append({
                 "vod_id": vid,
@@ -265,20 +376,16 @@ class Spider(BaseSpider):
                 "vod_pic": self._get_proxy_pic_url(f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg"),
                 "vod_remarks": "LIVE"
             })
-        
         return {"list": items, "page": 1, "pagecount": 1, "limit": len(items), "total": len(items)}
 
     def detailContent(self, ids):
         vid = ids[0]
         name = vid
-        
-        # 在所有分组中查找频道名
         for group_channels in CHANNEL_GROUPS.values():
             for ch_vid, ch_name in group_channels:
                 if ch_vid == vid:
                     name = ch_name
                     break
-        
         return {"list": [{
             "vod_id": vid,
             "vod_name": name,
@@ -292,16 +399,11 @@ class Spider(BaseSpider):
         video_id = raw_pid.rsplit('@', 1)[0] if '@' in raw_pid else raw_pid
         debug_log('player start', {'video_id': video_id})
 
-        # 通过 HTTP 代理获取 HLS
         hls_url = self._get_hls_with_proxy(video_id)
-        
         if hls_url:
             debug_log('hls obtained', {'video_id': video_id, 'hls_url_len': len(hls_url)})
-            
-            # 缓存并返回本地代理地址
             play_url = self._cache_hls_url(hls_url, video_id, 'master')
             debug_log('local proxy url', {'video_id': video_id, 'play_url': play_url})
-            
             return {
                 "parse": 0,
                 "jx": 0,
@@ -309,7 +411,6 @@ class Spider(BaseSpider):
                 "header": self.headers,
                 "format": "application/x-mpegURL"
             }
-        
         debug_log('hls not found', {'video_id': video_id})
         return {
             "parse": 1,
@@ -317,17 +418,18 @@ class Spider(BaseSpider):
             "header": self.headers
         }
 
+    # ---------- HLS 获取 ----------
     def _get_hls_with_proxy(self, video_id):
-        """通过 HTTP 代理获取 HLS 地址"""
         watch_url = f'https://www.youtube.com/watch?v={video_id}'
-        
-        for i, proxy in enumerate(HTTP_PROXIES):
-            proxies = {'http': proxy, 'https': proxy}
-            
+        max_attempts = len(ALL_PROXIES)
+        for attempt in range(max_attempts):
+            proxy = self._get_working_proxy()
+            if not proxy:
+                break
+            proxies = get_proxies_dict(proxy)
             try:
-                debug_log('try proxy', {'video_id': video_id, 'proxy': proxy, 'attempt': i+1})
-                
-                # 使用不同的客户端尝试
+                debug_log('try proxy', {'video_id': video_id, 'proxy': proxy, 'attempt': attempt+1})
+                # 尝试不同客户端
                 for client_name in ['web', 'android', 'ios']:
                     try:
                         hls = self._try_player_api(video_id, watch_url, proxy, proxies, client_name)
@@ -337,77 +439,64 @@ class Spider(BaseSpider):
                     except Exception as e:
                         debug_log('api client failed', {'client': client_name, 'error': str(e)[:100]})
                         continue
-                
-                # 如果 API 失败，尝试直接解析页面
+
+                # 尝试直接解析页面
                 resp = self.session.get(watch_url, proxies=proxies, timeout=15)
                 page = resp.text
                 hls = self._extract_hls_from_page(page)
                 if hls:
                     debug_log('hls from page', {'video_id': video_id, 'proxy': proxy})
                     return hls
-                    
             except Exception as e:
                 debug_log('proxy failed', {'video_id': video_id, 'proxy': proxy, 'error': str(e)[:200]})
+                self._mark_proxy_failed(proxy)
                 continue
-        
         return ''
 
     def _try_player_api(self, video_id, watch_url, proxy, proxies, client_name):
-        """尝试使用 YouTube Internal API 获取 HLS"""
-        # 先获取页面获取 api_key
         resp = self.session.get(watch_url, proxies=proxies, timeout=15)
         page = resp.text
-        
-        # 提取 api_key
         api_key_match = re.search(r'"INNERTUBE_API_KEY":"([^"]+)"', page)
         if not api_key_match:
             return ''
         api_key = api_key_match.group(1)
-        
-        # 构建 API 请求
         api_url = f'https://www.youtube.com/youtubei/v1/player?key={api_key}'
-        
+
         client_configs = {
             'web': {'clientName': 'WEB', 'clientVersion': '2.20240310.01.00'},
             'android': {'clientName': 'ANDROID', 'clientVersion': '21.02.35', 'androidSdkVersion': 30},
             'ios': {'clientName': 'IOS', 'clientVersion': '21.02.3'},
         }
-        
-        client_config = client_configs.get(client_name, client_configs['web'])
+        config = client_configs.get(client_name, client_configs['web'])
         client = {
-            'clientName': client_config['clientName'],
-            'clientVersion': client_config['clientVersion'],
+            'clientName': config['clientName'],
+            'clientVersion': config['clientVersion'],
             'hl': 'en',
             'gl': 'US'
         }
-        if 'androidSdkVersion' in client_config:
-            client['androidSdkVersion'] = client_config['androidSdkVersion']
-        
+        if 'androidSdkVersion' in config:
+            client['androidSdkVersion'] = config['androidSdkVersion']
+
         payload = {
             'context': {'client': client},
             'videoId': video_id,
             'contentCheckOk': True,
             'racyCheckOk': True,
         }
-        
         headers = {
             'Content-Type': 'application/json',
             'Origin': 'https://www.youtube.com',
             'Referer': watch_url,
         }
-        
         api_resp = self.session.post(api_url, json=payload, headers=headers, proxies=proxies, timeout=15)
         data = api_resp.json()
-        
-        hls = data.get('streamingData', {}).get('hlsManifestUrl', '')
-        return hls
+        return data.get('streamingData', {}).get('hlsManifestUrl', '')
 
     def _extract_hls_from_page(self, page):
         # 方法1
         match = re.search(r'"hlsManifestUrl"\s*:\s*"(https:[^"]+)"', page)
         if match:
             return match.group(1).replace(r'\/', '/')
-        
         # 方法2
         match2 = re.search(r'ytInitialPlayerResponse\s*=\s*({.+?});', page, re.S)
         if match2:
@@ -418,17 +507,14 @@ class Spider(BaseSpider):
                     return hls
             except:
                 pass
-        
         # 方法3
         matches = re.findall(r'"(https://[^"]*?\.m3u8[^"]*)"', page)
         if matches:
             return matches[0].replace(r'\/', '/')
-        
         return ''
 
-    # ========== 本地代理 ==========
+    # ---------- 本地代理 ----------
     def _get_proxy_pic_url(self, original_url):
-        """生成图片代理URL"""
         encoded = base64.b64encode(original_url.encode()).decode()
         return f'http://127.0.0.1:9978/proxy?do=py&type=pic&url={encoded}'
 
@@ -446,111 +532,84 @@ class Spider(BaseSpider):
     def localProxy(self, params):
         if params.get('do') != 'py':
             return None
-        
-        # 处理图片代理
         if params.get('type') == 'pic':
             return self._proxy_pic(params)
-        
-        # 处理HLS代理
         if params.get('type') == 'hls':
             return self._proxy_hls(params)
-        
         return None
 
     def _proxy_pic(self, params):
-        """代理图片请求"""
         try:
             encoded_url = params.get('url') or ''
             original_url = base64.b64decode(encoded_url).decode()
-            
-            # 设置缓存
             cache_key = f'pic_{encoded_url[:50]}'
             if cache_key in self.hls_cache:
                 item = self.hls_cache[cache_key]
                 if item.get('expires', 0) > time.time():
-                    return [
-                        200,
-                        item.get('content_type', 'image/jpeg'),
-                        item.get('content'),
-                        {'Cache-Control': 'public, max-age=3600'}
-                    ]
-            
-            proxy = get_proxy()
-            proxies = {'http': proxy, 'https': proxy}
-            
+                    return [200, item.get('content_type', 'image/jpeg'), item.get('content'),
+                            {'Cache-Control': 'public, max-age=3600'}]
+
+            proxy = self._get_working_proxy()
+            proxies = get_proxies_dict(proxy)
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
                 'Referer': 'https://www.youtube.com/',
                 'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
             }
-            
             debug_log('proxy pic', {'url': original_url[:80], 'proxy': proxy})
-            
-            response = self.session.get(original_url, headers=headers, proxies=proxies, timeout=15)
-            
+            try:
+                response = self.session.get(original_url, headers=headers, proxies=proxies, timeout=15)
+            except Exception:
+                self._mark_proxy_failed(proxy)
+                proxy = self._get_working_proxy(exclude=proxy)
+                proxies = get_proxies_dict(proxy)
+                response = self.session.get(original_url, headers=headers, proxies=proxies, timeout=15)
+
             if response.status_code == 200:
                 content_type = response.headers.get('content-type', 'image/jpeg')
                 content = response.content
-                
-                # 缓存图片
                 self.hls_cache[cache_key] = {
                     'content': content,
                     'content_type': content_type,
                     'expires': time.time() + self.hls_ttl.get('pic', 3600)
                 }
-                
-                return [
-                    200,
-                    content_type,
-                    content,
-                    {'Cache-Control': 'public, max-age=3600'}
-                ]
+                return [200, content_type, content, {'Cache-Control': 'public, max-age=3600'}]
             else:
-                debug_log('pic not found', {'status': response.status_code, 'url': original_url[:80]})
                 return [404, 'text/plain', 'Image not found']
-                
         except Exception as e:
             debug_log('proxy pic error', {'error': str(e)[:200]})
             return [500, 'text/plain', f'Image proxy error: {str(e)}']
 
     def _proxy_hls(self, params):
-        """代理HLS请求"""
         key = params.get('key') or ''
         item = self.hls_cache.get(key)
         if not item or item.get('expires', 0) < time.time():
             return [404, 'text/plain', 'HLS 缓存已过期']
-        
         item['expires'] = time.time() + self.hls_ttl.get(item.get('kind'), 180)
         target_url = item.get('url') or ''
-        
         try:
             headers = self._hls_headers(item.get('kind'))
-            proxy = get_proxy()
-            proxies = {'http': proxy, 'https': proxy}
-            
+            proxy = self._get_working_proxy()
+            proxies = get_proxies_dict(proxy)
             debug_log('local proxy request', {'kind': item.get('kind'), 'proxy': proxy, 'url_tail': target_url[-80:]})
-            
-            response = self.session.get(target_url, headers=headers, proxies=proxies, stream=True, timeout=20)
-            
+            try:
+                response = self.session.get(target_url, headers=headers, proxies=proxies, stream=True, timeout=20)
+            except Exception:
+                self._mark_proxy_failed(proxy)
+                proxy = self._get_working_proxy(exclude=proxy)
+                proxies = get_proxies_dict(proxy)
+                response = self.session.get(target_url, headers=headers, proxies=proxies, stream=True, timeout=20)
+
             content_type = response.headers.get('content-type') or ''
             is_m3u8 = item.get('kind') in ('master', 'playlist') or 'mpegurl' in content_type.lower() or target_url.endswith('.m3u8')
-            
             if is_m3u8:
                 text = response.text
                 rewritten = self._rewrite_m3u8(text, target_url, item.get('video_id') or '')
-                return [
-                    response.status_code,
-                    'application/vnd.apple.mpegurl',
-                    rewritten,
-                    {'Content-Type': 'application/vnd.apple.mpegurl', 'Cache-Control': 'no-cache'}
-                ]
+                return [response.status_code, 'application/vnd.apple.mpegurl', rewritten,
+                        {'Content-Type': 'application/vnd.apple.mpegurl', 'Cache-Control': 'no-cache'}]
             else:
-                return [
-                    response.status_code,
-                    content_type or 'application/octet-stream',
-                    response.content,
-                    {'Content-Type': content_type or 'application/octet-stream', 'Cache-Control': 'no-cache'}
-                ]
+                return [response.status_code, content_type or 'application/octet-stream', response.content,
+                        {'Content-Type': content_type or 'application/octet-stream', 'Cache-Control': 'no-cache'}]
         except Exception as e:
             debug_log('local proxy error', {'key': key, 'error': str(e)[:200]})
             return [500, 'text/plain', f'HLS 代理失败: {str(e)}']

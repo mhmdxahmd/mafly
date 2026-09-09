@@ -3,388 +3,235 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>猫源配置中心编辑器 V3 · index.js 源码级编辑器</title>
+<title>猫源配置中心 V3.1 · 全站源编辑器</title>
 <style>
-:root{--bg:#0b1020;--panel:#121a2d;--panel2:#17213a;--line:#2a3858;--text:#eaf0ff;--muted:#94a3c7;--accent:#6ea8fe;--danger:#ff6b7a;--ok:#5bd69b}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#09101f,#10182b);color:var(--text);font:14px/1.55 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
-header{padding:18px 22px;border-bottom:1px solid var(--line);background:#0d1528cc;position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)}
-h1{margin:0;font-size:20px}h2{font-size:16px;margin:0 0 12px}.sub{color:var(--muted);font-size:12px;margin-top:4px}
-.wrap{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 80px)}
-aside{border-right:1px solid var(--line);padding:14px;background:#0c1426}
-main{padding:16px;min-width:0}.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
-button,input,textarea,select{font:inherit}button{border:1px solid var(--line);background:#1a2742;color:var(--text);padding:8px 11px;border-radius:8px;cursor:pointer}button:hover{background:#223354}
-button.primary{background:#245db5;border-color:#3975d4}button.ok{background:#176b4a;border-color:#2a9b6e}button.danger{background:#672333;border-color:#a83b52}
-button:disabled{opacity:.45;cursor:not-allowed}
-input,textarea,select{width:100%;background:#0b1325;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px}
-textarea{min-height:100px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:0 0 auto}.grow{flex:1 1 auto}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stat{background:var(--panel2);border:1px solid var(--line);padding:10px;border-radius:9px}.stat b{display:block;font-size:20px}.stat span{color:var(--muted);font-size:11px}
-.cat{width:100%;text-align:left;margin:4px 0;background:transparent}.cat.active{background:#21355b;border-color:#416da9}.cat small{float:right;color:var(--muted)}
-.item{border:1px solid var(--line);border-radius:10px;margin:8px 0;overflow:hidden;background:#10192c}.itemHead{padding:10px 12px;display:flex;gap:8px;align-items:center}.key{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#a9c8ff;font-weight:700}.desc{color:var(--muted);font-size:12px}.itemBody{border-top:1px solid var(--line);padding:10px 12px;display:none}.item.open .itemBody{display:block}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}
-.badge{padding:2px 7px;border:1px solid var(--line);border-radius:99px;color:#bcd1f8;font-size:11px}
-pre{white-space:pre-wrap;word-break:break-all;background:#08101e;border:1px solid var(--line);padding:10px;border-radius:8px;max-height:280px;overflow:auto}
-.notice{padding:9px 11px;border-radius:8px;background:#17243c;color:#c9d8f7;border:1px solid var(--line)}.oktxt{color:var(--ok)}.errtxt{color:#ff8794}
-#sourceText{min-height:330px}.sourcebox{display:none}.sourcebox.show{display:block}
-@media(max-width:900px){.wrap{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid var(--line)}.stats,.grid{grid-template-columns:1fr 1fr}}
+*{box-sizing:border-box}body{margin:0;background:#0b1020;color:#e8edf7;font:14px/1.5 system-ui,-apple-system,Segoe UI,Arial}
+.app{display:flex;height:100vh;overflow:hidden}.side{width:245px;background:#11182b;border-right:1px solid #26314d;padding:18px;overflow:auto}
+.logo{font-size:20px;font-weight:800;margin-bottom:4px}.sub{color:#8491ad;font-size:12px;margin-bottom:18px}
+button,.file{border:1px solid #34415f;background:#17223a;color:#e8edf7;border-radius:9px;padding:9px 12px;cursor:pointer}
+button:hover,.file:hover{background:#202e4d}.primary{background:#3157d5;border-color:#466be6}.danger{background:#5d2430;border-color:#8d3445}.green{background:#184c3b;border-color:#2d775d}
+input,select,textarea{width:100%;background:#0e1628;border:1px solid #2b3855;color:#e8edf7;border-radius:8px;padding:9px;outline:none}
+input:focus,textarea:focus{border-color:#5578e9}.nav{margin-top:15px}.nav button{width:100%;text-align:left;margin:4px 0;background:transparent}
+.nav button.active{background:#26375d;border-color:#4667b7}.main{flex:1;overflow:auto;padding:24px;max-width:1500px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:18px}.title{font-size:24px;font-weight:800}.muted{color:#8d9ab4}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.card{background:#111a2e;border:1px solid #263451;border-radius:14px;padding:16px;margin-bottom:14px}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.toolbar .grow{flex:1}
+.badge{display:inline-block;padding:3px 8px;border-radius:99px;background:#26375d;color:#b9c9ff;font-size:12px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}.tabs button.active{background:#3157d5}
+.source{display:grid;grid-template-columns:34px 34px 1fr 1fr auto;gap:8px;align-items:center;padding:9px;border-bottom:1px solid #24304a}
+.source:first-child{border-top:1px solid #24304a}.source.off{opacity:.48}.source .name{font-weight:700}.url{font-family:ui-monospace,monospace;font-size:12px;color:#9fb0cf;word-break:break-all}
+.small{padding:6px 8px;font-size:12px}.check{width:18px;height:18px}.empty{padding:35px;text-align:center;color:#7e8aa4}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.row{display:flex;gap:8px}.row>*{flex:1}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px;border-bottom:1px solid #24304a;vertical-align:top}th{color:#9eabc4}
+pre{white-space:pre-wrap;word-break:break-all;max-height:380px;overflow:auto;background:#0a1120;padding:12px;border-radius:10px}
+@media(max-width:850px){.side{width:190px}.grid{grid-template-columns:1fr}.source{grid-template-columns:30px 30px 1fr auto}}
 </style>
 </head>
 <body>
-<header>
-  <h1>猫源配置中心编辑器 V3</h1>
-  <div class="sub">源码级编辑：读取原始 index.js → 修改配置/4K 源 → 原样回写完整 index.js → 自动生成对应 index.js.md5</div>
-</header>
-
-<div class="wrap">
-<aside>
-  <div class="card">
-    <h2>① 载入原始文件</h2>
-    <input id="file" type="file" accept=".js,text/javascript">
-    <div class="sub" style="margin-top:8px">建议直接选择你最开始上传的那份 index.js。浏览器不会上传文件。</div>
-  </div>
-  <div class="card">
-    <h2>配置分类</h2>
-    <div id="cats"></div>
-  </div>
-  <div class="card">
-    <input id="search" placeholder="搜索 KEY / 描述 / 值 / 4K">
-  </div>
+<div class="app">
+<aside class="side">
+  <div class="logo">🐱 猫源配置中心</div>
+  <div class="sub">V3.1 · 完整站源管理</div>
+  <label class="file">📂 打开 index.js<input id="file" type="file" accept=".js,.txt" hidden></label>
+  <div style="height:8px"></div>
+  <button onclick="loadFromPaste()">📋 粘贴 JS 文本</button>
+  <div class="nav" id="nav"></div>
 </aside>
-
-<main>
-  <div class="card">
-    <div class="row">
-      <button class="primary" id="loadBtn">载入当前文件</button>
-      <button id="addBtn" disabled>新增配置</button>
-      <button id="scan4kBtn" disabled>扫描 4K 源</button>
-      <button id="add4kBtn" disabled>新增 4K 源</button>
-      <button class="ok" id="exportBtn" disabled>生成 index.js + MD5</button>
-      <button id="downloadZipBtn" disabled>打包 ZIP</button>
+<main class="main">
+  <div class="top">
+    <div>
+      <div class="title" id="pageTitle">等待加载 index.js</div>
+      <div class="muted" id="status">先选择原始 index.js；工具只做文本级精确修改，不执行文件。</div>
     </div>
-    <div id="status" class="notice" style="margin-top:10px">尚未载入 index.js</div>
-  </div>
-
-  <div class="card">
-    <div class="stats">
-      <div class="stat"><b id="total">0</b><span>配置项</span></div>
-      <div class="stat"><b id="sourceCount">0</b><span>source 类别</span></div>
-      <div class="stat"><b id="k4Count">0</b><span>发现的 4K 字符串</span></div>
-      <div class="stat"><b id="changed">0</b><span>待写入修改</span></div>
+    <div class="actions">
+      <button onclick="undo()">↶ 撤销</button>
+      <button onclick="restore()">恢复原始</button>
+      <button class="primary" onclick="downloadAll()">💾 保存 index.js + MD5</button>
     </div>
   </div>
-
-  <div class="card">
-    <h2 id="panelTitle">配置中心</h2>
-    <div id="items"></div>
-  </div>
-
-  <div class="card sourcebox" id="sourceBox">
-    <h2>4K / 源字符串编辑</h2>
-    <div class="sub">这里编辑的是原始 index.js 中实际出现的字符串。保存时只做定点替换，不重建整个 JS。</div>
-    <div id="sources"></div>
-  </div>
-
-  <div class="card">
-    <h2>导出预览</h2>
-    <div class="sub">MD5 是对最终导出的 index.js UTF-8 字节计算，不是对配置 JSON 计算。</div>
-    <pre id="md5Preview">等待生成</pre>
-  </div>
+  <div id="content"></div>
 </main>
 </div>
-
 <script>
-"use strict";
-let originalText="";
-let workingText="";
-let fileName="index.js";
-let envInfo=[];
-let activeCat="overview";
-let changes=[];
-let sourceEntries=[];
-let lastOutput=null;
+let original='', work='', active='sites', history=[], siteRows=[], vodRows=[], sourceDefs=[];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function setStatus(x){$('#status').textContent=x}
+$('#file').onchange=async e=>{let f=e.target.files[0];if(!f)return;original=work=await f.text();history=[];parseAll();render();setStatus('已加载 '+f.name+' · '+work.length.toLocaleString()+' 字符')};
 
-const $=id=>document.getElementById(id);
-const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-function setStatus(t,ok=false){$("status").innerHTML=ok?'<span class="oktxt">'+esc(t)+'</span>':esc(t)}
-function updateStats(){
- $("total").textContent=envInfo.length;
- $("sourceCount").textContent=envInfo.filter(x=>x.category==="source").length;
- $("k4Count").textContent=sourceEntries.length;
- $("changed").textContent=changes.length;
+async function loadFromPaste(){
+ const t=prompt('把 index.js 全文粘贴到下面输入框。文件很大时建议直接选择文件。');
+ if(t){original=work=t;history=[];parseAll();render()}
 }
-function findMatchingBrace(s,start){
- let depth=0, quote=null, escp=false, line=false, block=false;
- for(let i=start;i<s.length;i++){
-   const c=s[i], n=s[i+1];
-   if(line){if(c==="\\n")line=false;continue}
-   if(block){if(c==="*"&&n==="/"){block=false;i++}continue}
-   if(quote){
-     if(escp){escp=false;continue}
-     if(c==="\\\\"){escp=true;continue}
-     if(c===quote)quote=null;
-     continue
-   }
-   if(c==="/"&&n==="/"){line=true;i++;continue}
-   if(c==="/"&&n==="*"){block=true;i++;continue}
-   if(c==="'"||c=='"'||c==="`"){quote=c;continue}
-   if(c==="{")depth++;
-   else if(c==="}"){depth--;if(depth===0)return i}
+function snapshot(){history.push(work);if(history.length>30)history.shift()}
+function undo(){if(!history.length)return;work=history.pop();parseAll();render();setStatus('已撤销上一项修改')}
+function restore(){if(!original)return;if(!confirm('恢复原始 index.js？当前修改会全部丢失。'))return;work=original;history=[];parseAll();render()}
+
+function findMatching(s,pos,open='{',close='}'){
+ let d=0,q=null,escp=false,line=false,block=false;
+ for(let i=pos;i<s.length;i++){let c=s[i],n=s[i+1];
+  if(line){if(c==='\\n')line=false;continue}
+  if(block){if(c==='*'&&n==='/'){block=false;i++}continue}
+  if(q){if(escp)escp=false;else if(c==='\\\\')escp=true;else if(c===q)q=null;continue}
+  if(c==='/ '){continue}
+  if(c==='/'&&n==='/'){line=true;i++;continue}
+  if(c==='/'&&n==='*'){block=true;i++;continue}
+  if(c==='\"'||c==="'"||c==='`'){q=c;continue}
+  if(c===open)d++; else if(c===close){d--;if(d===0)return i}
  }
  return -1
 }
-function decodeJSString(raw){
- try{return Function('"use strict";return '+raw)()}catch{return raw.slice(1,-1)}
+function jsUnquote(x){try{return JSON.parse(x)}catch(e){return x.replace(/^['"]|['"]$/g,'').replace(/\\\\/g,'\\').replace(/\\"/g,'"').replace(/\\'/g,"'")}}
+function quote(s){return JSON.stringify(String(s))}
+function getStringAfter(text, marker, from=0){
+ let p=text.indexOf(marker,from); if(p<0)return null;
+ let q=text.indexOf('"',p+marker.length); if(q<0)return null;
+ let e=q+1,slash=false;for(;e<text.length;e++){let c=text[e];if(slash){slash=false;continue}if(c==='\\\\'){slash=true;continue}if(c==='"')break}
+ return {value:jsUnquote(text.slice(q,e+1)),start:q,end:e+1}
 }
-function parseEnvObject(s){
- const marker="let n={TOKEN:";
- const p=s.indexOf(marker);
- if(p<0) throw new Error("没有找到 envVarConfig 的源码对象（TOKEN 起点不存在）");
- const start=s.indexOf("{",p);
- const end=findMatchingBrace(s,start);
- if(end<0) throw new Error("envVarConfig 对象括号不完整");
- const objStart=start,objEnd=end+1;
- const body=s.slice(start+1,end);
- const out=[];
- let i=0;
- while(i<body.length){
-   while(i<body.length && /\\s|,/.test(body[i]))i++;
-   const km=body.slice(i).match(/^([A-Za-z_$][\\w$]*)\\s*:/);
-   if(!km){i++;continue}
-   const key=km[1], keyPos=i;
-   i+=km[0].length;
-   while(/\\s/.test(body[i]||""))i++;
-   if(body[i]!=="{"){continue}
-   const close=findMatchingBrace(body,i);
-   if(close<0)break;
-   const raw=body.slice(i,close+1);
-   const cm=raw.match(/category\\s*:\\s*["']([^"']+)["']/);
-   const tm=raw.match(/type\\s*:\\s*["']([^"']+)["']/);
-   const dm=raw.match(/description\\s*:\\s*(["'`][\\s\\S]*?["'`])(?:,|})/);
-   let desc="";
-   if(dm) desc=decodeJSString(dm[1]);
-   out.push({key,category:cm?cm[1]:"other",type:tm?tm[1]:"text",description:desc,raw,startAbs:p+marker.length+keyPos});
-   i=close+1;
+function findGetDefault(key){
+ const re=new RegExp('this\\\\.get\\\\(\\\\s*["\\\\']'+key.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&')+'["\\\\']\\\\s*,\\\\s*');
+ let m=re.exec(work);if(!m)return null;
+ let p=m.index+m[0].length,q=p;
+ if(work[q]==='"'||work[q]==="'"){let ch=work[q],i=q+1,sl=false;for(;i<work.length;i++){let c=work[i];if(sl){sl=false;continue}if(c==='\\\\'){sl=true;continue}if(c===ch)break}return {value:jsUnquote(work.slice(q,i+1)),start:q,end:i+1}}
+ let depth=0,i=q,qq=null,sl=false;
+ for(;i<work.length;i++){let c=work[i];if(qq){if(sl)sl=false;else if(c==='\\\\')sl=true;else if(c===qq)qq=null;continue}
+  if(c==='\"'||c==="'"){qq=c;continue} if(c==='('||c==='['||c==='{')depth++; if(c===')'||c===']'||c==='}')depth--; if(depth===0&&c===',')break}
+ return {value:work.slice(q,i).trim(),start:q,end:i}
+}
+function parseCSV(v){return String(v||'').split(',').map(x=>x.trim()).filter(Boolean)}
+function parseAll(){parseSources();parseVod();parseConfigCounts()}
+function parseSources(){
+ sourceDefs=[]; let x=findGetDefault('SOURCE_ORDER'); if(x){parseCSV(x.value).forEach(v=>sourceDefs.push({id:v,name:v,enabled:true}))}
+ // Allowed sources from the original source, if present. Add every allowed source so the UI can configure all of them.
+ const m=work.match(/ALLOWED_SOURCES\\s*=\\s*\\[([\\s\\S]*?)\\]/);
+ if(m){let a=[...m[1].matchAll(/["']([^"']+)["']/g)].map(z=>z[1]);for(const id of a)if(!sourceDefs.some(x=>x.id===id))sourceDefs.push({id,name:id,enabled:false})}
+}
+function parseVod(){
+ vodRows=[];let re=/static\\s+resolveVodServers\\(\\)\\s*\\{[\\s\\S]*?this\\.get\\(\\s*["']VOD_SERVERS["']\\s*,\\s*/m,m=re.exec(work);if(!m)return;
+ let p=m.index+m[0].length,q=p;
+ while(q<work.length&&/\\s/.test(work[q]))q++;
+ let val='',start=q,end=q;
+ if(work[q]==='"'||work[q]==="'"){let ch=work[q],i=q+1,sl=false;for(;i<work.length;i++){let c=work[i];if(sl){sl=false;continue}if(c==='\\\\'){sl=true;continue}if(c===ch)break}val=jsUnquote(work.slice(q,i+1));start=q;end=i+1}
+ else return;
+ parseCSV(val).forEach((v,i)=>{let k=v.indexOf('@');vodRows.push({name:k>=0?v.slice(0,k):'站源 '+(i+1),url:k>=0?v.slice(k+1):v,enabled:true})});
+ vodRows._range={start,end,value:val};
+}
+function parseConfigCounts(){
+ let counts={api:0,source:0,match:0,danmu:0,cache:0,system:0};
+ const keys=[...work.matchAll(/this\\.get\\(\\s*["']([A-Z][A-Z0-9_]+)["']/g)].map(x=>x[1]);
+ const sourceKeys=new Set(['SOURCE_ORDER','MERGE_SOURCE_PAIRS','CUSTOM_MERGE_RULES','OTHER_SERVER','CUSTOM_SOURCE_API_URL','VOD_SERVERS','VOD_RETURN_MODE','VOD_REQUEST_TIMEOUT','BILIBILI_COOKIE','DOUBAN_COOKIE','YOUKU_CONCURRENCY']);
+ keys.forEach(k=>{if(sourceKeys.has(k))counts.source++;else if(/^DANMU|^BLOCKED|^GROUP_MINUTE|^LIKE|^COLOR|^GRADIENT|^HONGGUO/.test(k))counts.danmu++;else if(/^AI_|^PLATFORM|^TITLE|^ANIME|^EPISODE|^STRICT|^USE_BANGUMI/.test(k))counts.match++;else if(/^CACHE|^SEARCH_CACHE|^COMMENT_CACHE|^BANGUMI_DATA_CACHE|^REMEMBER|^MAX_ANIMES|^UPSTASH|^LOCAL_REDIS/.test(k))counts.cache++;else if(/^UI_|^LOG_|^PROXY_|^TMDB_|^DEPLOY_|^TOKEN|^RATE_LIMIT|^ADMIN/.test(k))counts.api++;else counts.system++});
+ return counts
+}
+function navRender(){
+ let c=parseConfigCounts(), items=[
+  ['sites','🌐 站源列表',siteRows.length+sourceDefs.length],
+  ['vod','📺 VOD/采集站',vodRows.length],
+  ['order','📑 站源顺序',sourceDefs.length],
+  ['brand','📣 品牌/公众号',''],
+  ['config','⚙️ 当前配置项','']
+ ];
+ $('#nav').innerHTML=items.map(x=>`<button class="${active===x[0]?'active':''}" onclick="active='${x[0]}';render()">${x[1]} ${x[2]!==''?`<span class=badge>${x[2]}</span>`:''}</button>`).join('');
+}
+function render(){navRender();if(!work){$('#content').innerHTML='<div class=card><div class=empty>请先打开原始 index.js</div></div>';return}
+ $('#pageTitle').textContent={sites:'全部站源列表',vod:'VOD / 采集站列表',order:'站源启用与排序',brand:'品牌与公众号文字',config:'当前分类配置'}[active];
+ if(active==='sites')renderSites();else if(active==='vod')renderVod();else if(active==='order')renderOrder();else if(active==='brand')renderBrand();else renderConfig();
+}
+function renderSites(){
+ let all=[...sourceDefs.map(x=>({kind:'source',id:x.id,name:x.id,url:'内置站源 · '+x.id,enabled:x.enabled})),...vodRows.map((x,i)=>({kind:'vod',id:'vod-'+i,name:x.name,url:x.url,enabled:x.enabled}))];
+ $('#content').innerHTML=`<div class=card><div class=toolbar><input id=filter class=grow placeholder="搜索站源名称 / URL / ID"><button onclick="addSource()">＋添加站源</button><button class=green onclick="saveAllSources()">💾 保存全部站源</button></div><div class=muted>这里显示完整可管理的站源：内置 SOURCE_ORDER + VOD_SERVERS。每一项都可以启用、停用、修改、删除、上移、下移。</div></div><div class=card id=list></div>`;
+ drawSiteList(all);
+ $('#filter').oninput=e=>drawSiteList(all,e.target.value);
+}
+function drawSiteList(all,filter=''){
+ let a=all.filter(x=>(x.name+' '+x.url+' '+x.id).toLowerCase().includes(filter.toLowerCase()));
+ $('#list').innerHTML=a.length?a.map((x,i)=>`<div class="source ${x.enabled?'':'off'}">
+ <input class=check type=checkbox ${x.enabled?'checked':''} onchange="toggleAny('${esc(x.kind)}','${esc(x.id)}',this.checked)">
+ <div class=url>${x.kind==='vod'?'VOD':'内置'}</div>
+ <div><div class=name>${esc(x.name)}</div><div class=url>${esc(x.url)}</div></div>
+ <input value="${esc(x.name)}" onchange="renameAny('${esc(x.kind)}','${esc(x.id)}',this.value)" title="修改名称">
+ <div class=row style="flex:0 0 auto"><button class=small onclick="moveAny('${esc(x.kind)}','${esc(x.id)}',-1)">↑</button><button class=small onclick="moveAny('${esc(x.kind)}','${esc(x.id)}',1)">↓</button><button class=small onclick="editAny('${esc(x.kind)}','${esc(x.id)}')">编辑</button><button class="small danger" onclick="deleteAny('${esc(x.kind)}','${esc(x.id)}')">删除</button></div>
+ </div>`).join(''):'<div class=empty>没有匹配的站源</div>';
+}
+function idxById(kind,id){return kind==='vod'?vodRows.findIndex((x,i)=>'vod-'+i===id):sourceDefs.findIndex(x=>x.id===id)}
+function toggleAny(kind,id,on){let i=idxById(kind,id);if(i<0)return;snapshot();(kind==='vod'?vodRows[i]:sourceDefs[i]).enabled=on;render()}
+function renameAny(kind,id,v){let i=idxById(kind,id);if(i<0)return;snapshot();(kind==='vod'?vodRows[i]:sourceDefs[i]).name=v; if(kind==='source')sourceDefs[i].id=v; render()}
+function moveAny(kind,id,d){let i=idxById(kind,id),a=kind==='vod'?vodRows:sourceDefs;if(i<0)return;let j=i+d;if(j<0||j>=a.length)return;snapshot();[a[i],a[j]]=[a[j],a[i]];render()}
+function deleteAny(kind,id){let i=idxById(kind,id);if(i<0||!confirm('确定删除这个站源？'))return;snapshot();(kind==='vod'?vodRows:sourceDefs).splice(i,1);render()}
+function editAny(kind,id){
+ let i=idxById(kind,id);if(i<0)return;
+ if(kind==='vod'){let x=vodRows[i],name=prompt('站源名称',x.name),url=prompt('站源 URL',x.url);if(name===null||url===null)return;snapshot();x.name=name;x.url=url}
+ else {let x=sourceDefs[i],v=prompt('站源 ID / 名称',x.id);if(v===null||!v.trim())return;snapshot();x.id=v.trim();x.name=v.trim()}
+ render()
+}
+function addSource(){
+ let kind=prompt('添加类型：输入 1=VOD采集站，2=内置站源','1');if(kind===null)return;
+ if(kind==='1'){let name=prompt('名称');let url=prompt('URL');if(!name||!url)return;snapshot();vodRows.push({name,url,enabled:true})}
+ else {let id=prompt('内置站源 ID，例如 custom');if(!id)return;snapshot();sourceDefs.push({id:id.trim(),name:id.trim(),enabled:true})}
+ render()
+}
+function saveAllSources(){
+ if(!work)return;snapshot();
+ // SOURCE_ORDER：只保存启用项，顺序以当前内置列表为准。
+ let so=sourceDefs.filter(x=>x.enabled).map(x=>x.id).join(',');
+ let g=findGetDefault('SOURCE_ORDER');if(g)work=work.slice(0,g.start)+quote(so)+work.slice(g.end);
+ // VOD_SERVERS：只保存启用项，按当前顺序保存。
+ let rg=vodRows._range;
+ // refresh range after SOURCE_ORDER replacement
+ parseVod(); rg=vodRows._range;
+ let vo=vodRows.filter(x=>x.enabled).map(x=>x.name+'@'+x.url).join(',');
+ if(rg)work=work.slice(0,rg.start)+quote(vo)+work.slice(rg.end);
+ parseAll();render();setStatus('站源列表已写回 index.js；未点击下载前原文件不会被覆盖。')
+}
+function renderVod(){
+ $('#content').innerHTML=`<div class=card><div class=toolbar><span class=badge>VOD_SERVERS</span><button onclick="addVod()">＋添加</button><button class=green onclick="saveVodOnly()">💾 保存 VOD</button></div><div class=muted>这里对应原 index.js 的 VOD_SERVERS。停用项不会写入最终默认列表。</div></div><div class=card>${vodRows.length?vodRows.map((x,i)=>`<div class="source ${x.enabled?'':'off'}"><input class=check type=checkbox ${x.enabled?'checked':''} onchange="snapshot();vodRows[${i}].enabled=this.checked;render()"><div>${i+1}</div><div><div class=name>${esc(x.name)}</div><div class=url>${esc(x.url)}</div></div><div class=row><button class=small onclick="moveVod(${i},-1)">↑</button><button class=small onclick="moveVod(${i},1)">↓</button><button class=small onclick="editVod(${i})">修改</button><button class="small danger" onclick="delVod(${i})">删除</button></div></div>`).join(''):'<div class=empty>没有解析到 VOD_SERVERS</div>'}</div>`;
+}
+function addVod(){let n=prompt('站源名称');if(!n)return;let u=prompt('URL');if(!u)return;snapshot();vodRows.push({name:n,url:u,enabled:true});render()}
+function editVod(i){let x=vodRows[i],n=prompt('名称',x.name),u=prompt('URL',x.url);if(n===null||u===null)return;snapshot();x.name=n;x.url=u;render()}
+function delVod(i){if(!confirm('删除该 VOD 站源？'))return;snapshot();vodRows.splice(i,1);render()}
+function moveVod(i,d){let j=i+d;if(j<0||j>=vodRows.length)return;snapshot();[vodRows[i],vodRows[j]]=[vodRows[j],vodRows[i]];render()}
+function saveVodOnly(){saveAllSources()}
+function renderOrder(){
+ $('#content').innerHTML=`<div class=card><div class=toolbar><button class=green onclick="saveAllSources()">💾 保存排序</button><span class=muted>勾选=启用；未勾选=停用。↑↓ 控制 SOURCE_ORDER 的最终顺序。</span></div>${sourceDefs.map((x,i)=>`<div class="source ${x.enabled?'':'off'}"><input class=check type=checkbox ${x.enabled?'checked':''} onchange="snapshot();sourceDefs[${i}].enabled=this.checked"><div>${i+1}</div><div><div class=name>${esc(x.id)}</div><div class=url>SOURCE_ORDER</div></div><div></div><div class=row><button class=small onclick="moveAny('source','${esc(x.id)}',-1)">↑</button><button class=small onclick="moveAny('source','${esc(x.id)}',1)">↓</button><button class=small onclick="editAny('source','${esc(x.id)}')">修改</button><button class="small danger" onclick="deleteAny('source','${esc(x.id)}')">删除</button></div></div>`).join('')}</div>`;
+}
+function renderBrand(){
+ let m=work.match(/yz\\s*=\\s*(["'])([\\s\\S]*?)\\1/), brand=m?jsUnquote(m[1]+m[2]+m[1]):'';
+ let cats=[['api','🔗 API 配置'],['source','📜 源配置'],['match','🔍 匹配配置'],['danmu','🔢 弹幕配置'],['cache','💾 缓存配置'],['system','⚙️ 系统配置']];
+ $('#content').innerHTML=`<div class=card><h3>📣 公众号 / 品牌文字</h3><input id=brand value="${esc(brand)}"><div style="height:10px"></div><button class=primary onclick="saveBrand()">保存品牌文字</button></div>
+ <div class=card><h3>配置分类名称</h3>${cats.map(x=>`<div class=row style="margin:8px 0"><input value="${esc(x[0])}" disabled><input id="cat_${x[0]}" value="${esc(x[1])}"></div>`).join('')}<button onclick="saveCategoryNames()">保存分类名称</button></div>`;
+}
+function saveBrand(){let v=$('#brand').value;let r=/yz\\s*=\\s*(["'])([\\s\\S]*?)\\1/;if(!r.test(work))return alert('没有找到 yz 品牌文字变量');snapshot();work=work.replace(r,(m,q)=>'yz='+quote(v));setStatus('品牌/公众号文字已修改')}
+function saveCategoryNames(){alert('分类名称在原文件中属于预览 UI 模板。此版本保留分类键和值的完整结构；如需直接改 UI 模板名称，请使用“精确模板编辑”功能。')}
+function renderConfig(){
+ let groups={api:['TOKEN','ADMIN_TOKEN','FAVORITE_REQUIRE_ADMIN','RATE_LIMIT_MAX_REQUESTS'],source:['SOURCE_ORDER','MERGE_SOURCE_PAIRS','CUSTOM_MERGE_RULES','OTHER_SERVER','CUSTOM_SOURCE_API_URL','VOD_SERVERS','VOD_RETURN_MODE','VOD_REQUEST_TIMEOUT','BILIBILI_COOKIE','DOUBAN_COOKIE','YOUKU_CONCURRENCY'],match:['PLATFORM_ORDER','STRICT_TITLE_MATCH','ENABLE_ANIME_EPISODE_FILTER','ANIME_TITLE_FILTER','EPISODE_TITLE_FILTER','TITLE_TO_CHINESE','ANIME_TITLE_SIMPLIFIED','TITLE_MAPPING_TABLE','AUTO_MATCH_MAPPING_TABLE','TITLE_NOISE_FILTER','AI_BASE_URL','AI_MODEL','AI_API_KEY','AI_MATCH_PROMPT','USE_BANGUMI_DATA'],danmu:['BLOCKED_WORDS','GROUP_MINUTE','DANMU_LIMIT','DANMU_SIMPLIFIED_TRADITIONAL','CONVERT_TOP_BOTTOM_TO_SCROLL','CONVERT_COLOR','COLOR_POOL','GRADIENT_CHANCE','GRADIENT_COLORS','LIKE_SWITCH','DANMU_OUTPUT_FORMAT','DANMU_PUSH_URL','DANMU_OFFSET','HONGGUO_MERGE_ALL_EPISODES'],cache:['SEARCH_CACHE_MINUTES','COMMENT_CACHE_MINUTES','COMMENT_CACHE_MIN_COUNT','BANGUMI_DATA_CACHE_DAYS','REMEMBER_LAST_SELECT','MAX_LAST_SELECT_MAP','MAX_ANIMES','UPSTASH_REDIS_REST_URL','UPSTASH_REDIS_REST_TOKEN','LOCAL_REDIS_URL'],system:['UI_THEME','LOG_LEVEL','PROXY_URL','TMDB_API_KEY','DEPLOY_PLATFROM_ACCOUNT','DEPLOY_PLATFROM_PROJECT','DEPLOY_PLATFROM_TOKEN','deployPlatform']};
+ let cat=active==='config'?'source':'source', keys=groups[cat], rows=keys.map(k=>{let g=findGetDefault(k);return g?{k,g}:null}).filter(Boolean);
+ $('#content').innerHTML=`<div class=card><div class=toolbar><span class=badge>源配置</span><span class=muted>只显示当前“源配置”分类，不把整个 6MB 文件铺满。</span></div><table><thead><tr><th>配置键</th><th>当前源码默认值</th><th>修改</th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${esc(r.k)}</b></td><td><pre>${esc(String(r.g.value))}</pre></td><td><button onclick="editConfig('${r.k}')">修改</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+function editConfig(k){let g=findGetDefault(k);if(!g)return;let v=prompt('修改 '+k+' 的源码默认值',String(g.value));if(v===null)return;snapshot();work=work.slice(0,g.start)+quote(v)+work.slice(g.end);parseAll();render();setStatus(k+' 已修改')}
+async function md5(buf){
+ function rrot(x,n){return(x<<n)|(x>>>(32-n))}
+ function add(x,y){return(((x>>>0)+(y>>>0))>>>0)}
+ function cm(x,y,z){return(x&y)|(~x&z)}function fn(x,y,z){return(x&z)|(y&~z)}
+ function hn(x,y,z){return x^y^z}function ii(x,y,z){return y^(x|~z)}
+ let a0=0x67452301,b0=0xefcdab89,c0=0x98badcfe,d0=0x10325476;
+ let a=new Uint8Array(buf),l=a.length,n=((l+8>>>6)+1)*16,p=new Uint8Array(n*4);p.set(a);p[l]=128;let dv=new DataView(p.buffer);dv.setUint32(p.length-8,l*8,true);
+ let k=[],s1=[7,12,17,22],s2=[5,9,14,20],s3=[4,11,16,23],s4=[6,10,15,21];
+ for(let i=0;i<64;i++)k[i]=Math.floor(Math.abs(Math.sin(i+1))*4294967296)>>>0;
+ for(let off=0;off<p.length;off+=64){let m=[];for(let i=0;i<16;i++)m[i]=dv.getUint32(off+i*4,true);let A=a0,B=b0,C=c0,D=d0;
+  for(let i=0;i<64;i++){let F,g,ss;if(i<16){F=cm(B,C,D);g=i;ss=s1[i%4]}else if(i<32){F=fn(B,C,D);g=(5*i+1)%16;ss=s2[i%4]}else if(i<48){F=hn(B,C,D);g=(3*i+5)%16;ss=s3[i%4]}else{F=ii(B,C,D);g=(7*i)%16;ss=s4[i%4]}
+   let T=D;D=C;C=B;B=add(B,rrot(add(add(A,F),add(k[i],m[g])),ss));A=T}
+  a0=add(a0,A);b0=add(b0,B);c0=add(c0,C);d0=add(d0,D)
  }
- return {items:out,start:objStart,end:objEnd};
+ let out='';for(let x of [a0,b0,c0,d0])for(let i=0;i<4;i++)out+=('0'+((x>>>8*i)&255).toString(16)).slice(-2);return out
 }
-function extract4KStrings(s){
- const seen=new Map(), re=/(["'`])((?:\\\\.|(?!\\1)[\\s\\S])*?)\\1/g;
- let m;
- while((m=re.exec(s))){
-   let val;
-   try{val=decodeJSString(m[0])}catch{continue}
-   if(typeof val==="string" && /\\|4K\\b/i.test(val)){
-     if(!seen.has(val))seen.set(val,{value:val,count:1});
-     else seen.get(val).count++;
-   }
- }
- return [...seen.values()].sort((a,b)=>a.value.localeCompare(b.value,"zh-CN"))
+async function downloadAll(){
+ if(!work)return alert('请先打开 index.js');
+ const bytes=new TextEncoder().encode(work),sum=await md5(bytes);
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([bytes],{type:'application/javascript'}));a.download='index.js';a.click();
+ const b=document.createElement('a');b.href=URL.createObjectURL(new Blob([sum+'  index.js\\n'],{type:'text/plain'}));b.download='index.js.md5';setTimeout(()=>b.click(),250);
+ setStatus('已生成最终 index.js 与匹配的 index.js.md5 · MD5 '+sum)
 }
-function renderCats(){
- const counts={};
- envInfo.forEach(x=>counts[x.category]=(counts[x.category]||0)+1);
- const order=["overview","api","source","4K","match","danmu","cache","system","other"];
- $("cats").innerHTML=order.map(c=>{
-   let n=c==="overview"?envInfo.length:c==="4K"?sourceEntries.length:(counts[c]||0);
-   let label={overview:"全部配置",api:"🔗 API 配置",source:"📜 源配置",4K:"💎 4K 源",match:"🔍 匹配配置",danmu:"🔢 弹幕配置",cache:"💾 缓存配置",system:"⚙️ 系统配置",other:"其它"}[c];
-   return '<button class="cat '+(activeCat===c?"active":"")+'" data-cat="'+esc(c)+'">'+label+' <small>'+n+'</small></button>'
- }).join("");
- document.querySelectorAll(".cat").forEach(b=>b.addEventListener("click",()=>{activeCat=b.dataset.cat;renderAll()}));
-}
-function renderAll(){
- renderCats();
- const q=$("search").value.trim().toLowerCase();
- if(activeCat==="4K"){ $("panelTitle").textContent="4K / 源字符串"; renderSources(q); return }
- $("sourceBox").classList.remove("show");
- $("panelTitle").textContent=activeCat==="overview"?"配置中心":activeCat+" 配置";
- let list=envInfo.filter(x=>activeCat==="overview"||x.category===activeCat);
- if(q)list=list.filter(x=>(x.key+" "+x.category+" "+x.description+" "+x.raw).toLowerCase().includes(q));
- $("items").innerHTML=list.map((x,idx)=>renderItem(x,idx)).join("") || '<div class="notice">没有匹配项</div>';
- list.forEach((x,idx)=>{
-   const root=document.querySelectorAll(".item")[idx];
-   root.querySelector(".editBtn").addEventListener("click",()=>toggleItem(root));
-   root.querySelector(".saveBtn").addEventListener("click",()=>saveItem(x,root));
-   root.querySelector(".delBtn").addEventListener("click",()=>deleteItem(x));
- });
-}
-function renderItem(x){
- const value=guessCurrentValue(x);
- return `<div class="item" data-key="${esc(x.key)}">
- <div class="itemHead"><span class="key">${esc(x.key)}</span><span class="badge">${esc(x.category)}</span><span class="badge">${esc(x.type)}</span><span class="grow desc">${esc(x.description)}</span><button class="editBtn">编辑</button></div>
- <div class="itemBody">
-   <div class="grid">
-    <div class="field"><label>KEY</label><input class="fkey" value="${esc(x.key)}" disabled></div>
-    <div class="field"><label>category</label><select class="fcat">${["api","source","match","danmu","cache","system","other"].map(c=>`<option ${c===x.category?"selected":""}>${c}</option>`).join("")}</select></div>
-    <div class="field"><label>type</label><select class="ftype">${["text","number","boolean","select","multi-select","json"].map(c=>`<option ${c===x.type?"selected":""}>${c}</option>`).join("")}</select></div>
-    <div class="field"><label>description</label><input class="fdesc" value="${esc(x.description)}"></div>
-   </div>
-   <div class="field" style="margin-top:10px"><label>源码对象（可直接修改 metadata / options / min / max 等）</label><textarea class="fraw">${esc(x.raw)}</textarea></div>
-   <div class="row" style="margin-top:8px"><button class="saveBtn ok">保存此项到源码</button><button class="delBtn danger">删除此配置</button></div>
- </div></div>`
-}
-function toggleItem(root){root.classList.toggle("open")}
-function locateEntry(x){
- const needle=x.raw;
- const pos=workingText.indexOf(needle);
- return pos;
-}
-function saveItem(x,root){
- const raw=root.querySelector(".fraw").value.trim();
- if(!raw||raw[0]!=="{"||raw[raw.length-1]!=="}"){alert("源码对象必须是 { ... }");return}
- const pos=locateEntry(x);
- if(pos<0){alert("找不到该配置在当前源码中的位置，可能已被其它修改影响。建议重新载入原始 index.js。");return}
- const key=x.key;
- const cat=root.querySelector(".fcat").value;
- const type=root.querySelector(".ftype").value;
- if(!new RegExp("^"+key.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\\\$&")+"\\\\s*:").test(raw)){
-   if(!confirm("你修改后的源码对象看起来没有以当前 KEY 开头，仍然写入吗？"))return
- }
- workingText=workingText.slice(0,pos)+raw+workingText.slice(pos+needle.length);
- const cm=raw.match(/category\\s*:\\s*["']([^"']+)["']/); x.category=cm?cm[1]:cat;
- const tm=raw.match(/type\\s*:\\s*["']([^"']+)["']/); x.type=tm?tm[1]:type;
- const dm=raw.match(/description\\s*:\\s*(["'`][\\s\\S]*?["'`])(?:,|})/); x.description=dm?decodeJSString(dm[1]):x.description;
- x.raw=raw; changes.push("config:"+key); updateStats(); renderAll(); setStatus("已写入 "+key+"，但尚未导出文件。",true)
-}
-function deleteItem(x){
- if(!confirm("确定从 envVarConfig 源码对象中删除 "+x.key+"？"))return;
- const re=new RegExp("(^|,)"+x.key.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\\\$&")+"\\\\s*:\\s*\\\\{");
- const m=re.exec(workingText);
- if(!m){alert("找不到配置项");return}
- const brace=workingText.indexOf("{",m.index+m[0].length-1), end=findMatchingBrace(workingText,brace);
- if(end<0){alert("对象括号异常");return}
- let a=m.index, b=end+1;
- if(workingText[b]===",")b++;
- else if(a>0 && workingText[a-1]===",")a--;
- workingText=workingText.slice(0,a)+workingText.slice(b);
- envInfo=envInfo.filter(v=>v!==x); changes.push("delete:"+x.key); updateStats(); renderAll()
-}
-function addConfig(){
- const key=prompt("新 KEY（例如 MY_4K_SOURCE）"); if(!key)return;
- if(!/^[A-Za-z_$][\\w$]*$/.test(key)){alert("KEY 必须是合法 JavaScript 标识符");return}
- if(envInfo.some(x=>x.key===key)){alert("KEY 已存在");return}
- const cat=prompt("category","source")||"source";
- const type=prompt("type","text")||"text";
- const desc=prompt("description","自定义配置")||"自定义配置";
- const raw=`${key}:{category:${JSON.stringify(cat)},type:${JSON.stringify(type)},description:${JSON.stringify(desc)}}`;
- const p=workingText.indexOf("let n={TOKEN:");
- if(p<0){alert("找不到配置对象");return}
- const st=workingText.indexOf("{",p), en=findMatchingBrace(workingText,st);
- workingText=workingText.slice(0,en)+","+raw+workingText.slice(en);
- envInfo.push({key,category:cat,type,description:desc,raw,startAbs:en});
- changes.push("add:"+key); updateStats(); renderAll(); setStatus("已新增 "+key+"，尚未导出。",true)
-}
-function renderSources(q=""){
- $("sourceBox").classList.add("show");
- let list=sourceEntries.filter(x=>!q||x.value.toLowerCase().includes(q));
- $("sources").innerHTML=list.map((x,i)=>`<div class="item open"><div class="itemHead"><span class="key">${esc(x.value)}</span><span class="badge">出现 ${x.count} 次</span><span class="grow"></span><button class="danger sdel">删除/替换</button></div><div class="itemBody" style="display:block"><div class="field"><label>替换为（留空=删除所有完全相同的该字符串）</label><input class="snew" value="${esc(x.value)}"></div><div class="row" style="margin-top:8px"><button class="ok ssave">写入替换</button></div></div></div>`).join("")||'<div class="notice">没有发现包含 |4K 的字符串</div>';
- document.querySelectorAll(".ssave").forEach((b,i)=>b.addEventListener("click",()=>{
-   const x=list[i], nv=b.closest(".item").querySelector(".snew").value;
-   if(!confirm(`把源码中所有完全相同的字符串\\n${x.value}\\n替换为\\n${nv}`))return;
-   const lit=JSON.stringify(x.value), replacement=nv===""?"":JSON.stringify(nv);
-   const re=new RegExp(lit.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\\\$&"),"g");
-   workingText=workingText.replace(re,replacement);
-   changes.push("4K:"+x.value+"=>"+nv);
-   sourceEntries=extract4KStrings(workingText); updateStats(); renderSources(q); setStatus("4K 字符串已写入源码，尚未导出。",true)
- }))
-}
-function add4K(){
- const nv=prompt("输入要新增的 4K 字符串，例如：某某|4K"); if(!nv)return;
- const sourceNeedle=prompt("插入到哪个已有字符串附近？（留空则追加到源码末尾）")||"";
- const lit=JSON.stringify(nv);
- if(workingText.includes(lit)){alert("该字符串已经存在");return}
- if(sourceNeedle){
-   const p=workingText.indexOf(JSON.stringify(sourceNeedle));
-   if(p<0){alert("找不到目标字符串");return}
-   workingText=workingText.slice(0,p)+lit+","+workingText.slice(p+lit.length);
- }else{
-   workingText+="\\n// MAOYUAN_V3_ADDED_4K: "+lit+"\\n";
- }
- changes.push("add4K:"+nv); sourceEntries=extract4KStrings(workingText); updateStats(); renderSources(); setStatus("已添加 4K 字符串。注意：留空目标时会作为源码字符串注释追加，不会自动改变程序的源数组。",true)
-}
-function guessCurrentValue(x){
- return "";
-}
-async function loadFile(file){
- originalText=await file.text(); workingText=originalText; fileName=file.name||"index.js";
- const parsed=parseEnvObject(workingText); envInfo=parsed.items;
- sourceEntries=extract4KStrings(workingText); changes=[]; lastOutput=null;
- $("exportBtn").disabled=false;$("downloadZipBtn").disabled=true;$("addBtn").disabled=false;$("scan4kBtn").disabled=false;$("add4kBtn").disabled=false;
- activeCat="overview"; updateStats();renderAll();
- setStatus(`已载入 ${fileName} · ${(originalText.length/1024/1024).toFixed(2)} MB · 配置 ${envInfo.length} 项`,true)
-}
-async function md5(text){
- const buf=new TextEncoder().encode(text);
- const hash=await crypto.subtle.digest("SHA-256",buf); // browser WebCrypto lacks MD5
- return md5Pure(new Uint8Array(buf));
-}
-function md5Pure(bytes){
- let a=0x67452301,b=0xefcdab89,c=0x98badcfe,d=0x10325476;
- const K=[],S=[];
- for(let i=0;i<64;i++)K[i]=Math.floor(Math.abs(Math.sin(i+1))*4294967296)>>>0;
- const ss=[[7,12,17,22],[5,9,14,20],[4,11,16,23],[6,10,15,21]];
- for(let j=0;j<4;j++)for(let i=0;i<4;i++)S[j*4+i]=ss[j][i];
- const len=bytes.length, bitLo=(len*8)>>>0, bitHi=Math.floor(len/0x20000000)>>>0;
- const pad=((56-(len+1)%64)+64)%64, x=new Uint8Array(len+1+pad+8); x.set(bytes); x[len]=0x80;
- const dv=new DataView(x.buffer);dv.setUint32(x.length-8,bitLo,true);dv.setUint32(x.length-4,bitHi,true);
- const rol=(v,n)=>(v<<n)|(v>>>(32-n));
- for(let off=0;off<x.length;off+=64){
-   const M=new Uint32Array(16);for(let i=0;i<16;i++)M[i]=dv.getUint32(off+i*4,true);
-   let A=a,B=b,C=c,D=d;
-   for(let i=0;i<64;i++){
-     let F,g;
-     if(i<16){F=(B&C)|((~B)&D);g=i}
-     else if(i<32){F=(D&B)|((~D)&C);g=(5*i+1)%16}
-     else if(i<48){F=B^C^D;g=(3*i+5)%16}
-     else{F=C^(B|(~D));g=(7*i)%16}
-     const t=(A+F+K[i]+M[g])>>>0, r=rol(t,S[Math.floor(i/16)*4+(i%4)]);A=D;D=C;C=B;B=(B+r)>>>0
-   }
-   a=(a+A)>>>0;b=(b+B)>>>0;c=(c+C)>>>0;d=(d+D)>>>0;
- }
- const out=new Uint8Array(16), w=new DataView(out.buffer);w.setUint32(0,a,true);w.setUint32(4,b,true);w.setUint32(8,c,true);w.setUint32(12,d,true);
- return [...out].map(v=>v.toString(16).padStart(2,"0")).join("");
-}
-function download(name,blob){
- const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)
-}
-async function exportFiles(){
- if(!workingText){alert("请先载入 index.js");return}
- const hash=await md5(workingText);
- lastOutput={js:workingText,md5:hash};
- $("md5Preview").textContent=hash+"  index.js\\n\\n文件长度："+new TextEncoder().encode(workingText).length+" bytes";
- download("index.js",new Blob([workingText],{type:"application/javascript;charset=utf-8"}));
- download("index.js.md5",new Blob([hash+"  index.js\\n"],{type:"text/plain;charset=utf-8"}));
- $("downloadZipBtn").disabled=false;
- setStatus("导出完成：index.js 与 index.js.md5 已按最终内容对应生成。",true)
-}
-async function makeZip(){
- if(!lastOutput){await exportFiles();if(!lastOutput)return}
- const zip=await createZip([
-  ["index.js",new TextEncoder().encode(lastOutput.js)],
-  ["index.js.md5",new TextEncoder().encode(lastOutput.md5+"  index.js\\n")]
- ]);
- download("猫源_index.js_V3_修改结果.zip",new Blob([zip],{type:"application/zip"}))
-}
-function u32(n){return new Uint8Array([n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255])}
-function crc32(data){let t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xedb88320^(c>>>1):c>>>1;t[n]=c>>>0}let c=0xffffffff;for(const b of data)c=t[(c^b)&255]^(c>>>8);return (c^0xffffffff)>>>0}
-function createZip(files){
- let chunks=[],offset=0,central=[];
- const enc=new TextEncoder();
- for(const [name,data] of files){
-  const nb=enc.encode(name), crc=crc32(data), local=new Uint8Array(30+nb.length);
-  const dv=new DataView(local.buffer);dv.setUint32(0,0x04034b50,true);dv.setUint16(4,20,true);dv.setUint16(6,0,true);dv.setUint16(8,0,true);dv.setUint16(10,0,true);dv.setUint16(12,0,true);dv.setUint32(14,crc,true);dv.setUint32(18,data.length,true);dv.setUint32(22,data.length,true);dv.setUint16(26,nb.length,true);dv.setUint16(28,0,true);local.set(nb,30);chunks.push(local,data);central.push({name:nb,crc,size:data.length,offset});offset+=local.length+data.length;
- }
- const cd=[];let cdSize=0;for(const f of central){const x=new Uint8Array(46+f.name.length),dv=new DataView(x.buffer);dv.setUint32(0,0x02014b50,true);dv.setUint16(4,20,true);dv.setUint16(6,20,true);dv.setUint16(8,0,true);dv.setUint16(10,0,true);dv.setUint16(12,0,true);dv.setUint16(14,0,true);dv.setUint32(16,f.crc,true);dv.setUint32(20,f.size,true);dv.setUint32(24,f.size,true);dv.setUint16(28,f.name.length,true);dv.setUint16(30,0,true);dv.setUint16(32,0,true);dv.setUint16(34,0,true);dv.setUint16(36,0,true);dv.setUint32(38,0,true);dv.setUint32(42,f.offset,true);x.set(f.name,46);cd.push(x);cdSize+=x.length}
- const end=new Uint8Array(22),dv=new DataView(end.buffer);dv.setUint32(0,0x06054b50,true);dv.setUint16(8,files.length,true);dv.setUint16(10,files.length,true);dv.setUint32(12,cdSize,true);dv.setUint32(16,offset,true);
- return new Blob([...chunks,...cd,end]).arrayBuffer()
-}
-$("file").addEventListener("change",e=>{if(e.target.files[0])loadFile(e.target.files[0]).catch(err=>{setStatus("载入失败："+err.message);console.error(err)})});
-$("loadBtn").addEventListener("click",()=>$("file").click());
-$("addBtn").addEventListener("click",addConfig);
-$("scan4kBtn").addEventListener("click",()=>{sourceEntries=extract4KStrings(workingText);updateStats();activeCat="4K";renderAll();setStatus("已重新扫描源码中的 |4K 字符串。",true)});
-$("add4kBtn").addEventListener("click",add4K);
-$("exportBtn").addEventListener("click",()=>exportFiles().catch(e=>alert("导出失败："+e.message)));
-$("downloadZipBtn").addEventListener("click",()=>makeZip().catch(e=>alert("ZIP 失败："+e.message)));
-$("search").addEventListener("input",renderAll);
 </script>
 </body>
 </html>

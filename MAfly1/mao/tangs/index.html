@@ -3,249 +3,388 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>猫源配置中心编辑器 V1</title>
+<title>猫源配置中心编辑器 V3 · index.js 源码级编辑器</title>
 <style>
-:root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#6b7280;--line:#e5e7eb;--primary:#5b5bd6;--danger:#d33;--ok:#138a52}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif}
-header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:14px 18px}
-h1{font-size:20px;margin:0 0 4px}.sub{color:var(--muted);font-size:12px}
-.wrap{max-width:1400px;margin:auto;padding:18px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 2px 10px #00000008}
-.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
-input,textarea,select{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px;background:#fff;color:var(--text);outline:none}
-textarea{min-height:110px;resize:vertical}.wide{grid-column:1/-1}
-button{border:0;border-radius:8px;padding:9px 13px;cursor:pointer;background:#eef0ff;color:#34348e;font-weight:600}
-button.primary{background:var(--primary);color:#fff}button.danger{background:#fff0f0;color:var(--danger)}button.ok{background:#eaf8f1;color:var(--ok)}
-button:disabled{opacity:.5;cursor:not-allowed}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.layout{display:grid;grid-template-columns:210px 1fr;gap:16px}
-.side{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;height:max-content;position:sticky;top:84px}
-.cat{display:flex;justify-content:space-between;align-items:center;width:100%;margin:3px 0;text-align:left;background:transparent;color:var(--text)}
-.cat.active{background:#eef0ff;color:#34348e}.count{font-size:11px;color:var(--muted)}
-.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px}.toolbar input{max-width:420px}
-.item{background:#fff;border:1px solid var(--line);border-radius:10px;margin:9px 0;padding:12px}
-.item-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.key{font-weight:800;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.desc{color:var(--muted);font-size:12px;margin-top:4px}
-.value{margin-top:10px;white-space:pre-wrap;word-break:break-word;background:#f8fafc;border-radius:7px;padding:9px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;max-height:130px;overflow:auto}
-.badge{display:inline-block;padding:2px 7px;border-radius:999px;background:#f0f2f5;color:#596174;font-size:11px;margin-left:6px}
-.modal{position:fixed;inset:0;background:#0007;display:none;align-items:center;justify-content:center;padding:20px;z-index:20}.modal.show{display:flex}
-.modalbox{background:#fff;width:min(760px,100%);max-height:90vh;overflow:auto;border-radius:14px;padding:18px}
-.notice{padding:10px 12px;background:#fff8df;border:1px solid #f0df9b;border-radius:8px;color:#6d5a14;font-size:12px;margin-top:10px}
-.status{font-size:12px;color:var(--muted);margin-top:8px;white-space:pre-wrap}
-.hidden{display:none!important}
-@media(max-width:900px){.grid{grid-template-columns:1fr 1fr}.layout{grid-template-columns:1fr}.side{position:static}}
-@media(max-width:600px){.grid{grid-template-columns:1fr}}
+:root{--bg:#0b1020;--panel:#121a2d;--panel2:#17213a;--line:#2a3858;--text:#eaf0ff;--muted:#94a3c7;--accent:#6ea8fe;--danger:#ff6b7a;--ok:#5bd69b}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#09101f,#10182b);color:var(--text);font:14px/1.55 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+header{padding:18px 22px;border-bottom:1px solid var(--line);background:#0d1528cc;position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)}
+h1{margin:0;font-size:20px}h2{font-size:16px;margin:0 0 12px}.sub{color:var(--muted);font-size:12px;margin-top:4px}
+.wrap{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 80px)}
+aside{border-right:1px solid var(--line);padding:14px;background:#0c1426}
+main{padding:16px;min-width:0}.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+button,input,textarea,select{font:inherit}button{border:1px solid var(--line);background:#1a2742;color:var(--text);padding:8px 11px;border-radius:8px;cursor:pointer}button:hover{background:#223354}
+button.primary{background:#245db5;border-color:#3975d4}button.ok{background:#176b4a;border-color:#2a9b6e}button.danger{background:#672333;border-color:#a83b52}
+button:disabled{opacity:.45;cursor:not-allowed}
+input,textarea,select{width:100%;background:#0b1325;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px}
+textarea{min-height:100px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:0 0 auto}.grow{flex:1 1 auto}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stat{background:var(--panel2);border:1px solid var(--line);padding:10px;border-radius:9px}.stat b{display:block;font-size:20px}.stat span{color:var(--muted);font-size:11px}
+.cat{width:100%;text-align:left;margin:4px 0;background:transparent}.cat.active{background:#21355b;border-color:#416da9}.cat small{float:right;color:var(--muted)}
+.item{border:1px solid var(--line);border-radius:10px;margin:8px 0;overflow:hidden;background:#10192c}.itemHead{padding:10px 12px;display:flex;gap:8px;align-items:center}.key{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#a9c8ff;font-weight:700}.desc{color:var(--muted);font-size:12px}.itemBody{border-top:1px solid var(--line);padding:10px 12px;display:none}.item.open .itemBody{display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}
+.badge{padding:2px 7px;border:1px solid var(--line);border-radius:99px;color:#bcd1f8;font-size:11px}
+pre{white-space:pre-wrap;word-break:break-all;background:#08101e;border:1px solid var(--line);padding:10px;border-radius:8px;max-height:280px;overflow:auto}
+.notice{padding:9px 11px;border-radius:8px;background:#17243c;color:#c9d8f7;border:1px solid var(--line)}.oktxt{color:var(--ok)}.errtxt{color:#ff8794}
+#sourceText{min-height:330px}.sourcebox{display:none}.sourcebox.show{display:block}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid var(--line)}.stats,.grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
-<header><div class="wrap" style="padding:0">
-<h1>猫源配置中心编辑器 V1</h1>
-<div class="sub">读取 /api/config 的真实配置；修改、新增、删除环境变量。分类/类型/选项优先使用 index.js 返回的 envVarConfig。</div>
-</div></header>
+<header>
+  <h1>猫源配置中心编辑器 V3</h1>
+  <div class="sub">源码级编辑：读取原始 index.js → 修改配置/4K 源 → 原样回写完整 index.js → 自动生成对应 index.js.md5</div>
+</header>
 
-<main class="wrap">
-<section class="card">
-  <div class="grid">
-    <div><label>猫源地址</label><input id="base" placeholder="https://example.com"></div>
-    <div><label>普通 TOKEN（可选）</label><input id="token" placeholder="87654321"></div>
-    <div><label>ADMIN_TOKEN（推荐）</label><input id="admin" placeholder="管理员令牌"></div>
-    <div><label>index.js（可选，用于读取源码分类/类型）</label><input id="sourceFile" type="file" accept=".js,.txt"></div>
-    <div class="wide">
-      <div class="actions">
-        <button class="primary" onclick="loadConfig()">读取配置中心</button>
-        <button onclick="exportJson()">导出当前配置 JSON</button>
-        <button onclick="importJson()">导入配置 JSON</button>
-        <button onclick="addItem()">新增配置项</button>
-      </div>
-      <div id="status" class="status"></div>
-    </div>
+<div class="wrap">
+<aside>
+  <div class="card">
+    <h2>① 载入原始文件</h2>
+    <input id="file" type="file" accept=".js,text/javascript">
+    <div class="sub" style="margin-top:8px">建议直接选择你最开始上传的那份 index.js。浏览器不会上传文件。</div>
   </div>
-  <div class="notice">
-    注意：这个工具调用的是猫源自身的 <b>/api/config</b>、<b>/api/env/set</b>、<b>/api/env/add</b>、<b>/api/env/del</b> 接口。
-    ADMIN_TOKEN 会参与 URL 路径，请不要把它公开发布。
-  </div>
-</section>
-
-<div class="layout">
-  <aside class="side">
-    <button class="cat active" id="cat-all" onclick="selectCat('all')"><span>全部配置</span><span class="count" id="count-all">0</span></button>
+  <div class="card">
+    <h2>配置分类</h2>
     <div id="cats"></div>
-  </aside>
-  <section class="card" style="margin:0">
-    <div class="toolbar">
-      <input id="search" placeholder="搜索 KEY / 值 / 描述 / 分类" oninput="render()">
-      <button onclick="addCategory()">新增本地分类</button>
+  </div>
+  <div class="card">
+    <input id="search" placeholder="搜索 KEY / 描述 / 值 / 4K">
+  </div>
+</aside>
+
+<main>
+  <div class="card">
+    <div class="row">
+      <button class="primary" id="loadBtn">载入当前文件</button>
+      <button id="addBtn" disabled>新增配置</button>
+      <button id="scan4kBtn" disabled>扫描 4K 源</button>
+      <button id="add4kBtn" disabled>新增 4K 源</button>
+      <button class="ok" id="exportBtn" disabled>生成 index.js + MD5</button>
+      <button id="downloadZipBtn" disabled>打包 ZIP</button>
     </div>
-    <div id="list"><div class="status">请先读取配置中心。</div></div>
-  </section>
-</div>
+    <div id="status" class="notice" style="margin-top:10px">尚未载入 index.js</div>
+  </div>
+
+  <div class="card">
+    <div class="stats">
+      <div class="stat"><b id="total">0</b><span>配置项</span></div>
+      <div class="stat"><b id="sourceCount">0</b><span>source 类别</span></div>
+      <div class="stat"><b id="k4Count">0</b><span>发现的 4K 字符串</span></div>
+      <div class="stat"><b id="changed">0</b><span>待写入修改</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 id="panelTitle">配置中心</h2>
+    <div id="items"></div>
+  </div>
+
+  <div class="card sourcebox" id="sourceBox">
+    <h2>4K / 源字符串编辑</h2>
+    <div class="sub">这里编辑的是原始 index.js 中实际出现的字符串。保存时只做定点替换，不重建整个 JS。</div>
+    <div id="sources"></div>
+  </div>
+
+  <div class="card">
+    <h2>导出预览</h2>
+    <div class="sub">MD5 是对最终导出的 index.js UTF-8 字节计算，不是对配置 JSON 计算。</div>
+    <pre id="md5Preview">等待生成</pre>
+  </div>
 </main>
-
-<div class="modal" id="modal">
- <div class="modalbox">
-  <h2 id="mtitle">编辑配置项</h2>
-  <div class="grid">
-   <div><label>KEY</label><input id="fkey" spellcheck="false"></div>
-   <div><label>分类</label><input id="fcat" placeholder="api/source/match/danmu/cache/system"></div>
-   <div><label>类型</label>
-    <select id="ftype" onchange="renderEditorOptions()">
-      <option value="text">text</option><option value="number">number</option><option value="boolean">boolean</option><option value="select">select</option><option value="multi-select">multi-select</option><option value="map">map</option>
-    </select>
-   </div>
-   <div><label>描述</label><input id="fdesc"></div>
-   <div class="wide"><label>值</label><textarea id="fvalue"></textarea></div>
-   <div class="wide hidden" id="optWrap"><label>可选项（逗号分隔）</label><input id="foptions"></div>
-   <div><label>最小值</label><input id="fmin" type="number"></div>
-   <div><label>最大值</label><input id="fmax" type="number"></div>
-  </div>
-  <div id="modalNotice" class="notice"></div>
-  <div class="actions">
-   <button class="primary" onclick="saveItem()">保存</button>
-   <button onclick="closeModal()">取消</button>
-   <button class="danger" id="delBtn" onclick="deleteCurrent()">删除</button>
-  </div>
- </div>
 </div>
-
-<input id="importFile" type="file" accept=".json" class="hidden">
 
 <script>
-let config=null, items=[], activeCat='all', editing=null;
-let localCats=JSON.parse(localStorage.getItem('catEditorLocalCats')||'[]');
+"use strict";
+let originalText="";
+let workingText="";
+let fileName="index.js";
+let envInfo=[];
+let activeCat="overview";
+let changes=[];
+let sourceEntries=[];
+let lastOutput=null;
 
 const $=id=>document.getElementById(id);
-function cleanBase(){return $('base').value.trim().replace(/\/+$/,'')}
-function apiUrl(path,system=true){
-  const base=cleanBase(); if(!base) throw Error('请先填写猫源地址');
-  const admin=$('admin').value.trim(), token=$('token').value.trim();
-  const t=system && admin ? admin : token;
-  return base + '/' + (t ? encodeURIComponent(t)+'/' : '') + path.replace(/^\\//,'');
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+function setStatus(t,ok=false){$("status").innerHTML=ok?'<span class="oktxt">'+esc(t)+'</span>':esc(t)}
+function updateStats(){
+ $("total").textContent=envInfo.length;
+ $("sourceCount").textContent=envInfo.filter(x=>x.category==="source").length;
+ $("k4Count").textContent=sourceEntries.length;
+ $("changed").textContent=changes.length;
 }
-function setStatus(s,err=false){$('status').textContent=s; $('status').style.color=err?'#c33':''}
-function jsonSafe(v){try{return JSON.parse(v)}catch{return null}}
-function normalizeServerConfig(c){
-  config=c||{};
-  const vals=config.originalEnvVars||config.values||config.variables||{};
-  const defs=config.envVarConfig||{};
-  items=Object.keys(vals).map(k=>{
-    const d=defs[k]||{};
-    return {key:k,value:vals[k]??'',category:d.category||'system',type:d.type||'text',
-      description:d.description||'',options:d.options||[],min:d.min,max:d.max};
-  });
-  // 如果接口没有返回某些变量定义，也保留真实值
+function findMatchingBrace(s,start){
+ let depth=0, quote=null, escp=false, line=false, block=false;
+ for(let i=start;i<s.length;i++){
+   const c=s[i], n=s[i+1];
+   if(line){if(c==="\\n")line=false;continue}
+   if(block){if(c==="*"&&n==="/"){block=false;i++}continue}
+   if(quote){
+     if(escp){escp=false;continue}
+     if(c==="\\\\"){escp=true;continue}
+     if(c===quote)quote=null;
+     continue
+   }
+   if(c==="/"&&n==="/"){line=true;i++;continue}
+   if(c==="/"&&n==="*"){block=true;i++;continue}
+   if(c==="'"||c=='"'||c==="`"){quote=c;continue}
+   if(c==="{")depth++;
+   else if(c==="}"){depth--;if(depth===0)return i}
+ }
+ return -1
 }
-async function loadConfig(){
-  try{
-    setStatus('正在读取 /api/config ...');
-    const r=await fetch(apiUrl('/api/config',true),{headers:{'Accept':'application/json'}});
-    const text=await r.text(); let c;
-    try{c=JSON.parse(text)}catch{throw Error('返回的不是 JSON：'+text.slice(0,200))}
-    if(!r.ok) throw Error('HTTP '+r.status+'：'+(c.errorMessage||c.message||text.slice(0,200)));
-    normalizeServerConfig(c);
-    renderCats(); render();
-    setStatus('读取成功：'+items.length+' 项。');
-  }catch(e){setStatus('读取失败：'+e.message,true)}
+function decodeJSString(raw){
+ try{return Function('"use strict";return '+raw)()}catch{return raw.slice(1,-1)}
 }
-function selectCat(c){activeCat=c;document.querySelectorAll('.cat').forEach(x=>x.classList.remove('active'));$('cat-'+CSS.escape(c))?.classList.add('active');render()}
+function parseEnvObject(s){
+ const marker="let n={TOKEN:";
+ const p=s.indexOf(marker);
+ if(p<0) throw new Error("没有找到 envVarConfig 的源码对象（TOKEN 起点不存在）");
+ const start=s.indexOf("{",p);
+ const end=findMatchingBrace(s,start);
+ if(end<0) throw new Error("envVarConfig 对象括号不完整");
+ const objStart=start,objEnd=end+1;
+ const body=s.slice(start+1,end);
+ const out=[];
+ let i=0;
+ while(i<body.length){
+   while(i<body.length && /\\s|,/.test(body[i]))i++;
+   const km=body.slice(i).match(/^([A-Za-z_$][\\w$]*)\\s*:/);
+   if(!km){i++;continue}
+   const key=km[1], keyPos=i;
+   i+=km[0].length;
+   while(/\\s/.test(body[i]||""))i++;
+   if(body[i]!=="{"){continue}
+   const close=findMatchingBrace(body,i);
+   if(close<0)break;
+   const raw=body.slice(i,close+1);
+   const cm=raw.match(/category\\s*:\\s*["']([^"']+)["']/);
+   const tm=raw.match(/type\\s*:\\s*["']([^"']+)["']/);
+   const dm=raw.match(/description\\s*:\\s*(["'`][\\s\\S]*?["'`])(?:,|})/);
+   let desc="";
+   if(dm) desc=decodeJSString(dm[1]);
+   out.push({key,category:cm?cm[1]:"other",type:tm?tm[1]:"text",description:desc,raw,startAbs:p+marker.length+keyPos});
+   i=close+1;
+ }
+ return {items:out,start:objStart,end:objEnd};
+}
+function extract4KStrings(s){
+ const seen=new Map(), re=/(["'`])((?:\\\\.|(?!\\1)[\\s\\S])*?)\\1/g;
+ let m;
+ while((m=re.exec(s))){
+   let val;
+   try{val=decodeJSString(m[0])}catch{continue}
+   if(typeof val==="string" && /\\|4K\\b/i.test(val)){
+     if(!seen.has(val))seen.set(val,{value:val,count:1});
+     else seen.get(val).count++;
+   }
+ }
+ return [...seen.values()].sort((a,b)=>a.value.localeCompare(b.value,"zh-CN"))
+}
 function renderCats(){
-  const counts={};items.forEach(x=>counts[x.category]=(counts[x.category]||0)+1);
-  $('count-all').textContent=items.length;
-  const serverCats=[...new Set(items.map(x=>x.category))];
-  const cats=[...new Set([...serverCats,...localCats])];
-  $('cats').innerHTML=cats.map(c=>`<button class="cat" id="cat-${esc(c)}" onclick="selectCat('${js(c)}')"><span>${esc(catName(c))}</span><span class="count">${counts[c]||0}</span></button>`).join('');
+ const counts={};
+ envInfo.forEach(x=>counts[x.category]=(counts[x.category]||0)+1);
+ const order=["overview","api","source","4K","match","danmu","cache","system","other"];
+ $("cats").innerHTML=order.map(c=>{
+   let n=c==="overview"?envInfo.length:c==="4K"?sourceEntries.length:(counts[c]||0);
+   let label={overview:"全部配置",api:"🔗 API 配置",source:"📜 源配置",4K:"💎 4K 源",match:"🔍 匹配配置",danmu:"🔢 弹幕配置",cache:"💾 缓存配置",system:"⚙️ 系统配置",other:"其它"}[c];
+   return '<button class="cat '+(activeCat===c?"active":"")+'" data-cat="'+esc(c)+'">'+label+' <small>'+n+'</small></button>'
+ }).join("");
+ document.querySelectorAll(".cat").forEach(b=>b.addEventListener("click",()=>{activeCat=b.dataset.cat;renderAll()}));
 }
-function catName(c){
- const map={api:'🔗 API 配置',source:'📜 源配置',match:'🔍 匹配配置',danmu:'🔢 弹幕配置',cache:'💾 缓存配置',system:'⚙️ 系统配置'};
- return map[c]||c;
+function renderAll(){
+ renderCats();
+ const q=$("search").value.trim().toLowerCase();
+ if(activeCat==="4K"){ $("panelTitle").textContent="4K / 源字符串"; renderSources(q); return }
+ $("sourceBox").classList.remove("show");
+ $("panelTitle").textContent=activeCat==="overview"?"配置中心":activeCat+" 配置";
+ let list=envInfo.filter(x=>activeCat==="overview"||x.category===activeCat);
+ if(q)list=list.filter(x=>(x.key+" "+x.category+" "+x.description+" "+x.raw).toLowerCase().includes(q));
+ $("items").innerHTML=list.map((x,idx)=>renderItem(x,idx)).join("") || '<div class="notice">没有匹配项</div>';
+ list.forEach((x,idx)=>{
+   const root=document.querySelectorAll(".item")[idx];
+   root.querySelector(".editBtn").addEventListener("click",()=>toggleItem(root));
+   root.querySelector(".saveBtn").addEventListener("click",()=>saveItem(x,root));
+   root.querySelector(".delBtn").addEventListener("click",()=>deleteItem(x));
+ });
 }
-function render(){
- const q=$('search').value.trim().toLowerCase();
- const arr=items.filter(x=>(activeCat==='all'||x.category===activeCat)&&(!q||[x.key,x.value,x.description,x.category].join(' ').toLowerCase().includes(q)));
- $('list').innerHTML=arr.length?arr.map(x=>{
-   const i=items.indexOf(x);
-   return `<div class="item"><div class="item-head"><div><span class="key">${esc(x.key)}</span><span class="badge">${esc(x.type)}</span><span class="badge">${esc(catName(x.category))}</span><div class="desc">${esc(x.description)}</div></div><div class="actions" style="margin:0"><button onclick="editItem(${i})">编辑</button></div></div><div class="value">${esc(String(x.value))}</div></div>`;
- }).join(''):'<div class="status">没有匹配的配置。</div>';
+function renderItem(x){
+ const value=guessCurrentValue(x);
+ return `<div class="item" data-key="${esc(x.key)}">
+ <div class="itemHead"><span class="key">${esc(x.key)}</span><span class="badge">${esc(x.category)}</span><span class="badge">${esc(x.type)}</span><span class="grow desc">${esc(x.description)}</span><button class="editBtn">编辑</button></div>
+ <div class="itemBody">
+   <div class="grid">
+    <div class="field"><label>KEY</label><input class="fkey" value="${esc(x.key)}" disabled></div>
+    <div class="field"><label>category</label><select class="fcat">${["api","source","match","danmu","cache","system","other"].map(c=>`<option ${c===x.category?"selected":""}>${c}</option>`).join("")}</select></div>
+    <div class="field"><label>type</label><select class="ftype">${["text","number","boolean","select","multi-select","json"].map(c=>`<option ${c===x.type?"selected":""}>${c}</option>`).join("")}</select></div>
+    <div class="field"><label>description</label><input class="fdesc" value="${esc(x.description)}"></div>
+   </div>
+   <div class="field" style="margin-top:10px"><label>源码对象（可直接修改 metadata / options / min / max 等）</label><textarea class="fraw">${esc(x.raw)}</textarea></div>
+   <div class="row" style="margin-top:8px"><button class="saveBtn ok">保存此项到源码</button><button class="delBtn danger">删除此配置</button></div>
+ </div></div>`
 }
-function editItem(i){
- editing=i; const x=items[i]; $('mtitle').textContent='编辑配置项'; fill(x); $('delBtn').classList.remove('hidden'); $('modal').classList.add('show');
+function toggleItem(root){root.classList.toggle("open")}
+function locateEntry(x){
+ const needle=x.raw;
+ const pos=workingText.indexOf(needle);
+ return pos;
 }
-function addItem(){
- editing=null; $('mtitle').textContent='新增配置项'; fill({key:'',value:'',category:activeCat==='all'?'system':activeCat,type:'text',description:'',options:[],min:'',max:''});
- $('delBtn').classList.add('hidden');$('modal').classList.add('show');
+function saveItem(x,root){
+ const raw=root.querySelector(".fraw").value.trim();
+ if(!raw||raw[0]!=="{"||raw[raw.length-1]!=="}"){alert("源码对象必须是 { ... }");return}
+ const pos=locateEntry(x);
+ if(pos<0){alert("找不到该配置在当前源码中的位置，可能已被其它修改影响。建议重新载入原始 index.js。");return}
+ const key=x.key;
+ const cat=root.querySelector(".fcat").value;
+ const type=root.querySelector(".ftype").value;
+ if(!new RegExp("^"+key.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\\\$&")+"\\\\s*:").test(raw)){
+   if(!confirm("你修改后的源码对象看起来没有以当前 KEY 开头，仍然写入吗？"))return
+ }
+ workingText=workingText.slice(0,pos)+raw+workingText.slice(pos+needle.length);
+ const cm=raw.match(/category\\s*:\\s*["']([^"']+)["']/); x.category=cm?cm[1]:cat;
+ const tm=raw.match(/type\\s*:\\s*["']([^"']+)["']/); x.type=tm?tm[1]:type;
+ const dm=raw.match(/description\\s*:\\s*(["'`][\\s\\S]*?["'`])(?:,|})/); x.description=dm?decodeJSString(dm[1]):x.description;
+ x.raw=raw; changes.push("config:"+key); updateStats(); renderAll(); setStatus("已写入 "+key+"，但尚未导出文件。",true)
 }
-function fill(x){
- $('fkey').value=x.key||'';$('fcat').value=x.category||'system';$('ftype').value=x.type||'text';$('fdesc').value=x.description||'';
- $('fvalue').value=String(x.value??'');$('foptions').value=(x.options||[]).join(',');$('fmin').value=x.min??'';$('fmax').value=x.max??'';
- renderEditorOptions();
- $('modalNotice').textContent=x.type==='multi-select'?'多选值使用逗号分隔；SOURCE_ORDER / PLATFORM_ORDER 等排序项可直接填写。':x.type==='map'?'映射表按每行 left->right 保存。':'';
+function deleteItem(x){
+ if(!confirm("确定从 envVarConfig 源码对象中删除 "+x.key+"？"))return;
+ const re=new RegExp("(^|,)"+x.key.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\\\$&")+"\\\\s*:\\s*\\\\{");
+ const m=re.exec(workingText);
+ if(!m){alert("找不到配置项");return}
+ const brace=workingText.indexOf("{",m.index+m[0].length-1), end=findMatchingBrace(workingText,brace);
+ if(end<0){alert("对象括号异常");return}
+ let a=m.index, b=end+1;
+ if(workingText[b]===",")b++;
+ else if(a>0 && workingText[a-1]===",")a--;
+ workingText=workingText.slice(0,a)+workingText.slice(b);
+ envInfo=envInfo.filter(v=>v!==x); changes.push("delete:"+x.key); updateStats(); renderAll()
 }
-function renderEditorOptions(){
- const t=$('ftype').value;
- $('optWrap').classList.toggle('hidden',!(t==='select'||t==='multi-select'));
+function addConfig(){
+ const key=prompt("新 KEY（例如 MY_4K_SOURCE）"); if(!key)return;
+ if(!/^[A-Za-z_$][\\w$]*$/.test(key)){alert("KEY 必须是合法 JavaScript 标识符");return}
+ if(envInfo.some(x=>x.key===key)){alert("KEY 已存在");return}
+ const cat=prompt("category","source")||"source";
+ const type=prompt("type","text")||"text";
+ const desc=prompt("description","自定义配置")||"自定义配置";
+ const raw=`${key}:{category:${JSON.stringify(cat)},type:${JSON.stringify(type)},description:${JSON.stringify(desc)}}`;
+ const p=workingText.indexOf("let n={TOKEN:");
+ if(p<0){alert("找不到配置对象");return}
+ const st=workingText.indexOf("{",p), en=findMatchingBrace(workingText,st);
+ workingText=workingText.slice(0,en)+","+raw+workingText.slice(en);
+ envInfo.push({key,category:cat,type,description:desc,raw,startAbs:en});
+ changes.push("add:"+key); updateStats(); renderAll(); setStatus("已新增 "+key+"，尚未导出。",true)
 }
-function closeModal(){$('modal').classList.remove('show')}
-async function saveItem(){
- const key=$('fkey').value.trim(), value=$('fvalue').value;
- if(!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)){alert('KEY 必须符合环境变量命名规则，例如 SOURCE_ORDER');return}
- const cat=$('fcat').value.trim()||'system', type=$('ftype').value;
- const data={key,value,category:cat,type,description:$('fdesc').value.trim(),options:$('foptions').value.split(',').map(x=>x.trim()).filter(Boolean)};
- try{
-   setStatus('正在保存 '+key+' ...');
-   let r=await fetch(apiUrl('/api/env/set',true),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key,value})});
-   let j=await r.json();
-   if(!j.success){r=await fetch(apiUrl('/api/env/add',true),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key,value})});j=await r.json()}
-   if(!j.success)throw Error(j.message||j.errorMessage||'保存失败');
-   if(editing===null)items.push(data);else items[editing]={...items[editing],...data};
-   if(!localCats.includes(cat) && !['api','source','match','danmu','cache','system'].includes(cat)){localCats.push(cat);localStorage.setItem('catEditorLocalCats',JSON.stringify(localCats))}
-   renderCats();render();closeModal();setStatus('保存成功：'+key);
- }catch(e){setStatus('保存失败：'+e.message,true)}
+function renderSources(q=""){
+ $("sourceBox").classList.add("show");
+ let list=sourceEntries.filter(x=>!q||x.value.toLowerCase().includes(q));
+ $("sources").innerHTML=list.map((x,i)=>`<div class="item open"><div class="itemHead"><span class="key">${esc(x.value)}</span><span class="badge">出现 ${x.count} 次</span><span class="grow"></span><button class="danger sdel">删除/替换</button></div><div class="itemBody" style="display:block"><div class="field"><label>替换为（留空=删除所有完全相同的该字符串）</label><input class="snew" value="${esc(x.value)}"></div><div class="row" style="margin-top:8px"><button class="ok ssave">写入替换</button></div></div></div>`).join("")||'<div class="notice">没有发现包含 |4K 的字符串</div>';
+ document.querySelectorAll(".ssave").forEach((b,i)=>b.addEventListener("click",()=>{
+   const x=list[i], nv=b.closest(".item").querySelector(".snew").value;
+   if(!confirm(`把源码中所有完全相同的字符串\\n${x.value}\\n替换为\\n${nv}`))return;
+   const lit=JSON.stringify(x.value), replacement=nv===""?"":JSON.stringify(nv);
+   const re=new RegExp(lit.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\\\$&"),"g");
+   workingText=workingText.replace(re,replacement);
+   changes.push("4K:"+x.value+"=>"+nv);
+   sourceEntries=extract4KStrings(workingText); updateStats(); renderSources(q); setStatus("4K 字符串已写入源码，尚未导出。",true)
+ }))
 }
-async function deleteCurrent(){
- if(editing===null)return;
- const x=items[editing];if(!confirm('确定删除 '+x.key+'？'))return;
- try{
-   const r=await fetch(apiUrl('/api/env/del',true),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:x.key})});
-   const j=await r.json();if(!j.success)throw Error(j.message||j.errorMessage||'删除失败');
-   items.splice(editing,1);renderCats();render();closeModal();setStatus('已删除：'+x.key);
- }catch(e){setStatus('删除失败：'+e.message,true)}
+function add4K(){
+ const nv=prompt("输入要新增的 4K 字符串，例如：某某|4K"); if(!nv)return;
+ const sourceNeedle=prompt("插入到哪个已有字符串附近？（留空则追加到源码末尾）")||"";
+ const lit=JSON.stringify(nv);
+ if(workingText.includes(lit)){alert("该字符串已经存在");return}
+ if(sourceNeedle){
+   const p=workingText.indexOf(JSON.stringify(sourceNeedle));
+   if(p<0){alert("找不到目标字符串");return}
+   workingText=workingText.slice(0,p)+lit+","+workingText.slice(p+lit.length);
+ }else{
+   workingText+="\\n// MAOYUAN_V3_ADDED_4K: "+lit+"\\n";
+ }
+ changes.push("add4K:"+nv); sourceEntries=extract4KStrings(workingText); updateStats(); renderSources(); setStatus("已添加 4K 字符串。注意：留空目标时会作为源码字符串注释追加，不会自动改变程序的源数组。",true)
 }
-function addCategory(){
- const n=prompt('输入本地分类名称，例如：4K、电视剧、我的配置');
- if(!n)return;const c=n.trim();if(!c)return;
- if(!localCats.includes(c))localCats.push(c);localStorage.setItem('catEditorLocalCats',JSON.stringify(localCats));renderCats();selectCat(c);
+function guessCurrentValue(x){
+ return "";
 }
-function exportJson(){
- const out={format:'cat-config-editor',version:1,exportedAt:new Date().toISOString(),values:{}};
- items.forEach(x=>out.values[x.key]=x.value);
- const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});downloadBlob(blob,'cat-config-export.json');
+async function loadFile(file){
+ originalText=await file.text(); workingText=originalText; fileName=file.name||"index.js";
+ const parsed=parseEnvObject(workingText); envInfo=parsed.items;
+ sourceEntries=extract4KStrings(workingText); changes=[]; lastOutput=null;
+ $("exportBtn").disabled=false;$("downloadZipBtn").disabled=true;$("addBtn").disabled=false;$("scan4kBtn").disabled=false;$("add4kBtn").disabled=false;
+ activeCat="overview"; updateStats();renderAll();
+ setStatus(`已载入 ${fileName} · ${(originalText.length/1024/1024).toFixed(2)} MB · 配置 ${envInfo.length} 项`,true)
 }
-function importJson(){ $('importFile').click() }
-$('importFile').addEventListener('change',async e=>{
- const f=e.target.files[0];if(!f)return;
- try{
-  const d=JSON.parse(await f.text()), vals=d.values||d.variables||d.env||d;
-  let ok=0;
-  for(const [key,value] of Object.entries(vals)){
-   if(!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)||value===null||typeof value==='object')continue;
-   let r=await fetch(apiUrl('/api/env/set',true),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key,value:String(value)})});
-   let j=await r.json(); if(!j.success){r=await fetch(apiUrl('/api/env/add',true),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key,value:String(value)})});j=await r.json()}
-   if(j.success)ok++;
-  }
-  setStatus('导入完成：成功 '+ok+' 项。');await loadConfig();
- }catch(err){setStatus('导入失败：'+err.message,true)}
- e.target.value='';
-});
-$('sourceFile').addEventListener('change',async e=>{
- const f=e.target.files[0];if(!f)return;
- // 这里仅做源码识别提示；真实分类/类型优先以 /api/config 返回的 envVarConfig 为准。
- const s=await f.text();
- const hits=(s.match(/envVarConfig/g)||[]).length;
- setStatus('已读取 index.js：发现 envVarConfig '+hits+' 处。点击“读取配置中心”即可按服务端实际配置加载。');
-});
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function js(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
-function downloadBlob(b,n){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+async function md5(text){
+ const buf=new TextEncoder().encode(text);
+ const hash=await crypto.subtle.digest("SHA-256",buf); // browser WebCrypto lacks MD5
+ return md5Pure(new Uint8Array(buf));
+}
+function md5Pure(bytes){
+ let a=0x67452301,b=0xefcdab89,c=0x98badcfe,d=0x10325476;
+ const K=[],S=[];
+ for(let i=0;i<64;i++)K[i]=Math.floor(Math.abs(Math.sin(i+1))*4294967296)>>>0;
+ const ss=[[7,12,17,22],[5,9,14,20],[4,11,16,23],[6,10,15,21]];
+ for(let j=0;j<4;j++)for(let i=0;i<4;i++)S[j*4+i]=ss[j][i];
+ const len=bytes.length, bitLo=(len*8)>>>0, bitHi=Math.floor(len/0x20000000)>>>0;
+ const pad=((56-(len+1)%64)+64)%64, x=new Uint8Array(len+1+pad+8); x.set(bytes); x[len]=0x80;
+ const dv=new DataView(x.buffer);dv.setUint32(x.length-8,bitLo,true);dv.setUint32(x.length-4,bitHi,true);
+ const rol=(v,n)=>(v<<n)|(v>>>(32-n));
+ for(let off=0;off<x.length;off+=64){
+   const M=new Uint32Array(16);for(let i=0;i<16;i++)M[i]=dv.getUint32(off+i*4,true);
+   let A=a,B=b,C=c,D=d;
+   for(let i=0;i<64;i++){
+     let F,g;
+     if(i<16){F=(B&C)|((~B)&D);g=i}
+     else if(i<32){F=(D&B)|((~D)&C);g=(5*i+1)%16}
+     else if(i<48){F=B^C^D;g=(3*i+5)%16}
+     else{F=C^(B|(~D));g=(7*i)%16}
+     const t=(A+F+K[i]+M[g])>>>0, r=rol(t,S[Math.floor(i/16)*4+(i%4)]);A=D;D=C;C=B;B=(B+r)>>>0
+   }
+   a=(a+A)>>>0;b=(b+B)>>>0;c=(c+C)>>>0;d=(d+D)>>>0;
+ }
+ const out=new Uint8Array(16), w=new DataView(out.buffer);w.setUint32(0,a,true);w.setUint32(4,b,true);w.setUint32(8,c,true);w.setUint32(12,d,true);
+ return [...out].map(v=>v.toString(16).padStart(2,"0")).join("");
+}
+function download(name,blob){
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)
+}
+async function exportFiles(){
+ if(!workingText){alert("请先载入 index.js");return}
+ const hash=await md5(workingText);
+ lastOutput={js:workingText,md5:hash};
+ $("md5Preview").textContent=hash+"  index.js\\n\\n文件长度："+new TextEncoder().encode(workingText).length+" bytes";
+ download("index.js",new Blob([workingText],{type:"application/javascript;charset=utf-8"}));
+ download("index.js.md5",new Blob([hash+"  index.js\\n"],{type:"text/plain;charset=utf-8"}));
+ $("downloadZipBtn").disabled=false;
+ setStatus("导出完成：index.js 与 index.js.md5 已按最终内容对应生成。",true)
+}
+async function makeZip(){
+ if(!lastOutput){await exportFiles();if(!lastOutput)return}
+ const zip=await createZip([
+  ["index.js",new TextEncoder().encode(lastOutput.js)],
+  ["index.js.md5",new TextEncoder().encode(lastOutput.md5+"  index.js\\n")]
+ ]);
+ download("猫源_index.js_V3_修改结果.zip",new Blob([zip],{type:"application/zip"}))
+}
+function u32(n){return new Uint8Array([n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255])}
+function crc32(data){let t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xedb88320^(c>>>1):c>>>1;t[n]=c>>>0}let c=0xffffffff;for(const b of data)c=t[(c^b)&255]^(c>>>8);return (c^0xffffffff)>>>0}
+function createZip(files){
+ let chunks=[],offset=0,central=[];
+ const enc=new TextEncoder();
+ for(const [name,data] of files){
+  const nb=enc.encode(name), crc=crc32(data), local=new Uint8Array(30+nb.length);
+  const dv=new DataView(local.buffer);dv.setUint32(0,0x04034b50,true);dv.setUint16(4,20,true);dv.setUint16(6,0,true);dv.setUint16(8,0,true);dv.setUint16(10,0,true);dv.setUint16(12,0,true);dv.setUint32(14,crc,true);dv.setUint32(18,data.length,true);dv.setUint32(22,data.length,true);dv.setUint16(26,nb.length,true);dv.setUint16(28,0,true);local.set(nb,30);chunks.push(local,data);central.push({name:nb,crc,size:data.length,offset});offset+=local.length+data.length;
+ }
+ const cd=[];let cdSize=0;for(const f of central){const x=new Uint8Array(46+f.name.length),dv=new DataView(x.buffer);dv.setUint32(0,0x02014b50,true);dv.setUint16(4,20,true);dv.setUint16(6,20,true);dv.setUint16(8,0,true);dv.setUint16(10,0,true);dv.setUint16(12,0,true);dv.setUint16(14,0,true);dv.setUint32(16,f.crc,true);dv.setUint32(20,f.size,true);dv.setUint32(24,f.size,true);dv.setUint16(28,f.name.length,true);dv.setUint16(30,0,true);dv.setUint16(32,0,true);dv.setUint16(34,0,true);dv.setUint16(36,0,true);dv.setUint32(38,0,true);dv.setUint32(42,f.offset,true);x.set(f.name,46);cd.push(x);cdSize+=x.length}
+ const end=new Uint8Array(22),dv=new DataView(end.buffer);dv.setUint32(0,0x06054b50,true);dv.setUint16(8,files.length,true);dv.setUint16(10,files.length,true);dv.setUint32(12,cdSize,true);dv.setUint32(16,offset,true);
+ return new Blob([...chunks,...cd,end]).arrayBuffer()
+}
+$("file").addEventListener("change",e=>{if(e.target.files[0])loadFile(e.target.files[0]).catch(err=>{setStatus("载入失败："+err.message);console.error(err)})});
+$("loadBtn").addEventListener("click",()=>$("file").click());
+$("addBtn").addEventListener("click",addConfig);
+$("scan4kBtn").addEventListener("click",()=>{sourceEntries=extract4KStrings(workingText);updateStats();activeCat="4K";renderAll();setStatus("已重新扫描源码中的 |4K 字符串。",true)});
+$("add4kBtn").addEventListener("click",add4K);
+$("exportBtn").addEventListener("click",()=>exportFiles().catch(e=>alert("导出失败："+e.message)));
+$("downloadZipBtn").addEventListener("click",()=>makeZip().catch(e=>alert("ZIP 失败："+e.message)));
+$("search").addEventListener("input",renderAll);
 </script>
 </body>
 </html>

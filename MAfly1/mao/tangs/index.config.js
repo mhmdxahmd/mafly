@@ -33,17 +33,7 @@ var index_config_default = {
   uc: {
     cookie: "cookie",
     token: "token",
-    refreshtoken: "refreshtoken",
     ut: "ut"
-  },
-  baidu: {
-    cookie: "cookie"
-  },
-  wuming: {
-    cookie: ""
-  },
-  douban: {
-    extend: ""
   },
   y115: {
     cookie: ""
@@ -54,74 +44,109 @@ var index_config_default = {
   wogg: {
     url: ""
   },
-  zhizhen: {
-    url: ""
-  },
-  duoduo: {
-    url: ""
-  },
-  huban: {
-    url: ""
-  },
-  erxiao: {
-    url: ""
-  },
-  guanying: {
-    url: ""
-  },
-  qwmkv: {
-    url: ""
-  },
-  qiwei: {
-    url: ""
-  },
-  jutou: {
-    url: ""
-  },
-  pan123ziyuan: {
-    cookie: ""
-  },
-  guangyazhenying: {
-    cookie: ""
-  },
-  panlian: {
-    account: "",
-    password: ""
-  },
   leijing: {
     url: ""
   },
   tgsou: {
-    pic: false,
+    tgPic: false,
     count: 0,
     url: "",
     channelUsername: ""
   },
   tgchannel: {},
-  bili: {
-    categories: "",
-    cookie: ""
-  },
   sites: {
     list: []
   },
   pans: {
     list: []
   },
+   danmu: {
+    urls: [
+           { address: "https://logo.saodu.work:8888/87654321", name: "默认1" },
+           { address: "https://fjj0417.dpdns.org/87654321", name: "默认2" }, 
+           { address: "http://127.0.0.1:9321/87654321", name: "默认3" }, 
+           { address: "http://47.107.188.112:6008/87654321", name: "默认4" }, 
+           { address: "http://ecs.dysobo.cn:9321/87654321", name: "默认5" },
+           { address: "https://dm.626258.xyz/87654321", name: "默认6" }
+          ],
+    autoPush: true
+  },
+ t4: {list: [
+    {name: "✈️TG频道@flymaf",
+      address: "http://bob2.hkt.net.cn/miraplay/dbo.php"},
+      {name: "📡Maflya直播",
+      address: "https://seep.eu.org/https://t4.maflya.com"},
+      {name: "🍟五大联赛/篮球(专用)-[实时抓取]]",
+      address: "https://seep.eu.org/https://jsnzkpg.de5.net/t4.json"},
+      {name: "🍟webdev-Marpla",
+      address: "https://seep.eu.org/https://webdav.maflya.com"},
+      {name: "🍟直播采集-Marplay",
+      address: "https://seep.eu.org/https://t4cj.maflya.com"}, 
+         {name: "🍟emby-Marplay",
+      address: "https://seep.eu.org/https://emby.maflya.com"},  
+    {name: "👖金牌影视",
+      address: "https://banyeomni.780420.xyz:17777/api/tvbox/source/2070335666620731392?token=banye666"},
+    {name: "👖瓜子影视",
+      address: "https://banyeomni.780420.xyz:17777/api/tvbox/source/2070335665161113600?token=banye666"},
+    {name: "👖热播影视",
+      address: "https://banyeomni.780420.xyz:17777/api/tvbox/source/2070335664787820544?token=banye666"},
+    {name: "👖歪比影视",
+      address: "https://banyeomni.780420.xyz:17777/api/tvbox/source/2070335664104148992?token=banye666"},
+    {name: "👖毒舌影视",
+      address: "https://banyeomni.780420.xyz:17777/api/tvbox/source/2070335664116731904?token=banye666"},
+    {name: "👖星辰影视",
+      address: "https://banyeomni.780420.xyz:17777/api/tvbox/source/2070335663328202752?token=banye666"},
+    {name: "👖爬虫影视",
+      address: "https://dy.7772888.xyz/api.php/tvbox"},
+    {name: "👖央视影视",
+      address: "https://catbox.n13.club/18/央视影视.php"}
+]},
+  cms: {list: [
+{name: "👖如意采集",
+address: "https://cj.rycjapi.com/api.php/provide/vod"},
+{name: "👖iQiYi采集",
+address: "https://iqiyizyapi.com/api.php/provide/vod"},
+]},
   alist: [
     {
-      name: "🐉神族九帝",
-      server: "https://alist.shenzjd.com"
+      name: "LM379 资源库",
+      server: "https://pan.lm379.cn/dav/Video",
+      username: "public_dav",
+      password: "cGFXCWMEbQ2t2BPi7zwWPqeAldc0iA"
     },
     {
-      name: "💢repl",
-      server: "https://ali.liucn.repl.co"
+      name: "追番网 WebDAV",
+      server: "https://zhuifan.link/dav",
+      username: "zhuifan",
+      password: "zhuifan"
+    },
+    {
+      name: "QSesvick 资源库",
+      server: "https://alist.qsesvick.top/dav",
+      username: "davguest",
+      password: "davguest"
+    },
+    {
+      name: "CLUN 云盘",
+      server: "https://pan.clun.top/dav",
+      username: "guest",
+      password: "guest"
+    },
+    {
+      name: "Chirmyram 资源库",
+      server: "https://al.chirmyram.com/dav/",
+      username: "alist",
+      password: "kCJQSyuVJDmwgI0BM60Mtum8VGnI"
+    },
+    {
+      name: "Marplay-webdev",
+      server: "https://webdav.maflya.com/"
     }
   ],
   color: [
     {
       light: {
-        bg: "https://fs-im-kefu.7moor-fs1.com/ly/4d2c3f00-7d4c-11e5-af15-41bf63ae4ea0/cefd4d3f5b8c5a66/photo_2025-08-01_11-09-06.jpg",
+        bg: "https://i2.100024.xyz/2024/01/13/pptcej.webp",
         bgMask: "0x50ffffff",
         primary: "0xff446732",
         onPrimary: "0xffffffff",
@@ -155,7 +180,7 @@ var index_config_default = {
         surfaceTint: "0xff446732"
       },
       dark: {
-        bg: "https://fs-im-kefu.7moor-fs1.com/ly/4d2c3f00-7d4c-11e5-af15-41bf63ae4ea0/3885167c85e1c977/photo_2025-08-01_11-09-06 (2).jpg",
+        bg: "https://i2.100024.xyz/2024/01/13/pptg3z.webp",
         bgMask: "0x50000000",
         primary: "0xffaad291",
         onPrimary: "0xff173807",
@@ -191,7 +216,7 @@ var index_config_default = {
     },
     {
       light: {
-        bg: "https://fs-im-kefu.7moor-fs1.com/ly/4d2c3f00-7d4c-11e5-af15-41bf63ae4ea0/cefd4d3f5b8c5a66/photo_2025-08-01_11-09-06.jpg",
+        bg: "https://i2.100024.xyz/2024/01/13/pi2rpw.webp",
         bgMask: "0x50ffffff",
         primary: "0xff666014",
         onPrimary: "0xffffffff",
@@ -225,7 +250,7 @@ var index_config_default = {
         surfaceTint: "0xff666014"
       },
       dark: {
-        bg: "https://fs-im-kefu.7moor-fs1.com/ly/4d2c3f00-7d4c-11e5-af15-41bf63ae4ea0/3885167c85e1c977/photo_2025-08-01_11-09-06 (2).jpg",
+        bg: "https://i2.100024.xyz/2024/01/13/pi2reo.webp",
         bgMask: "0x50000000",
         primary: "0xffd1c973",
         onPrimary: "0xff353100",
@@ -261,7 +286,7 @@ var index_config_default = {
     },
     {
       light: {
-        bg: "https://fs-im-kefu.7moor-fs1.com/ly/4d2c3f00-7d4c-11e5-af15-41bf63ae4ea0/66537cf7d0225c8e/photo_2025-08-01_16-02-38.jpg",
+        bg: "https://i2.100024.xyz/2024/01/13/qrnuwt.webp",
         bgMask: "0x50ffffff",
         primary: "0xFF2B6C00",
         onPrimary: "0xFFFFFFFF",
@@ -295,7 +320,7 @@ var index_config_default = {
         surfaceTint: "0xFF2B6C00"
       },
       dark: {
-        bg: "https://fs-im-kefu.7moor-fs1.com/ly/4d2c3f00-7d4c-11e5-af15-41bf63ae4ea0/d026f7c9a068661a/photo_2025-08-01_16-02-39.jpg",
+        bg: "https://i2.100024.xyz/2024/01/13/qrc37o.webp",
         bgMask: "0x50000000",
         primary: "0xFF8CDA60",
         onPrimary: "0xFF133800",

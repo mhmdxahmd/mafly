@@ -39,13 +39,21 @@ MAFly-youtube-iptv直播
 
 https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/youtube.m3u
 
+MAFly-youtube-iptv 免翻直播  
+
+https://x.maflya.com/api/proxy?target=https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/youtube.m3u  
+
 MAFly-youtube-免翻直播  
+
 https://x.maflya.com/
 
-MAFly-IOS-猫源md5订阅  
+MAFly-IOS-猫源md5订阅  V1
+
 https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/index.js.md5  
 
+MAFly-IOS-猫源md5订阅  V3
 
+https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/tangs/index.js.md5  
 
 node公益订阅节点  
 ======  
@@ -56,11 +64,12 @@ maflya-NODE
 二维码直接代理软件扫码订阅  
 QRCODE FOR Subscription  
 
-https://sub.maflya.com  
+https://sub.maflya.com   
 
-一键注册 自由航线  
+=======MAFly · 公益机场聚合集合=====  
 
-https://cfip.maflya.com  
+https://jc.maflya.com/  
+
 
 Telegram 最新 WEB 代理协议！  
 

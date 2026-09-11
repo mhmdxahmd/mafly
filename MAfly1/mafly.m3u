@@ -496,6 +496,8 @@ http://3niao.lielangys.top/play/1608285342287698006.m3u8
 http://3niao.lielangys.top/play/1685677773164578006.m3u8
 #EXTINF:-1 group-title="🔮港澳台直播" tvg-name="翡翠台" tvg-logo="https://epg.112114.xyz/logo/%E7%BF%A1%E7%BF%A0%E5%8F%B0.png" epg-url="https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz",翡翠台
 http://play.wenxiang.cn/live/e240363d284b6f41fcb7136eef507ef6.flv
+#EXTINF:-1 group-title="🔮港澳台直播" tvg-name="翡翠台4K(字幕)" tvg-logo="https://epg.112114.xyz/logo/%E7%BF%A1%E7%BF%A0%E5%8F%B04K(%E5%AD%97%E5%B9%95).png" epg-url="https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz",翡翠台4K(字幕)
+http://cdn6.163189.xyz/163189/fct4k
 #EXTINF:-1 group-title="🔮港澳台直播" tvg-name="TVBPlus" tvg-logo="https://epg.112114.xyz/logo/TVBPlus.png" epg-url="https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz",TVBPlus
 http://play.wenxiang.cn/live/5ec77f27f37babab48d60b879fde862a.flv
 #EXTINF:-1 group-title="🔮港澳台直播" tvg-name="HOY76" tvg-logo="https://epg.112114.xyz/logo/HOY76.png" epg-url="https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz",HOY76

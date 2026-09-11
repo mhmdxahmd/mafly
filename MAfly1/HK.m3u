@@ -1,6 +1,6 @@
 #EXTM3U x-tvg-url="https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz"
 #EXTINF:-1 group-title="港澳台直播[2]" tvg-name="翡翠台4K(字幕)" tvg-logo="https://epg.112114.xyz/logo/%E7%BF%A1%E7%BF%A0%E5%8F%B04K(%E5%AD%97%E5%B9%95).png" epg-url="https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz",翡翠台4K(字幕)
-https://cdn.qd.je/163189/fct4k
+http://cdn6.163189.xyz/163189/fct4k
 #EXTINF:-1 group-title="港澳台直播[2]" tvg-name="凤凰中文" tvg-logo="https://epg.112114.xyz/logo/%E5%87%A4%E5%87%B0%E4%B8%AD%E6%96%87.png" epg-url="https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz",凤凰中文
 https://cdn.qd.je/163189/fhzw
 #EXTINF:-1 group-title="港澳台直播[2]" tvg-name="CCTV1港澳版" tvg-logo="https://epg.112114.xyz/logo/CCTV1%E6%B8%AF%E6%BE%B3%E7%89%88.png" epg-url="https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz",CCTV1港澳版

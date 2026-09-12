@@ -1,0 +1,1349 @@
+mixed-port: 7890
+allow-lan: false
+mode: rule
+log-level: info
+ipv6: true
+unified-delay: true
+tcp-concurrent: true
+find-process-mode: 'off'
+external-controller: 127.0.0.1:9090
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  skip-domain:
+    - '+.push.apple.com'
+    - '+.apple.com'
+
+dns:
+  enable: true
+  listen: 0.0.0.0:1053
+  ipv6: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - '+.lan'
+    - '+.local'
+    - '*.msftconnecttest.com'
+    - '*.msftncsi.com'
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  nameserver:
+    - https://223.5.5.5/dns-query
+    - https://1.12.12.12/dns-query
+  proxy-server-nameserver:
+    - https://223.5.5.5/dns-query
+  nameserver-policy:
+    'geosite:cn,private':
+      - https://223.5.5.5/dns-query
+      - https://1.12.12.12/dns-query
+    'geosite:geolocation-!cn':
+      - https://1.1.1.1/dns-query
+      - https://8.8.8.8/dns-query
+
+proxies:
+  - name: WARP-198.1-443
+    type: masque
+    server: 162.159.198.1
+    port: 443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-198.1-500
+    type: masque
+    server: 162.159.198.1
+    port: 500
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-198.1-1701
+    type: masque
+    server: 162.159.198.1
+    port: 1701
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-198.1-4500
+    type: masque
+    server: 162.159.198.1
+    port: 4500
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-198.1-4443
+    type: masque
+    server: 162.159.198.1
+    port: 4443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-198.1-8443
+    type: masque
+    server: 162.159.198.1
+    port: 8443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-198.1-8095
+    type: masque
+    server: 162.159.198.1
+    port: 8095
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-198.2-443
+    type: masque
+    server: 162.159.198.2
+    port: 443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-198.2-500
+    type: masque
+    server: 162.159.198.2
+    port: 500
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-198.2-1701
+    type: masque
+    server: 162.159.198.2
+    port: 1701
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-198.2-4500
+    type: masque
+    server: 162.159.198.2
+    port: 4500
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-198.2-4443
+    type: masque
+    server: 162.159.198.2
+    port: 4443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-198.2-8443
+    type: masque
+    server: 162.159.198.2
+    port: 8443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-198.2-8095
+    type: masque
+    server: 162.159.198.2
+    port: 8095
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-199.1-443
+    type: masque
+    server: 162.159.199.1
+    port: 443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-199.1-500
+    type: masque
+    server: 162.159.199.1
+    port: 500
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-199.1-1701
+    type: masque
+    server: 162.159.199.1
+    port: 1701
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-199.1-4500
+    type: masque
+    server: 162.159.199.1
+    port: 4500
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-199.1-4443
+    type: masque
+    server: 162.159.199.1
+    port: 4443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-199.1-8443
+    type: masque
+    server: 162.159.199.1
+    port: 8443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-199.1-8095
+    type: masque
+    server: 162.159.199.1
+    port: 8095
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-199.2-443
+    type: masque
+    server: 162.159.199.2
+    port: 443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-199.2-500
+    type: masque
+    server: 162.159.199.2
+    port: 500
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-199.2-1701
+    type: masque
+    server: 162.159.199.2
+    port: 1701
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-199.2-4500
+    type: masque
+    server: 162.159.199.2
+    port: 4500
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-199.2-4443
+    type: masque
+    server: 162.159.199.2
+    port: 4443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-199.2-8443
+    type: masque
+    server: 162.159.199.2
+    port: 8443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-199.2-8095
+    type: masque
+    server: 162.159.199.2
+    port: 8095
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-103-1-443
+    type: masque
+    server: "2606:4700:103::1"
+    port: 443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-103-1-500
+    type: masque
+    server: "2606:4700:103::1"
+    port: 500
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-103-1-1701
+    type: masque
+    server: "2606:4700:103::1"
+    port: 1701
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-103-1-4500
+    type: masque
+    server: "2606:4700:103::1"
+    port: 4500
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-103-1-4443
+    type: masque
+    server: "2606:4700:103::1"
+    port: 4443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-103-1-8443
+    type: masque
+    server: "2606:4700:103::1"
+    port: 8443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-103-1-8095
+    type: masque
+    server: "2606:4700:103::1"
+    port: 8095
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-103-2-443
+    type: masque
+    server: "2606:4700:103::2"
+    port: 443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-103-2-500
+    type: masque
+    server: "2606:4700:103::2"
+    port: 500
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-103-2-1701
+    type: masque
+    server: "2606:4700:103::2"
+    port: 1701
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-103-2-4500
+    type: masque
+    server: "2606:4700:103::2"
+    port: 4500
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-103-2-4443
+    type: masque
+    server: "2606:4700:103::2"
+    port: 4443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-103-2-8443
+    type: masque
+    server: "2606:4700:103::2"
+    port: 8443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-103-2-8095
+    type: masque
+    server: "2606:4700:103::2"
+    port: 8095
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-104-1-443
+    type: masque
+    server: "2606:4700:104::1"
+    port: 443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-104-1-500
+    type: masque
+    server: "2606:4700:104::1"
+    port: 500
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-104-1-1701
+    type: masque
+    server: "2606:4700:104::1"
+    port: 1701
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-104-1-4500
+    type: masque
+    server: "2606:4700:104::1"
+    port: 4500
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-104-1-4443
+    type: masque
+    server: "2606:4700:104::1"
+    port: 4443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-104-1-8443
+    type: masque
+    server: "2606:4700:104::1"
+    port: 8443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-104-1-8095
+    type: masque
+    server: "2606:4700:104::1"
+    port: 8095
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-104-2-443
+    type: masque
+    server: "2606:4700:104::2"
+    port: 443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-104-2-500
+    type: masque
+    server: "2606:4700:104::2"
+    port: 500
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-104-2-1701
+    type: masque
+    server: "2606:4700:104::2"
+    port: 1701
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-104-2-4500
+    type: masque
+    server: "2606:4700:104::2"
+    port: 4500
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-104-2-4443
+    type: masque
+    server: "2606:4700:104::2"
+    port: 4443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-104-2-8443
+    type: masque
+    server: "2606:4700:104::2"
+    port: 8443
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP6-104-2-8095
+    type: masque
+    server: "2606:4700:104::2"
+    port: 8095
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+  - name: WARP-官方域名
+    type: masque
+    server: 162.159.198.1
+    port: 443
+    sni: zt-masque.cloudflareclient.com
+    private-key: MHcCAQEEIGz+unRnYC3DVCn1shkKVgcONewV+SQebvfdfA8DOUfDoAoGCCqGSM49AwEHoUQDQgAEhqxSAQ1KCHc72VEPVQMbziXU1YTBa2AX+lnMaZ69f5C0jai6UPbPH7KF8qWDD/CWou57Ovo7SeCUGp7wEaUlpw==
+    public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==
+    ip: 172.16.0.2
+    ipv6: 2606:4700:110:8270:9b0d:d4f0:ad69:570f
+    mtu: 1280
+    udp: true
+    remote-dns-resolve: true
+    dns: [1.1.1.1, 2606:4700:4700::1111]
+
+proxy-groups:
+  - name: 🚀 节点选择
+    type: select
+    proxies:
+      - ♻️ 自动选择
+      - 🔄 故障转移
+      - ☑️ 手动切换
+      - DIRECT
+
+  - name: ☑️ 手动切换
+    type: select
+    proxies:
+      - WARP-198.1-443
+      - WARP-198.1-500
+      - WARP-198.1-1701
+      - WARP-198.1-4500
+      - WARP-198.1-4443
+      - WARP-198.1-8443
+      - WARP-198.1-8095
+      - WARP-198.2-443
+      - WARP-198.2-500
+      - WARP-198.2-1701
+      - WARP-198.2-4500
+      - WARP-198.2-4443
+      - WARP-198.2-8443
+      - WARP-198.2-8095
+      - WARP-199.1-443
+      - WARP-199.1-500
+      - WARP-199.1-1701
+      - WARP-199.1-4500
+      - WARP-199.1-4443
+      - WARP-199.1-8443
+      - WARP-199.1-8095
+      - WARP-199.2-443
+      - WARP-199.2-500
+      - WARP-199.2-1701
+      - WARP-199.2-4500
+      - WARP-199.2-4443
+      - WARP-199.2-8443
+      - WARP-199.2-8095
+      - WARP6-103-1-443
+      - WARP6-103-1-500
+      - WARP6-103-1-1701
+      - WARP6-103-1-4500
+      - WARP6-103-1-4443
+      - WARP6-103-1-8443
+      - WARP6-103-1-8095
+      - WARP6-103-2-443
+      - WARP6-103-2-500
+      - WARP6-103-2-1701
+      - WARP6-103-2-4500
+      - WARP6-103-2-4443
+      - WARP6-103-2-8443
+      - WARP6-103-2-8095
+      - WARP6-104-1-443
+      - WARP6-104-1-500
+      - WARP6-104-1-1701
+      - WARP6-104-1-4500
+      - WARP6-104-1-4443
+      - WARP6-104-1-8443
+      - WARP6-104-1-8095
+      - WARP6-104-2-443
+      - WARP6-104-2-500
+      - WARP6-104-2-1701
+      - WARP6-104-2-4500
+      - WARP6-104-2-4443
+      - WARP6-104-2-8443
+      - WARP6-104-2-8095
+      - WARP-官方域名
+
+  - name: ♻️ 自动选择
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    lazy: false
+    proxies:
+      - WARP-198.1-443
+      - WARP-198.1-500
+      - WARP-198.1-1701
+      - WARP-198.1-4500
+      - WARP-198.1-4443
+      - WARP-198.1-8443
+      - WARP-198.1-8095
+      - WARP-198.2-443
+      - WARP-198.2-500
+      - WARP-198.2-1701
+      - WARP-198.2-4500
+      - WARP-198.2-4443
+      - WARP-198.2-8443
+      - WARP-198.2-8095
+      - WARP-199.1-443
+      - WARP-199.1-500
+      - WARP-199.1-1701
+      - WARP-199.1-4500
+      - WARP-199.1-4443
+      - WARP-199.1-8443
+      - WARP-199.1-8095
+      - WARP-199.2-443
+      - WARP-199.2-500
+      - WARP-199.2-1701
+      - WARP-199.2-4500
+      - WARP-199.2-4443
+      - WARP-199.2-8443
+      - WARP-199.2-8095
+      - WARP6-103-1-443
+      - WARP6-103-1-500
+      - WARP6-103-1-1701
+      - WARP6-103-1-4500
+      - WARP6-103-1-4443
+      - WARP6-103-1-8443
+      - WARP6-103-1-8095
+      - WARP6-103-2-443
+      - WARP6-103-2-500
+      - WARP6-103-2-1701
+      - WARP6-103-2-4500
+      - WARP6-103-2-4443
+      - WARP6-103-2-8443
+      - WARP6-103-2-8095
+      - WARP6-104-1-443
+      - WARP6-104-1-500
+      - WARP6-104-1-1701
+      - WARP6-104-1-4500
+      - WARP6-104-1-4443
+      - WARP6-104-1-8443
+      - WARP6-104-1-8095
+      - WARP6-104-2-443
+      - WARP6-104-2-500
+      - WARP6-104-2-1701
+      - WARP6-104-2-4500
+      - WARP6-104-2-4443
+      - WARP6-104-2-8443
+      - WARP6-104-2-8095
+      - WARP-官方域名
+
+  - name: 🔄 故障转移
+    type: fallback
+    url: http://www.gstatic.com/generate_204
+    interval: 180
+    proxies:
+      - WARP-198.1-443
+      - WARP-198.1-500
+      - WARP-198.1-1701
+      - WARP-198.1-4500
+      - WARP-198.1-4443
+      - WARP-198.1-8443
+      - WARP-198.1-8095
+      - WARP-198.2-443
+      - WARP-198.2-500
+      - WARP-198.2-1701
+      - WARP-198.2-4500
+      - WARP-198.2-4443
+      - WARP-198.2-8443
+      - WARP-198.2-8095
+      - WARP-199.1-443
+      - WARP-199.1-500
+      - WARP-199.1-1701
+      - WARP-199.1-4500
+      - WARP-199.1-4443
+      - WARP-199.1-8443
+      - WARP-199.1-8095
+      - WARP-199.2-443
+      - WARP-199.2-500
+      - WARP-199.2-1701
+      - WARP-199.2-4500
+      - WARP-199.2-4443
+      - WARP-199.2-8443
+      - WARP-199.2-8095
+      - WARP6-103-1-443
+      - WARP6-103-1-500
+      - WARP6-103-1-1701
+      - WARP6-103-1-4500
+      - WARP6-103-1-4443
+      - WARP6-103-1-8443
+      - WARP6-103-1-8095
+      - WARP6-103-2-443
+      - WARP6-103-2-500
+      - WARP6-103-2-1701
+      - WARP6-103-2-4500
+      - WARP6-103-2-4443
+      - WARP6-103-2-8443
+      - WARP6-103-2-8095
+      - WARP6-104-1-443
+      - WARP6-104-1-500
+      - WARP6-104-1-1701
+      - WARP6-104-1-4500
+      - WARP6-104-1-4443
+      - WARP6-104-1-8443
+      - WARP6-104-1-8095
+      - WARP6-104-2-443
+      - WARP6-104-2-500
+      - WARP6-104-2-1701
+      - WARP6-104-2-4500
+      - WARP6-104-2-4443
+      - WARP6-104-2-8443
+      - WARP6-104-2-8095
+      - WARP-官方域名
+
+  - name: 📹 油管视频
+    type: select
+    proxies:
+      - 🚀 节点选择
+      - ♻️ 自动选择
+      - 🔄 故障转移
+      - ☑️ 手动切换
+      - DIRECT
+
+  - name: 🎥 奈飞视频
+    type: select
+    proxies:
+      - 🚀 节点选择
+      - ♻️ 自动选择
+      - 🔄 故障转移
+      - ☑️ 手动切换
+      - DIRECT
+
+  - name: 🌍 国外媒体
+    type: select
+    proxies:
+      - 🚀 节点选择
+      - ♻️ 自动选择
+      - 🔄 故障转移
+      - 🎯 全球直连
+
+  - name: 📲 电报信息
+    type: select
+    proxies:
+      - 🚀 节点选择
+      - ♻️ 自动选择
+      - 🎯 全球直连
+
+  - name: 🤖 AI服务
+    type: select
+    proxies:
+      - 🚀 节点选择
+      - ♻️ 自动选择
+      - 🔄 故障转移
+      - ☑️ 手动切换
+      - DIRECT
+
+  - name: Ⓜ️ 微软服务
+    type: select
+    proxies:
+      - 🎯 全球直连
+      - 🚀 节点选择
+      - ♻️ 自动选择
+
+  - name: 🍎 苹果服务
+    type: select
+    proxies:
+      - 🎯 全球直连
+      - 🚀 节点选择
+      - ♻️ 自动选择
+
+  - name: 📢 谷歌FCM
+    type: select
+    proxies:
+      - 🚀 节点选择
+      - 🎯 全球直连
+      - ♻️ 自动选择
+
+  - name: 🎯 全球直连
+    type: select
+    proxies:
+      - DIRECT
+      - 🚀 节点选择
+      - ♻️ 自动选择
+
+  - name: 🛑 全球拦截
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+
+  - name: 🍃 应用净化
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+
+  - name: 🐟 漏网之鱼
+    type: select
+    proxies:
+      - 🚀 节点选择
+      - 🎯 全球直连
+      - ♻️ 自动选择
+
+rule-providers:
+  rule00:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/cmliu/ACL4SSR/refs/heads/main/Clash/CFnat.list
+    path: ./ruleset/rule00.list
+  rule01:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/LocalAreaNetwork.list
+    path: ./ruleset/rule01.list
+  rule02:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/UnBan.list
+    path: ./ruleset/rule02.list
+  rule03:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanAD.list
+    path: ./ruleset/rule03.list
+  rule04:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanProgramAD.list
+    path: ./ruleset/rule04.list
+  rule05:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/adobe.list
+    path: ./ruleset/rule05.list
+  rule06:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/IDM.list
+    path: ./ruleset/rule06.list
+  rule07:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/GoogleFCM.list
+    path: ./ruleset/rule07.list
+  rule08:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/GoogleCN.list
+    path: ./ruleset/rule08.list
+  rule09:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/SteamCN.list
+    path: ./ruleset/rule09.list
+  rule10:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Microsoft.list
+    path: ./ruleset/rule10.list
+  rule11:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Apple.list
+    path: ./ruleset/rule11.list
+  rule12:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Telegram.list
+    path: ./ruleset/rule12.list
+  rule13:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/OpenAi.list
+    path: ./ruleset/rule13.list
+  rule14:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/juewuy/ShellClash/master/rules/ai.list
+    path: ./ruleset/rule14.list
+  rule15:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/Copilot.list
+    path: ./ruleset/rule15.list
+  rule16:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/GithubCopilot.list
+    path: ./ruleset/rule16.list
+  rule17:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/Claude.list
+    path: ./ruleset/rule17.list
+  rule18:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/Gemini.list
+    path: ./ruleset/rule18.list
+  rule19:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/YouTube.list
+    path: ./ruleset/rule19.list
+  rule20:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Netflix.list
+    path: ./ruleset/rule20.list
+  rule21:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list
+    path: ./ruleset/rule21.list
+  rule22:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/Emby.list
+    path: ./ruleset/rule22.list
+  rule23:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyLite.list
+    path: ./ruleset/rule23.list
+  rule24:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/CMBlog.list
+    path: ./ruleset/rule24.list
+  rule25:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaDomain.list
+    path: ./ruleset/rule25.list
+  rule26:
+    type: http
+    behavior: classical
+    format: text
+    interval: 86400
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaCompanyIp.list
+    path: ./ruleset/rule26.list
+
+rules:
+  - DOMAIN-SUFFIX,openai.fm,🤖 AI服务
+  - DOMAIN-SUFFIX,operator.chatgpt.com,🤖 AI服务
+  - DOMAIN-SUFFIX,chat.com,🤖 AI服务
+  - DOMAIN-SUFFIX,anthropic.com,🤖 AI服务
+  - DOMAIN-SUFFIX,claude.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,claudeusercontent.com,🤖 AI服务
+  - DOMAIN-SUFFIX,gemini.google.com,🤖 AI服务
+  - DOMAIN-SUFFIX,aistudio.google.com,🤖 AI服务
+  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,🤖 AI服务
+  - DOMAIN-SUFFIX,notebooklm.google.com,🤖 AI服务
+  - DOMAIN-SUFFIX,notebooklm.google,🤖 AI服务
+  - DOMAIN-SUFFIX,labs.google,🤖 AI服务
+  - DOMAIN-SUFFIX,deepmind.com,🤖 AI服务
+  - DOMAIN-SUFFIX,x.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,grok.com,🤖 AI服务
+  - DOMAIN-SUFFIX,meta.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,perplexity.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,pplx.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,perplexity.com,🤖 AI服务
+  - DOMAIN-SUFFIX,mistral.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,chat.mistral.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,cohere.com,🤖 AI服务
+  - DOMAIN-SUFFIX,cohere.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,ai21.com,🤖 AI服务
+  - DOMAIN-SUFFIX,together.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,together.xyz,🤖 AI服务
+  - DOMAIN-SUFFIX,fireworks.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,groq.com,🤖 AI服务
+  - DOMAIN-SUFFIX,huggingface.co,🤖 AI服务
+  - DOMAIN-SUFFIX,hf.co,🤖 AI服务
+  - DOMAIN-SUFFIX,huggingface.js.org,🤖 AI服务
+  - DOMAIN-SUFFIX,replicate.com,🤖 AI服务
+  - DOMAIN-SUFFIX,replicate.delivery,🤖 AI服务
+  - DOMAIN-SUFFIX,runpod.io,🤖 AI服务
+  - DOMAIN-SUFFIX,modal.com,🤖 AI服务
+  - DOMAIN-SUFFIX,openrouter.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,poe.com,🤖 AI服务
+  - DOMAIN-SUFFIX,quora.com,🤖 AI服务
+  - DOMAIN-SUFFIX,cursor.com,🤖 AI服务
+  - DOMAIN-SUFFIX,cursor.sh,🤖 AI服务
+  - DOMAIN-SUFFIX,codeium.com,🤖 AI服务
+  - DOMAIN-SUFFIX,windsurf.com,🤖 AI服务
+  - DOMAIN-SUFFIX,tabnine.com,🤖 AI服务
+  - DOMAIN-SUFFIX,sourcegraph.com,🤖 AI服务
+  - DOMAIN-SUFFIX,phind.com,🤖 AI服务
+  - DOMAIN-SUFFIX,v0.dev,🤖 AI服务
+  - DOMAIN-SUFFIX,v0.app,🤖 AI服务
+  - DOMAIN-SUFFIX,bolt.new,🤖 AI服务
+  - DOMAIN-SUFFIX,lovable.dev,🤖 AI服务
+  - DOMAIN-SUFFIX,devin.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,cognition.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,midjourney.com,🤖 AI服务
+  - DOMAIN-SUFFIX,stability.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,stablediffusionweb.com,🤖 AI服务
+  - DOMAIN-SUFFIX,leonardo.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,runwayml.com,🤖 AI服务
+  - DOMAIN-SUFFIX,pika.art,🤖 AI服务
+  - DOMAIN-SUFFIX,lumalabs.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,ideogram.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,recraft.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,krea.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,civitai.com,🤖 AI服务
+  - DOMAIN-SUFFIX,elevenlabs.io,🤖 AI服务
+  - DOMAIN-SUFFIX,eleven-labs.com,🤖 AI服务
+  - DOMAIN-SUFFIX,play.ht,🤖 AI服务
+  - DOMAIN-SUFFIX,suno.com,🤖 AI服务
+  - DOMAIN-SUFFIX,suno.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,udio.com,🤖 AI服务
+  - DOMAIN-SUFFIX,assemblyai.com,🤖 AI服务
+  - DOMAIN-SUFFIX,deepgram.com,🤖 AI服务
+  - DOMAIN-SUFFIX,you.com,🤖 AI服务
+  - DOMAIN-SUFFIX,kagi.com,🤖 AI服务
+  - DOMAIN-SUFFIX,exa.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,tavily.com,🤖 AI服务
+  - DOMAIN-SUFFIX,jasper.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,copy.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,writesonic.com,🤖 AI服务
+  - DOMAIN-SUFFIX,notion.so,🤖 AI服务
+  - DOMAIN-SUFFIX,langchain.com,🤖 AI服务
+  - DOMAIN-SUFFIX,langsmith.com,🤖 AI服务
+  - DOMAIN-SUFFIX,wandb.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,weightsandbiases.com,🤖 AI服务
+  - DOMAIN-SUFFIX,pinecone.io,🤖 AI服务
+  - DOMAIN-SUFFIX,weaviate.io,🤖 AI服务
+  - DOMAIN-SUFFIX,qdrant.tech,🤖 AI服务
+  - DOMAIN-SUFFIX,chromadb.com,🤖 AI服务
+  - DOMAIN-SUFFIX,deepseek.com,🤖 AI服务
+  - DOMAIN-SUFFIX,moonshot.cn,🤖 AI服务
+  - DOMAIN-SUFFIX,moonshotai.com,🤖 AI服务
+  - DOMAIN-SUFFIX,kimi.com,🤖 AI服务
+  - DOMAIN-SUFFIX,bigmodel.cn,🤖 AI服务
+  - DOMAIN-SUFFIX,zhipuai.cn,🤖 AI服务
+  - DOMAIN-SUFFIX,z.ai,🤖 AI服务
+  - DOMAIN-SUFFIX,minimaxi.com,🤖 AI服务
+  - DOMAIN-SUFFIX,minimax.io,🤖 AI服务
+  - DOMAIN-SUFFIX,hailuoai.com,🤖 AI服务
+  - DOMAIN-SUFFIX,siliconflow.cn,🤖 AI服务
+  - DOMAIN-SUFFIX,dashscope.aliyuncs.com,🤖 AI服务
+  - RULE-SET,rule00,🎯 全球直连
+  - RULE-SET,rule01,🎯 全球直连
+  - RULE-SET,rule02,🎯 全球直连
+  - RULE-SET,rule03,🛑 全球拦截
+  - RULE-SET,rule04,🍃 应用净化
+  - RULE-SET,rule05,🍃 应用净化
+  - RULE-SET,rule06,🍃 应用净化
+  - RULE-SET,rule07,📢 谷歌FCM
+  - RULE-SET,rule08,🎯 全球直连
+  - RULE-SET,rule09,🎯 全球直连
+  - RULE-SET,rule10,Ⓜ️ 微软服务
+  - RULE-SET,rule11,🍎 苹果服务
+  - RULE-SET,rule12,📲 电报信息
+  - RULE-SET,rule13,🤖 AI服务
+  - RULE-SET,rule14,🤖 AI服务
+  - RULE-SET,rule15,🤖 AI服务
+  - RULE-SET,rule16,🤖 AI服务
+  - RULE-SET,rule17,🤖 AI服务
+  - RULE-SET,rule18,🤖 AI服务
+  - RULE-SET,rule19,📹 油管视频
+  - RULE-SET,rule20,🎥 奈飞视频
+  - RULE-SET,rule21,🌍 国外媒体
+  - RULE-SET,rule22,🌍 国外媒体
+  - RULE-SET,rule23,🚀 节点选择
+  - RULE-SET,rule24,🚀 节点选择
+  - RULE-SET,rule25,🎯 全球直连
+  - RULE-SET,rule26,🎯 全球直连
+  - GEOIP,LAN,🎯 全球直连,no-resolve
+  - GEOIP,CN,🎯 全球直连
+  - MATCH,🐟 漏网之鱼

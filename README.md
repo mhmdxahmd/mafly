@@ -70,6 +70,21 @@ https://sub.maflya.com
 
 https://jc.maflya.com/  
 
+====优选ip===
+Cloudflare EDT 导航    
+https://bestcf.pages.dev/  
+
+利群- Cloudflare 优选IP API  
+https://github.com/LancelotRar/best-cf-ips  
+
+=======S5公益内置代理集合---  
+S5-TG内置代理公益  
+
+https://t.me/MyCool_Official_Bot?start=8628475611  
+
+汉堡-TG内置代理公益  
+
+https://t.me/hanbaocloudfree_bot?start=0A745B119F  
 
 Telegram 最新 WEB 代理协议！  
 

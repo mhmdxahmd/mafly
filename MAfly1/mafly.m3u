@@ -1,5 +1,5 @@
 #EXTM3U x-tvg-url="https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz"
-#EXTINF:-1 group-title="✈️TG频道@flymaf" tvg-name="更新时间2026.9.15" tvg-logo="https://epg.112114.xyz/logo/更新时间2026.9.15.png" epg-url="https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz",更新时间2026.9.15 1523
+#EXTINF:-1 group-title="✈️TG频道@flymaf" tvg-name="更新时间2026.9.27" tvg-logo="https://epg.112114.xyz/logo/更新时间2026.9.27.png" epg-url="https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz",更新时间2026.9.27 1908
 https://jsnzkpg4.pages.dev/https://mpimg.cn/view.php/7156505e46d701ce78133f2bf0349d4d.mp4
 #EXTINF:-1 group-title="✈️TG频道@flymaf" tvg-name="永久官网https://maflya.com" tvg-logo="https://epg.112114.xyz/logo/永久官网https://maflya.com.png" epg-url="https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz",永久官网https://maflya.com
 https://mpimg.cn/view.php/33d9c1521de0e0e9de09ad5d78668564.mp4
@@ -552,6 +552,8 @@ https://mobile.ccdntech.com/transcoder/_definst_/vod164_Live/live/chunklist_w117
 https://petclub-samsungaus.amagi.tv/playlist.m3u8
 #EXTINF:-1 group-title="🔮港澳台直播" tvg-name="RTHKTV31" tvg-logo="https://epg.112114.xyz/logo/RTHKTV31.png" epg-url="https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz",RTHKTV31
 https://rthktv31-live.akamaized.net/hls/live/2036818/RTHKTV31/master.m3u8
+#EXTINF:-1 group-title="时尚直播" tvg-name="fashiontv" tvg-logo="https://epg.112114.xyz/logo/fashiontv.png" epg-url="https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz",FashionTV
+http://fashionlive.mediacdn.ru/cdn/fashiontv/playlist.m3u8
 #EXTINF:-1 group-title="🇲🇾马来西亚直播" tvg-name="APETITO" tvg-logo="https://epg.112114.xyz/logo/APETITO.png" epg-url="https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz",APETITO
 https://d1sq2slp9afh7o.cloudfront.net/smil:apetito/chunklist_b2596000_slENG.m3u8
 #EXTINF:-1 group-title="🇲🇾马来西亚直播" tvg-name="AURA" tvg-logo="https://epg.112114.xyz/logo/AURA.png" epg-url="https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz",AURA

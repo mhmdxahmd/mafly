@@ -33,6 +33,27 @@ function hasPreciseTimestamp(lrc) {
   return /\[\d{1,2}:\d{1,2}\.\d{1,2}\]/.test(lrc);
 }
 
+// Base64 解码（兼容 Node / 浏览器环境）
+function decodeBase64(str) {
+  if (!str) return "";
+  try {
+    if (typeof atob !== "undefined") {
+      return decodeURIComponent(
+        atob(str)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      );
+    }
+  } catch (e) {}
+  try {
+    if (typeof Buffer !== "undefined") {
+      return Buffer.from(str, "base64").toString("utf-8");
+    }
+  } catch (e) {}
+  return str;
+}
+
 function artworkShort2Long(albumpicShort) {
   var _a;
   const firstSlashOfAlbum =
@@ -323,7 +344,114 @@ async function getLyric(musicItem) {
     }
   } catch (e) {}
 
-  // ========== 策略 2：LRCLIB（全球公开歌词库，默认带百分秒精度） ==========
+  // ========== 策略 2：QQ音乐官方歌词接口（带翻译，时间戳精准） ==========
+  try {
+    const trackName = (musicItem.title || "")
+      .replace(/\s*\(.*?\)\s*/g, "")
+      .trim();
+    const artistName = (musicItem.artist || "").split(/[\/、,&]/)[0].trim();
+    if (trackName) {
+      const searchRes = (
+        await axios_1.default.post(
+          "https://u.y.qq.com/cgi-bin/musicu.fcg",
+          {
+            req_1: {
+              method: "DoSearchForQQMusicDesktop",
+              module: "music.search.SearchCgiService",
+              param: {
+                num_per_page: 5,
+                page_num: 1,
+                query: trackName,
+                search_type: 0,
+              },
+            },
+          },
+          {
+            headers: {
+              referer: "https://y.qq.com",
+              "user-agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
+              Cookie: "uin=",
+            },
+            timeout: 8000,
+          }
+        )
+      ).data;
+
+      const list = searchRes && searchRes.req_1 && searchRes.req_1.data && searchRes.req_1.data.body && searchRes.req_1.data.body.song && searchRes.req_1.data.body.song.list;
+      if (Array.isArray(list) && list.length) {
+        let best = list[0];
+        for (const item of list) {
+          const singers = (item.singer || [])
+            .map((s) => s.name)
+            .join(" ")
+            .toLowerCase();
+          if (artistName && singers.includes(artistName.toLowerCase())) {
+            best = item;
+            break;
+          }
+        }
+        const songmid = best.mid || best.songmid;
+        if (songmid) {
+          const lyricRes = (
+            await axios_1.default.get(
+              "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg",
+              {
+                params: {
+                  songmid: songmid,
+                  pcachetime: new Date().getTime(),
+                  g_tk: 5381,
+                  loginUin: 0,
+                  hostUin: 0,
+                  inCharset: "utf8",
+                  outCharset: "utf-8",
+                  notice: 0,
+                  platform: "yqq",
+                  needNewCode: 0,
+                },
+                headers: {
+                  Referer: "https://y.qq.com",
+                  Cookie: "uin=",
+                },
+                timeout: 8000,
+              }
+            )
+          ).data;
+
+          const text =
+            typeof lyricRes === "string"
+              ? lyricRes
+              : JSON.stringify(lyricRes);
+          const cleaned = text.replace(
+            /callback\(|MusicJsonCallback\(|jsonCallback\(|\)$/g,
+            ""
+          );
+          let parsed;
+          try {
+            parsed = JSON.parse(cleaned);
+          } catch (e) {
+            parsed = lyricRes;
+          }
+
+          if (parsed && parsed.lyric) {
+            let rawLrc = decodeBase64(parsed.lyric);
+            if (parsed.trans) {
+              const trans = decodeBase64(parsed.trans);
+              if (trans) rawLrc = rawLrc + "\n" + trans;
+            }
+            if (hasPreciseTimestamp(rawLrc)) {
+              return { rawLrc };
+            }
+            if (hasTimestamp(rawLrc) && !fallbackLrc) {
+              fallbackLrc = rawLrc;
+            }
+          }
+        }
+      }
+    }
+  } catch (e) {}
+
+  // ========== 策略 3：LRCLIB（全球公开歌词库） ==========
   try {
     const trackName = (musicItem.title || "")
       .replace(/\s*\(.*?\)\s*/g, "")
@@ -334,7 +462,7 @@ async function getLyric(musicItem) {
         await axios_1.default.get("https://lrclib.net/api/get", {
           params: { track_name: trackName, artist_name: artistName },
           headers: {
-            "User-Agent": "MusicFreePlugin/10.4.3 (https://maflya.com)",
+            "User-Agent": "MusicFreePlugin/10.4.4 (https://maflya.com)",
           },
           timeout: 8000,
         })
@@ -345,7 +473,7 @@ async function getLyric(musicItem) {
     }
   } catch (e) {}
 
-  // ========== 策略 3：api.lrc.cx（聚合 API） ==========
+  // ========== 策略 4：api.lrc.cx（聚合 API） ==========
   try {
     const keyword = `${musicItem.title || ""} ${musicItem.artist || ""}`.trim();
     if (keyword) {
@@ -353,7 +481,7 @@ async function getLyric(musicItem) {
         await axios_1.default.get("https://api.lrc.cx/lyrics", {
           params: { title: musicItem.title, artist: musicItem.artist },
           headers: {
-            "User-Agent": "MusicFreePlugin/10.4.3 (https://maflya.com)",
+            "User-Agent": "MusicFreePlugin/10.4.4 (https://maflya.com)",
           },
           timeout: 8000,
         })
@@ -373,7 +501,6 @@ async function getLyric(musicItem) {
     }
   } catch (e) {}
 
-  // 返回精度较高的兜底歌词，或空
   return { rawLrc: fallbackLrc };
 }
 
@@ -702,7 +829,7 @@ async function getMusicInfo(musicItem) {
 module.exports = {
   platform: "maflya.com音源",
   author: "✈️TG频道@flymaf",
-  version: "10.4.3",
+  version: "10.4.4",
   appVersion: ">0.1.0-alpha.0",
   srcUrl: "https://maflya.com",
   cacheControl: "no-cache",

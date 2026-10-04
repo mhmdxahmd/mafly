@@ -21,6 +21,18 @@ const API_PATHS = {
     kw: '/kw.php'
 };
 
+// 校验歌词是否含时间戳
+function hasTimestamp(lrc) {
+  if (!lrc || typeof lrc !== "string") return false;
+  return /\[\d{1,2}:\d{1,2}(\.\d{1,3})?\]/.test(lrc);
+}
+
+// 校验歌词是否含百分秒精度的时间戳（滚动更准）
+function hasPreciseTimestamp(lrc) {
+  if (!lrc || typeof lrc !== "string") return false;
+  return /\[\d{1,2}:\d{1,2}\.\d{1,2}\]/.test(lrc);
+}
+
 function artworkShort2Long(albumpicShort) {
   var _a;
   const firstSlashOfAlbum =
@@ -274,6 +286,8 @@ async function getArtistWorks(artistItem, page, type) {
 }
 
 async function getLyric(musicItem) {
+  let fallbackLrc = "";
+
   // ========== 策略 1：酷我官方接口（按 ID 直查，最精准） ==========
   try {
     const musicId = String(musicItem.id).replace(/^MUSIC_/i, "");
@@ -300,11 +314,16 @@ async function getLyric(musicItem) {
           return `[${time}]${line}`;
         })
         .join("\n");
-      return { rawLrc };
+      if (hasPreciseTimestamp(rawLrc)) {
+        return { rawLrc };
+      }
+      if (hasTimestamp(rawLrc) && !fallbackLrc) {
+        fallbackLrc = rawLrc;
+      }
     }
   } catch (e) {}
 
-  // ========== 策略 2：LRCLIB（全球公开歌词库，按歌名+歌手精确匹配） ==========
+  // ========== 策略 2：LRCLIB（全球公开歌词库，默认带百分秒精度） ==========
   try {
     const trackName = (musicItem.title || "")
       .replace(/\s*\(.*?\)\s*/g, "")
@@ -313,23 +332,20 @@ async function getLyric(musicItem) {
     if (trackName && artistName) {
       const res = (
         await axios_1.default.get("https://lrclib.net/api/get", {
-          params: {
-            track_name: trackName,
-            artist_name: artistName,
-          },
+          params: { track_name: trackName, artist_name: artistName },
           headers: {
-            "User-Agent": "MusicFreePlugin/10.4.2 (https://maflya.com)",
+            "User-Agent": "MusicFreePlugin/10.4.3 (https://maflya.com)",
           },
           timeout: 8000,
         })
       ).data;
-      if (res && res.syncedLyrics) {
+      if (res && res.syncedLyrics && hasTimestamp(res.syncedLyrics)) {
         return { rawLrc: res.syncedLyrics };
       }
     }
   } catch (e) {}
 
-  // ========== 策略 3：api.lrc.cx（聚合 API，支持酷狗等来源） ==========
+  // ========== 策略 3：api.lrc.cx（聚合 API） ==========
   try {
     const keyword = `${musicItem.title || ""} ${musicItem.artist || ""}`.trim();
     if (keyword) {
@@ -337,26 +353,28 @@ async function getLyric(musicItem) {
         await axios_1.default.get("https://api.lrc.cx/lyrics", {
           params: { title: musicItem.title, artist: musicItem.artist },
           headers: {
-            "User-Agent": "MusicFreePlugin/10.4.2 (https://maflya.com)",
+            "User-Agent": "MusicFreePlugin/10.4.3 (https://maflya.com)",
           },
           timeout: 8000,
         })
       ).data;
-      // api.lrc.cx 可能返回纯文本或 JSON，根据实际返回格式做兼容
-      if (typeof res === "string" && res.includes("[")) {
-        return { rawLrc: res };
-      }
-      if (res && res.lyrics) {
-        return { rawLrc: res.lyrics };
-      }
-      if (res && res.lrc) {
-        return { rawLrc: res.lrc };
+      const candidates = [];
+      if (typeof res === "string") candidates.push(res);
+      if (res && res.lyrics) candidates.push(res.lyrics);
+      if (res && res.lrc) candidates.push(res.lrc);
+      for (const c of candidates) {
+        if (c && hasPreciseTimestamp(c)) {
+          return { rawLrc: c };
+        }
+        if (c && hasTimestamp(c) && !fallbackLrc) {
+          fallbackLrc = c;
+        }
       }
     }
   } catch (e) {}
 
-  // 全部失败，返回空歌词（MusicFree 会触发自动搜索其他插件）
-  return { rawLrc: "" };
+  // 返回精度较高的兜底歌词，或空
+  return { rawLrc: fallbackLrc };
 }
 
 async function getAlbumInfo(albumItem) {
@@ -684,7 +702,7 @@ async function getMusicInfo(musicItem) {
 module.exports = {
   platform: "maflya.com音源",
   author: "✈️TG频道@flymaf",
-  version: "10.4.2",
+  version: "10.4.3",
   appVersion: ">0.1.0-alpha.0",
   srcUrl: "https://maflya.com",
   cacheControl: "no-cache",

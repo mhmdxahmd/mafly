@@ -634,7 +634,7 @@ async function getMusicInfo(musicItem) {
 module.exports = {
   platform: "maflya.com音源",
   author: "✈️TG频道@flymaf",
-  version: "8.8.8",
+  version: "10.4.1",
   appVersion: ">0.1.0-alpha.0",
   srcUrl: "https://maflya.com",
   cacheControl: "no-cache",
@@ -651,6 +651,7 @@ module.exports = {
     if (type === "album") return await searchAlbum(query, page);
     if (type === "artist") return await searchArtist(query, page);
     if (type === "sheet") return await searchMusicSheet(query, page);
+    if (type === "lyric") return await searchMusic(query, page);
   },
   getMediaSource,
   getMusicInfo,

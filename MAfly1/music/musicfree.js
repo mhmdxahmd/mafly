@@ -274,18 +274,39 @@ async function getArtistWorks(artistItem, page, type) {
 }
 
 async function getLyric(musicItem) {
-  const res = (
-    await axios_1.default.get("http://m.kuwo.cn/newh5/singles/songinfoandlrc", {
-      params: {
-        musicId: musicItem.id,
-        httpStatus: 1,
-      },
-    })
-  ).data;
-  const list = res.data.lrclist;
-  return {
-    rawLrc: list.map((_) => `[${_.time}]${_.lineLyric}`).join("\n"),
-  };
+  try {
+    const musicId = String(musicItem.id).replace(/^MUSIC_/i, "");
+    const res = (
+      await axios_1.default.get(
+        "https://m.kuwo.cn/newh5/singles/songinfoandlrc",
+        {
+          params: {
+            musicId,
+            httpStatus: 1,
+          },
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
+            Referer: "https://m.kuwo.cn/",
+          },
+        }
+      )
+    ).data;
+    const list = res && res.data && res.data.lrclist;
+    if (!Array.isArray(list) || !list.length) {
+      return { rawLrc: "" };
+    }
+    const rawLrc = list
+      .map((_) => {
+        const time = _ && _.time != null ? _.time : "00:00";
+        const line = _ && _.lineLyric != null ? _.lineLyric : "";
+        return `[${time}]${line}`;
+      })
+      .join("\n");
+    return { rawLrc };
+  } catch (e) {
+    return { rawLrc: "" };
+  }
 }
 
 async function getAlbumInfo(albumItem) {
@@ -575,24 +596,39 @@ async function getMediaSource(musicItem, quality) {
 }
 
 async function getMusicInfo(musicItem) {
-  const res = (
-    await axios_1.default.get("http://m.kuwo.cn/newh5/singles/songinfoandlrc", {
-      params: {
-        musicId: musicItem.id,
-        httpStatus: 1,
-      },
-    })
-  ).data;
-  const originalUrl = res.data.songinfo.pic;
-  let picUrl;
-  if (originalUrl.includes("starheads/")) {
-    picUrl = originalUrl.replace(/starheads\/\d+/, "starheads/800");
-  } else if (originalUrl.includes("albumcover/")) {
-    picUrl = originalUrl.replace(/albumcover\/\d+/, "albumcover/800");
+  try {
+    const musicId = String(musicItem.id).replace(/^MUSIC_/i, "");
+    const res = (
+      await axios_1.default.get(
+        "https://m.kuwo.cn/newh5/singles/songinfoandlrc",
+        {
+          params: {
+            musicId,
+            httpStatus: 1,
+          },
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
+            Referer: "https://m.kuwo.cn/",
+          },
+        }
+      )
+    ).data;
+    const songinfo = res && res.data && res.data.songinfo;
+    if (!songinfo || !songinfo.pic) return {};
+    const originalUrl = songinfo.pic;
+    let picUrl = originalUrl;
+    if (originalUrl.includes("starheads/")) {
+      picUrl = originalUrl.replace(/starheads\/\d+/, "starheads/800");
+    } else if (originalUrl.includes("albumcover/")) {
+      picUrl = originalUrl.replace(/albumcover\/\d+/, "albumcover/800");
+    }
+    return {
+      artwork: picUrl,
+    };
+  } catch (e) {
+    return {};
   }
-  return {
-    artwork: picUrl,
-  };
 }
 
 module.exports = {

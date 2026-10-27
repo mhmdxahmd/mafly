@@ -1,4 +1,4 @@
-[![GitHub Pulse](https://github-pulse-topaz.vercel.app/u/mhmdxahmd)](https://www.maflya.com)
+[![GitHub Pulse](https://github-pulse-topaz.vercel.app/u/mhmdxahmd?color=ff2d95&bg=141021&text=ffffff&accent=ff2d95&muted=8888aa)](https://www.maflya.com)
 # mafly
 > [!IMPORTANT]  
 ![gif图片alien](./MAfly1/pic/alien_converted-1M.gif)  
@@ -24,15 +24,9 @@ https://www.maflya.com
  
 https://kitty.fo/register?invite=NOWP3LB4  
 
-WY Cloud  
-
-https://w1w1.org/#/register?code=QPUweilI  
-
 追云加速机场  
 
 https://zhuiyun.shop/#/register?code=ItNiRvGw  
-
-
 
 一分机场  
 

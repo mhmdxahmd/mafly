@@ -119,6 +119,7 @@ class Spider(BaseSpider):
           - "源索引"            -> 返回二级分组列表，vod_id = 源索引_组索引
           - "源索引_组索引"     -> 返回该组频道列表，vod_id = 源索引_组索引_频道索引
         全部用数字索引，避免组名含下划线导致拆分错位。
+        二级频道项直接自带 vod_play_url，壳子无论是否走 detailContent 都能播。
         """
         tid = str(tid)
 
@@ -140,11 +141,14 @@ class Spider(BaseSpider):
 
             items = []
             for ch_idx, ch in enumerate(channels):
+                vod_id = f"{src_idx}_{group_idx}_{ch_idx}"
                 items.append({
-                    "vod_id": f"{src_idx}_{group_idx}_{ch_idx}",
+                    "vod_id": vod_id,
                     "vod_name": ch["name"],
                     "vod_pic": "",
                     "vod_remarks": group_name,
+                    "vod_play_from": group_name,
+                    "vod_play_url": f"{ch['name']}${ch['url']}",
                 })
             return {"list": items, "page": 1, "pagecount": 1,
                     "limit": len(items), "total": len(items)}
@@ -194,9 +198,27 @@ class Spider(BaseSpider):
         }]}
 
     def playerContent(self, flag, pid, vipFlags):
+        # pid 可能是完整 URL，也可能是 源索引_组索引_频道索引
+        url = pid
+
+        if not pid.startswith("http"):
+            parts = pid.split("_")
+            if len(parts) == 3:
+                try:
+                    src_idx, group_idx, ch_idx = int(parts[0]), int(parts[1]), int(parts[2])
+                    groups = self._load_groups(src_idx)
+                    group_names = list(groups.keys())
+                    if 0 <= group_idx < len(group_names):
+                        channels = groups[group_names[group_idx]]
+                        if 0 <= ch_idx < len(channels):
+                            url = channels[ch_idx]["url"]
+                except Exception:
+                    pass
+
         return {
             "parse": 0,
             "jx": 0,
-            "url": pid,
+            "url": url,
             "header": self.headers,
+            "format": "application/x-mpegURL",
         }

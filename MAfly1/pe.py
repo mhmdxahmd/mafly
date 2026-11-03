@@ -21,6 +21,7 @@ class Spider(BaseSpider):
         self.session.headers.update(self.headers)
         # 源配置：分类名 -> m3u地址
         self.sources = [
+            ("IPTV直播", "https://iptv.445569.xyz/live.m3u"),
             ("咖啡体育直播", "https://jsnzkpg.de5.net/all.m3u"),
             ("大米体育直播", "https://stymei.pages.dev/live.m3u"),
             ("88看球直播", "https://stymei1.pages.dev/live.m3u"),

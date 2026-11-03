@@ -19,7 +19,6 @@ class Spider(BaseSpider):
         self.session = requests.Session()
         self.session.headers.update(self.headers)
 
-        # 一级分类：源名称 -> m3u地址
         self.sources = [
             ("IPTV直播", "https://iptv.445569.xyz/live.m3u"),
             ("咖啡体育直播", "https://jsnzkpg.de5.net/all.m3u"),
@@ -41,10 +40,8 @@ class Spider(BaseSpider):
             ("U球体育直播", "https://stymei15.pages.dev/live.m3u"),
         ]
 
-        # 缓存：源索引 -> {组名: [频道...]}
         self.group_cache = {}
 
-    # ---------- 过滤 ----------
     def _should_filter(self, line):
         s = line.strip()
         if not s:
@@ -57,7 +54,6 @@ class Spider(BaseSpider):
             return True
         return False
 
-    # ---------- 抓取 ----------
     def _fetch_m3u(self, url):
         try:
             r = self.session.get(url, timeout=10)
@@ -67,12 +63,7 @@ class Spider(BaseSpider):
             pass
         return ""
 
-    # ---------- 解析：按 group-title 分组 ----------
     def _parse_groups(self, m3u_text):
-        """
-        返回 dict：组名 -> [{name, url}]
-        没有 group-title 的频道归入 "未分组"
-        """
         groups = {}
         lines = [ln.strip() for ln in m3u_text.splitlines() if not self._should_filter(ln)]
         i = 0
@@ -94,7 +85,6 @@ class Spider(BaseSpider):
         return groups
 
     def _load_groups(self, src_idx):
-        """加载并缓存某个源的二级分组，src_idx 必须是 int"""
         src_idx = int(src_idx)
         key = str(src_idx)
         if key in self.group_cache:
@@ -107,23 +97,14 @@ class Spider(BaseSpider):
         self.group_cache[key] = groups
         return groups
 
-    # ---------- 壳子接口 ----------
     def homeContent(self, filter):
         classes = [{"type_id": str(idx), "type_name": name}
                    for idx, (name, _) in enumerate(self.sources)]
         return {"class": classes}
 
     def categoryContent(self, tid, pg, filter, extend):
-        """
-        tid 形态：
-          - "源索引"            -> 返回二级分组列表，vod_id = 源索引_组索引
-          - "源索引_组索引"     -> 返回该组频道列表，vod_id = 源索引_组索引_频道索引
-        全部用数字索引，避免组名含下划线导致拆分错位。
-        二级频道项直接自带 vod_play_url，壳子无论是否走 detailContent 都能播。
-        """
         tid = str(tid)
 
-        # 二级：返回组内频道
         if "_" in tid:
             parts = tid.split("_")
             if len(parts) != 2:
@@ -141,19 +122,18 @@ class Spider(BaseSpider):
 
             items = []
             for ch_idx, ch in enumerate(channels):
-                vod_id = f"{src_idx}_{group_idx}_{ch_idx}"
+                item_id = f"{src_idx}_{group_idx}_{ch_idx}"
                 items.append({
-                    "vod_id": vod_id,
+                    "vod_id": item_id,
                     "vod_name": ch["name"],
                     "vod_pic": "",
                     "vod_remarks": group_name,
                     "vod_play_from": group_name,
-                    "vod_play_url": f"{ch['name']}${ch['url']}",
+                    "vod_play_url": f"{ch['name']}${item_id}",
                 })
             return {"list": items, "page": 1, "pagecount": 1,
                     "limit": len(items), "total": len(items)}
 
-        # 一级：返回二级分组
         src_idx = int(tid)
         groups = self._load_groups(src_idx)
         items = []
@@ -193,16 +173,20 @@ class Spider(BaseSpider):
             "vod_id": vid,
             "vod_name": ch["name"],
             "vod_pic": "",
+            "vod_remarks": group_name,
             "vod_play_from": group_name,
-            "vod_play_url": f"{ch['name']}${ch['url']}"
+            "vod_play_url": f"{ch['name']}${vid}"
         }]}
 
     def playerContent(self, flag, pid, vipFlags):
-        # pid 可能是完整 URL，也可能是 源索引_组索引_频道索引
-        url = pid
+        raw_pid = pid.split('$')[-1]
+        if '@' in raw_pid:
+            raw_pid = raw_pid.rsplit('@', 1)[0]
 
-        if not pid.startswith("http"):
-            parts = pid.split("_")
+        url = raw_pid
+
+        if not raw_pid.startswith("http"):
+            parts = raw_pid.split("_")
             if len(parts) == 3:
                 try:
                     src_idx, group_idx, ch_idx = int(parts[0]), int(parts[1]), int(parts[2])

@@ -2,11 +2,13 @@
 # -*- coding: utf-8 -*-
 """
 MAFLYA体育直播 - FongMi/OK影视 Python 直播蜘蛛
-壳子调用时实时抓取并过滤，直接返回 M3U 文本。
+实时抓取 17 个 M3U 源，过滤 @stymei 注释，保留 https://stymei. 域名，
+合并返回 M3U 文本给壳子。
 """
 
-import requests
 import re
+import requests
+
 
 class Spider:
 
@@ -31,13 +33,23 @@ class Spider:
             ("U球体育直播", "https://stymei15.pages.dev/live.m3u"),
         ]
         self.headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                          "AppleWebKit/537.36 (KHTML, like Gecko) "
-                          "Chrome/120.0.0.0 Safari/537.36"
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/120.0.0.0 Safari/537.36"
+            )
         }
 
+    # ---------- 过滤规则 ----------
     def _should_filter(self, line):
-        """过滤含 @stymei 的行，但保留 https://stymei. 开头的 URL"""
+        """
+        返回 True 表示该行应被丢弃。
+        规则：
+          - 空行丢弃
+          - 以 https://stymei. 开头的 URL 保留（不丢弃）
+          - 含 @stymei 的行丢弃（广告注释）
+          - 其他 # 注释行丢弃（避免干扰解析）
+        """
         s = line.strip()
         if not s:
             return True
@@ -45,60 +57,60 @@ class Spider:
             return False
         if "@stymei" in s:
             return True
+        if s.startswith("#") and not s.startswith("#EXTINF") and not s.startswith("#EXTM3U"):
+            return True
         return False
 
+    # ---------- 抓取 ----------
     def _fetch(self, url):
         try:
-            r = requests.get(url, headers=self.headers, timeout=20)
+            r = requests.get(url, headers=self.headers, timeout=8)
             r.raise_for_status()
-            return r.text
+            # 有些源返回 gbk，统一按 utf-8 忽略错误解码
+            return r.content.decode("utf-8", errors="ignore")
         except Exception:
             return ""
 
-    def liveContent(self, url=""):
-        """壳子调用的入口，返回合并后的 M3U 文本"""
+    # ---------- 壳子入口 ----------
+    def liveContent(self, url):
         lines = ["#EXTM3U"]
 
         for name, m3u_url in self.sources:
             raw = self._fetch(m3u_url)
-            if not raw:
+            if not raw or "#EXTM3U" not in raw.upper():
                 continue
 
-            # 过滤广告注释行
-            kept = [ln for ln in raw.splitlines() if not self._should_filter(ln)]
-            text = "\n".join(kept).strip()
-
-            if "#EXTM3U" not in text.upper():
-                continue
-
-            # 统一替换 group-title 为本源名称，方便壳子里分类展示
-            current_extinf = None
-            for ln in kept:
-                stripped = ln.strip()
-                if stripped.startswith("#EXTINF"):
-                    # 把原来的 group-title 替换或追加为本源名称
-                    if 'group-title="' in stripped:
-                        stripped = re.sub(
-                            r'group-title="[^"]*"',
-                            f'group-title="{name}"',
-                            stripped
-                        )
-                    else:
-                        # 没有 group-title，插入一个
-                        stripped = stripped.replace(
-                            "#EXTINF:-1",
-                            f'#EXTINF:-1 group-title="{name}"',
-                            1
-                        )
-                    current_extinf = stripped
-                    lines.append(current_extinf)
-                elif stripped.startswith("#"):
-                    # 跳过源文件里的 #EXTM3U 和多余注释
+            kept = []
+            for ln in raw.splitlines():
+                if self._should_filter(ln):
                     continue
-                elif stripped.startswith("http"):
-                    # 只保留紧跟在 #EXTINF 后的 URL
-                    if current_extinf is not None:
-                        lines.append(stripped)
-                        current_extinf = None
+                kept.append(ln.strip())
+
+            # 只保留 #EXTINF 行 + 紧跟的 http 行，保证壳子能正确配对
+            i = 0
+            while i < len(kept):
+                ln = kept[i]
+                if ln.startswith("#EXTINF"):
+                    # 统一 group-title 为本源名称
+                    if 'group-title="' in ln:
+                        ln = re.sub(r'group-title="[^"]*"', f'group-title="{name}"', ln)
+                    else:
+                        ln = ln.replace("#EXTINF:-1", f'#EXTINF:-1 group-title="{name}"', 1)
+
+                    # 找下一行有效 http
+                    j = i + 1
+                    while j < len(kept) and not kept[j].startswith("http"):
+                        # 跳过中间可能残留的 # 行
+                        j += 1
+                    if j < len(kept) and kept[j].startswith("http"):
+                        lines.append(ln)
+                        lines.append(kept[j])
+                        i = j + 1
+                        continue
+                i += 1
+
+        # 防止返回空壳
+        if len(lines) <= 1:
+            return "#EXTM3U\n"
 
         return "\n".join(lines)

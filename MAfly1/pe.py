@@ -42,7 +42,6 @@ class Spider(BaseSpider):
 
         self.group_cache = {}
 
-    # ---------- 过滤 ----------
     def _should_filter(self, line):
         s = line.strip()
         if not s:
@@ -55,7 +54,6 @@ class Spider(BaseSpider):
             return True
         return False
 
-    # ---------- 抓取 ----------
     def _fetch_m3u(self, url):
         try:
             r = self.session.get(url, timeout=10)
@@ -65,7 +63,6 @@ class Spider(BaseSpider):
             pass
         return ""
 
-    # ---------- 解析 ----------
     def _parse_groups(self, m3u_text):
         groups = {}
         lines = [ln.strip() for ln in m3u_text.splitlines() if not self._should_filter(ln)]
@@ -115,7 +112,7 @@ class Spider(BaseSpider):
             if not tid:
                 return {"list": [], "page": 1, "pagecount": 1, "limit": 0, "total": 0}
 
-            # 二级：源索引_组索引
+            # 二级：源索引_组索引 -> 返回频道列表（只给 vod 基本信息）
             if "_" in tid:
                 parts = tid.split("_")
                 if len(parts) != 2:
@@ -134,19 +131,16 @@ class Spider(BaseSpider):
                 items = []
                 for ch_idx, ch in enumerate(channels):
                     item_id = f"{src_idx}_{group_idx}_{ch_idx}"
-                    safe_name = re.sub(r'[#$&?]', ' ', ch["name"]).strip() or "频道"
                     items.append({
                         "vod_id": item_id,
                         "vod_name": ch["name"],
                         "vod_pic": "",
                         "vod_remarks": group_name,
-                        "vod_play_from": group_name,
-                        "vod_play_url": f"{safe_name}${item_id}",
                     })
                 return {"list": items, "page": 1, "pagecount": 1,
                         "limit": len(items), "total": len(items)}
 
-            # 一级：源索引
+            # 一级：源索引 -> 返回组列表
             src_idx = int(tid)
             groups = self._load_groups(src_idx)
             items = []
@@ -183,14 +177,14 @@ class Spider(BaseSpider):
                 return {"list": []}
 
             ch = channels[ch_idx]
-            safe_name = re.sub(r'[#$&?]', ' ', ch["name"]).strip() or "频道"
+            safe_name = re.sub(r'[#$@]', ' ', ch["name"]).strip() or "频道"
             return {"list": [{
                 "vod_id": vid,
                 "vod_name": ch["name"],
                 "vod_pic": "",
                 "vod_remarks": group_name,
                 "vod_play_from": group_name,
-                "vod_play_url": f"{safe_name}${vid}"
+                "vod_play_url": f"{safe_name}${vid}@live"
             }]}
         except Exception:
             return {"list": []}

@@ -11,40 +11,17 @@
             "url": "https://x.maflya.com/api/proxy?target=https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/youtube.m3u"
         },
         {
-            "name": "TikTok直播-免翻",
-            "type": 0,
-            "url": "https://multiiptv.maflya.com/tiktok.m3u8"
-        }, 
-        {
-            "name": "⭐-抖音直播源 专区",
-            "type": 1,
-            "url": "https://stymei2.pages.dev/live.m3u"
-        },
-         {
-            "name": "裤佬TV直播",
-            "type": 0,
-            "url": "https://live.445569.xyz/live.m3u"
-        },
-         {
-            "name": "抖音直播源",
-            "type": 0,
-            "url": "https://stymei2.pages.dev/live.m3u"
-        },        
-        {
-            "name": "体育直播",
-            "type": 0,
-            "url": "https://sports.445569.xyz/all.m3u"
-        },
-        {
-            "name": "快手直播",
-            "type": 0,
-            "url": "https://kuaishou.445569.xyz/list.m3u"
-        },
-        {
-            "name": "Twitch直播",
-            "type": 0,
-            "url": "https://twitch.445569.xyz/live.m3u"
-        },
+            "key": "⭐Maflya-油管实时固定频道",
+            "name": "⭐Maflya YouTube丨免翻实时固定频道",
+            "type": 3,
+            "api": "https://x.maflya.com/api/proxy?target=https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/youtube.py"
+       },
+      {
+            "key": "⭐Maflya聚合体育直播线路1",
+            "name": "⭐Maflya聚合体育直播线路1",
+            "type": 3,
+            "api": "http://seep.eu.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/pe.py"
+       },
         {
             "name": "🍿斗鱼TV直播",
             "type": 1,

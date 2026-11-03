@@ -97,10 +97,16 @@
       "ext": "https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/zbzdb.json"
     },
 	 {
-  "key": "⭐Maflya聚合体育直播",
-  "name": "⭐Maflya聚合体育直播",
+  "key": "⭐Maflya聚合体育直播线路1",
+  "name": "⭐Maflya聚合体育直播线路1",
   "type": 3,
-  "api": "http://seep.eu.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/PE.py"
+  "api": "http://seep.eu.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/pe.py"
+    },	
+	 {
+  "key": "⭐Maflya聚合体育直播线路2",
+  "name": "⭐Maflya聚合体育直播线路2",
+  "type": 3,
+  "api": "https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/pe.py"
     },	
 	 {
       "key": "⭐Maflya-SEEP油管固定频道",

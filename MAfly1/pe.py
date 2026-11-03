@@ -26,12 +26,12 @@ class Spider:
 
     def _fetch(self, url):
         try:
-            r = requests.get(url, headers=self.headers, timeout=8)
+            r = requests.get(url, headers=self.headers, timeout=10)
             if r.status_code == 200:
                 return r.text
-            return ""
         except Exception:
-            return ""
+            pass
+        return ""
 
     def _should_filter(self, line):
         s = line.strip()
@@ -41,41 +41,33 @@ class Spider:
             return False
         if "@stymei" in s:
             return True
+        if s.startswith("#") and not s.startswith("#EXTINF") and not s.startswith("#EXTM3U"):
+            return True
         return False
 
-    def _parse_m3u(self, raw, group_name):
-        """解析 M3U，返回频道列表"""
-        channels = []
-        lines = [ln.strip() for ln in raw.splitlines() if not self._should_filter(ln)]
-        i = 0
-        while i < len(lines):
-            ln = lines[i]
-            if ln.startswith("#EXTINF"):
-                # 提取频道名（逗号后面的部分）
-                name = ln.split(",")[-1].strip() if "," in ln else "未知频道"
-                # 找下一行 http
-                j = i + 1
-                while j < len(lines) and not lines[j].startswith("http"):
-                    j += 1
-                if j < len(lines):
-                    channels.append({"name": name, "url": lines[j]})
-                    i = j + 1
-                    continue
-            i += 1
-        return channels
-
-    def liveContent(self, url=""):
-        result = []
+    def liveContent(self, url):
+        out = ["#EXTM3U"]
         for name, m3u_url in self.sources:
             raw = self._fetch(m3u_url)
             if not raw or "#EXTM3U" not in raw.upper():
                 continue
-            channels = self._parse_m3u(raw, name)
-            if not channels:
-                continue
-            result.append({
-                "name": name,
-                "groups": [{"name": "全部频道", "channels": channels}]
-            })
-        # 如果全部为空，返回空数组，壳子会显示空白但不报错
-        return result
+            lines = [ln.strip() for ln in raw.splitlines() if not self._should_filter(ln)]
+            i = 0
+            while i < len(lines):
+                ln = lines[i]
+                if ln.startswith("#EXTINF"):
+                    # 统一 group-title 为源名称
+                    if 'group-title="' in ln:
+                        ln = re.sub(r'group-title="[^"]*"', f'group-title="{name}"', ln)
+                    else:
+                        ln = ln.replace("#EXTINF:-1", f'#EXTINF:-1 group-title="{name}"', 1)
+                    j = i + 1
+                    while j < len(lines) and not lines[j].startswith("http"):
+                        j += 1
+                    if j < len(lines):
+                        out.append(ln)
+                        out.append(lines[j])
+                        i = j + 1
+                        continue
+                i += 1
+        return "\n".join(out)

@@ -100,7 +100,18 @@ class Spider(BaseSpider):
         self.group_cache[key] = groups
         return groups
 
-    # ---------- 壳子接口 ----------
+    def _make_channel_vod(self, src_idx, group_idx, ch_idx, group_name, ch):
+        vid = f"{src_idx}_{group_idx}_{ch_idx}"
+        safe_name = re.sub(r'[#$@]', ' ', ch["name"]).strip() or "频道"
+        return {
+            "vod_id": vid,
+            "vod_name": ch["name"],
+            "vod_pic": "",
+            "vod_remarks": group_name,
+            "vod_play_from": group_name,
+            "vod_play_url": f"{safe_name}${vid}@live",
+        }
+
     def homeContent(self, filter):
         classes = [{"type_id": str(idx), "type_name": name}
                    for idx, (name, _) in enumerate(self.sources)]
@@ -112,7 +123,7 @@ class Spider(BaseSpider):
             if not tid:
                 return {"list": [], "page": 1, "pagecount": 1, "limit": 0, "total": 0}
 
-            # 二级：源索引_组索引 -> 返回频道列表（只给 vod 基本信息）
+            # 二级：源索引_组索引 -> 返回频道列表
             if "_" in tid:
                 parts = tid.split("_")
                 if len(parts) != 2:
@@ -162,30 +173,39 @@ class Spider(BaseSpider):
                 return {"list": []}
             vid = str(ids[0]).strip()
             parts = vid.split("_")
-            if len(parts) != 3:
-                return {"list": []}
 
-            src_idx, group_idx, ch_idx = int(parts[0]), int(parts[1]), int(parts[2])
-            groups = self._load_groups(src_idx)
-            group_names = list(groups.keys())
-            if group_idx < 0 or group_idx >= len(group_names):
-                return {"list": []}
+            # 情况一：壳子把“组”当视频点了，vid 是 源索引_组索引（两段）
+            # 返回该组下的所有频道，让壳子展示成视频列表
+            if len(parts) == 2:
+                src_idx, group_idx = int(parts[0]), int(parts[1])
+                groups = self._load_groups(src_idx)
+                group_names = list(groups.keys())
+                if group_idx < 0 or group_idx >= len(group_names):
+                    return {"list": []}
 
-            group_name = group_names[group_idx]
-            channels = groups[group_name]
-            if ch_idx < 0 or ch_idx >= len(channels):
-                return {"list": []}
+                group_name = group_names[group_idx]
+                channels = groups[group_name]
+                result = []
+                for ch_idx, ch in enumerate(channels):
+                    result.append(self._make_channel_vod(src_idx, group_idx, ch_idx, group_name, ch))
+                return {"list": result}
 
-            ch = channels[ch_idx]
-            safe_name = re.sub(r'[#$@]', ' ', ch["name"]).strip() or "频道"
-            return {"list": [{
-                "vod_id": vid,
-                "vod_name": ch["name"],
-                "vod_pic": "",
-                "vod_remarks": group_name,
-                "vod_play_from": group_name,
-                "vod_play_url": f"{safe_name}${vid}@live"
-            }]}
+            # 情况二：正常频道，vid 是 源索引_组索引_频道索引（三段）
+            if len(parts) == 3:
+                src_idx, group_idx, ch_idx = int(parts[0]), int(parts[1]), int(parts[2])
+                groups = self._load_groups(src_idx)
+                group_names = list(groups.keys())
+                if group_idx < 0 or group_idx >= len(group_names):
+                    return {"list": []}
+
+                group_name = group_names[group_idx]
+                channels = groups[group_name]
+                if ch_idx < 0 or ch_idx >= len(channels):
+                    return {"list": []}
+
+                return {"list": [self._make_channel_vod(src_idx, group_idx, ch_idx, group_name, channels[ch_idx])]}
+
+            return {"list": []}
         except Exception:
             return {"list": []}
 

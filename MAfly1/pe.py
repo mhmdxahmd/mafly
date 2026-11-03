@@ -42,6 +42,7 @@ class Spider(BaseSpider):
 
         self.group_cache = {}
 
+    # ---------- 过滤 ----------
     def _should_filter(self, line):
         s = line.strip()
         if not s:
@@ -54,6 +55,7 @@ class Spider(BaseSpider):
             return True
         return False
 
+    # ---------- 抓取 ----------
     def _fetch_m3u(self, url):
         try:
             r = self.session.get(url, timeout=10)
@@ -63,6 +65,7 @@ class Spider(BaseSpider):
             pass
         return ""
 
+    # ---------- 解析 ----------
     def _parse_groups(self, m3u_text):
         groups = {}
         lines = [ln.strip() for ln in m3u_text.splitlines() if not self._should_filter(ln)]
@@ -85,7 +88,10 @@ class Spider(BaseSpider):
         return groups
 
     def _load_groups(self, src_idx):
-        src_idx = int(src_idx)
+        try:
+            src_idx = int(src_idx)
+        except (TypeError, ValueError):
+            return {}
         key = str(src_idx)
         if key in self.group_cache:
             return self.group_cache[key]
@@ -97,98 +103,113 @@ class Spider(BaseSpider):
         self.group_cache[key] = groups
         return groups
 
+    # ---------- 壳子接口 ----------
     def homeContent(self, filter):
         classes = [{"type_id": str(idx), "type_name": name}
                    for idx, (name, _) in enumerate(self.sources)]
         return {"class": classes}
 
     def categoryContent(self, tid, pg, filter, extend):
-        tid = str(tid)
-
-        if "_" in tid:
-            parts = tid.split("_")
-            if len(parts) != 2:
+        try:
+            tid = str(tid).strip()
+            if not tid:
                 return {"list": [], "page": 1, "pagecount": 1, "limit": 0, "total": 0}
 
-            src_idx, group_idx = int(parts[0]), int(parts[1])
+            # 二级：源索引_组索引
+            if "_" in tid:
+                parts = tid.split("_")
+                if len(parts) != 2:
+                    return {"list": [], "page": 1, "pagecount": 1, "limit": 0, "total": 0}
+
+                src_idx, group_idx = int(parts[0]), int(parts[1])
+                groups = self._load_groups(src_idx)
+                group_names = list(groups.keys())
+
+                if group_idx < 0 or group_idx >= len(group_names):
+                    return {"list": [], "page": 1, "pagecount": 1, "limit": 0, "total": 0}
+
+                group_name = group_names[group_idx]
+                channels = groups[group_name]
+
+                items = []
+                for ch_idx, ch in enumerate(channels):
+                    item_id = f"{src_idx}_{group_idx}_{ch_idx}"
+                    safe_name = re.sub(r'[#$&?]', ' ', ch["name"]).strip() or "频道"
+                    items.append({
+                        "vod_id": item_id,
+                        "vod_name": ch["name"],
+                        "vod_pic": "",
+                        "vod_remarks": group_name,
+                        "vod_play_from": group_name,
+                        "vod_play_url": f"{safe_name}${item_id}",
+                    })
+                return {"list": items, "page": 1, "pagecount": 1,
+                        "limit": len(items), "total": len(items)}
+
+            # 一级：源索引
+            src_idx = int(tid)
             groups = self._load_groups(src_idx)
-            group_names = list(groups.keys())
-
-            if group_idx < 0 or group_idx >= len(group_names):
-                return {"list": [], "page": 1, "pagecount": 1, "limit": 0, "total": 0}
-
-            group_name = group_names[group_idx]
-            channels = groups[group_name]
-
             items = []
-            for ch_idx, ch in enumerate(channels):
-                item_id = f"{src_idx}_{group_idx}_{ch_idx}"
+            for g_idx, (group_name, channels) in enumerate(groups.items()):
                 items.append({
-                    "vod_id": item_id,
-                    "vod_name": ch["name"],
+                    "vod_id": f"{src_idx}_{g_idx}",
+                    "vod_name": group_name,
                     "vod_pic": "",
-                    "vod_remarks": group_name,
-                    "vod_play_from": group_name,
-                    "vod_play_url": f"{ch['name']}${item_id}",
+                    "vod_remarks": f"{len(channels)} 个频道",
                 })
             return {"list": items, "page": 1, "pagecount": 1,
                     "limit": len(items), "total": len(items)}
-
-        src_idx = int(tid)
-        groups = self._load_groups(src_idx)
-        items = []
-        for g_idx, (group_name, channels) in enumerate(groups.items()):
-            items.append({
-                "vod_id": f"{src_idx}_{g_idx}",
-                "vod_name": group_name,
-                "vod_pic": "",
-                "vod_remarks": f"{len(channels)} 个频道",
-            })
-        return {"list": items, "page": 1, "pagecount": 1,
-                "limit": len(items), "total": len(items)}
+        except Exception:
+            return {"list": [], "page": 1, "pagecount": 1, "limit": 0, "total": 0}
 
     def detailContent(self, ids):
-        vid = ids[0]
-        parts = vid.split("_")
-        if len(parts) != 3:
-            return {"list": []}
-
         try:
+            if not ids:
+                return {"list": []}
+            vid = str(ids[0]).strip()
+            parts = vid.split("_")
+            if len(parts) != 3:
+                return {"list": []}
+
             src_idx, group_idx, ch_idx = int(parts[0]), int(parts[1]), int(parts[2])
-        except ValueError:
-            return {"list": []}
+            groups = self._load_groups(src_idx)
+            group_names = list(groups.keys())
+            if group_idx < 0 or group_idx >= len(group_names):
+                return {"list": []}
 
-        groups = self._load_groups(src_idx)
-        group_names = list(groups.keys())
-        if group_idx < 0 or group_idx >= len(group_names):
-            return {"list": []}
+            group_name = group_names[group_idx]
+            channels = groups[group_name]
+            if ch_idx < 0 or ch_idx >= len(channels):
+                return {"list": []}
 
-        group_name = group_names[group_idx]
-        channels = groups[group_name]
-        if ch_idx < 0 or ch_idx >= len(channels):
+            ch = channels[ch_idx]
+            safe_name = re.sub(r'[#$&?]', ' ', ch["name"]).strip() or "频道"
+            return {"list": [{
+                "vod_id": vid,
+                "vod_name": ch["name"],
+                "vod_pic": "",
+                "vod_remarks": group_name,
+                "vod_play_from": group_name,
+                "vod_play_url": f"{safe_name}${vid}"
+            }]}
+        except Exception:
             return {"list": []}
-
-        ch = channels[ch_idx]
-        return {"list": [{
-            "vod_id": vid,
-            "vod_name": ch["name"],
-            "vod_pic": "",
-            "vod_remarks": group_name,
-            "vod_play_from": group_name,
-            "vod_play_url": f"{ch['name']}${vid}"
-        }]}
 
     def playerContent(self, flag, pid, vipFlags):
-        raw_pid = pid.split('$')[-1]
-        if '@' in raw_pid:
-            raw_pid = raw_pid.rsplit('@', 1)[0]
+        try:
+            if not pid:
+                return {"parse": 0, "jx": 0, "url": "", "header": self.headers,
+                        "format": "application/x-mpegURL"}
 
-        url = raw_pid
+            raw_pid = str(pid).split('$')[-1]
+            if '@' in raw_pid:
+                raw_pid = raw_pid.rsplit('@', 1)[0]
 
-        if not raw_pid.startswith("http"):
-            parts = raw_pid.split("_")
-            if len(parts) == 3:
-                try:
+            url = raw_pid
+
+            if not raw_pid.startswith("http"):
+                parts = raw_pid.split("_")
+                if len(parts) == 3:
                     src_idx, group_idx, ch_idx = int(parts[0]), int(parts[1]), int(parts[2])
                     groups = self._load_groups(src_idx)
                     group_names = list(groups.keys())
@@ -196,13 +217,14 @@ class Spider(BaseSpider):
                         channels = groups[group_names[group_idx]]
                         if 0 <= ch_idx < len(channels):
                             url = channels[ch_idx]["url"]
-                except Exception:
-                    pass
 
-        return {
-            "parse": 0,
-            "jx": 0,
-            "url": url,
-            "header": self.headers,
-            "format": "application/x-mpegURL",
-        }
+            return {
+                "parse": 0,
+                "jx": 0,
+                "url": url,
+                "header": self.headers,
+                "format": "application/x-mpegURL",
+            }
+        except Exception:
+            return {"parse": 0, "jx": 0, "url": "", "header": self.headers,
+                    "format": "application/x-mpegURL"}

@@ -79,13 +79,10 @@ class Spider(BaseSpider):
         while i < len(lines):
             ln = lines[i]
             if ln.startswith("#EXTINF"):
-                # 频道名：最后一个逗号之后
                 name = ln.split(",")[-1].strip() if "," in ln else "未知频道"
-                # 组名：group-title="..."
                 m = re.search(r'group-title="([^"]*)"', ln)
                 group = m.group(1).strip() if m and m.group(1).strip() else "未分组"
 
-                # 找紧跟的 http 行
                 j = i + 1
                 while j < len(lines) and not lines[j].startswith("http"):
                     j += 1
@@ -96,44 +93,55 @@ class Spider(BaseSpider):
             i += 1
         return groups
 
-    def _load_groups(self, tid):
-        """加载并缓存某个源的二级分组"""
-        tid = str(tid)
-        if tid in self.group_cache:
-            return self.group_cache[tid]
-        idx = int(tid)
-        if idx < 0 or idx >= len(self.sources):
+    def _load_groups(self, src_idx):
+        """加载并缓存某个源的二级分组，src_idx 必须是 int"""
+        src_idx = int(src_idx)
+        key = str(src_idx)
+        if key in self.group_cache:
+            return self.group_cache[key]
+        if src_idx < 0 or src_idx >= len(self.sources):
             return {}
-        name, url = self.sources[idx]
+        _, url = self.sources[src_idx]
         m3u = self._fetch_m3u(url)
         groups = self._parse_groups(m3u)
-        self.group_cache[tid] = groups
+        self.group_cache[key] = groups
         return groups
 
     # ---------- 壳子接口 ----------
     def homeContent(self, filter):
-        # 一级分类：17 个源
         classes = [{"type_id": str(idx), "type_name": name}
                    for idx, (name, _) in enumerate(self.sources)]
         return {"class": classes}
 
     def categoryContent(self, tid, pg, filter, extend):
         """
-        tid 支持两种形态：
-          - "源索引"          -> 返回该源下的二级分组列表
-          - "源索引_组名"     -> 返回该组下的频道列表
+        tid 形态：
+          - "源索引"            -> 返回二级分组列表，vod_id = 源索引_组索引
+          - "源索引_组索引"     -> 返回该组频道列表，vod_id = 源索引_组索引_频道索引
+        全部用数字索引，避免组名含下划线导致拆分错位。
         """
         tid = str(tid)
 
-        # 二级：源索引_组名
+        # 二级：返回组内频道
         if "_" in tid:
-            src_idx, group_name = tid.split("_", 1)
+            parts = tid.split("_")
+            if len(parts) != 2:
+                return {"list": [], "page": 1, "pagecount": 1, "limit": 0, "total": 0}
+
+            src_idx, group_idx = int(parts[0]), int(parts[1])
             groups = self._load_groups(src_idx)
-            channels = groups.get(group_name, [])
+            group_names = list(groups.keys())
+
+            if group_idx < 0 or group_idx >= len(group_names):
+                return {"list": [], "page": 1, "pagecount": 1, "limit": 0, "total": 0}
+
+            group_name = group_names[group_idx]
+            channels = groups[group_name]
+
             items = []
-            for i, ch in enumerate(channels):
+            for ch_idx, ch in enumerate(channels):
                 items.append({
-                    "vod_id": f"{src_idx}__{group_name}__{i}",
+                    "vod_id": f"{src_idx}_{group_idx}_{ch_idx}",
                     "vod_name": ch["name"],
                     "vod_pic": "",
                     "vod_remarks": group_name,
@@ -141,12 +149,13 @@ class Spider(BaseSpider):
             return {"list": items, "page": 1, "pagecount": 1,
                     "limit": len(items), "total": len(items)}
 
-        # 一级：源索引 -> 列出二级分组
-        groups = self._load_groups(tid)
+        # 一级：返回二级分组
+        src_idx = int(tid)
+        groups = self._load_groups(src_idx)
         items = []
-        for group_name, channels in groups.items():
+        for g_idx, (group_name, channels) in enumerate(groups.items()):
             items.append({
-                "vod_id": f"{tid}_{group_name}",
+                "vod_id": f"{src_idx}_{g_idx}",
                 "vod_name": group_name,
                 "vod_pic": "",
                 "vod_remarks": f"{len(channels)} 个频道",
@@ -156,16 +165,25 @@ class Spider(BaseSpider):
 
     def detailContent(self, ids):
         vid = ids[0]
-        # 三级 vod_id：源索引__组名__频道索引
-        parts = vid.split("__")
+        parts = vid.split("_")
         if len(parts) != 3:
             return {"list": []}
-        src_idx, group_name, ch_idx = parts
-        ch_idx = int(ch_idx)
-        groups = self._load_groups(src_idx)
-        channels = groups.get(group_name, [])
-        if ch_idx >= len(channels):
+
+        try:
+            src_idx, group_idx, ch_idx = int(parts[0]), int(parts[1]), int(parts[2])
+        except ValueError:
             return {"list": []}
+
+        groups = self._load_groups(src_idx)
+        group_names = list(groups.keys())
+        if group_idx < 0 or group_idx >= len(group_names):
+            return {"list": []}
+
+        group_name = group_names[group_idx]
+        channels = groups[group_name]
+        if ch_idx < 0 or ch_idx >= len(channels):
+            return {"list": []}
+
         ch = channels[ch_idx]
         return {"list": [{
             "vod_id": vid,

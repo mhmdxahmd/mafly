@@ -2,21 +2,6 @@
   <channel id="CGTN.yt">
     <display-name lang="en">CGTN LIVE</display-name>
   </channel>
-  <programme channel="CGTN.yt" start="20261104030000 +0000" stop="20261104060000 +0000">
-    <title lang="en">https://www.youtube.com/watch?v=Jxk39FR22so</title>
-    <desc lang="en">No description provided</desc>
-    <icon src=""/>
-  </programme>
-  <programme channel="CGTN.yt" start="20261104060000 +0000" stop="20261104090000 +0000">
-    <title lang="en">https://www.youtube.com/watch?v=Jxk39FR22so</title>
-    <desc lang="en">No description provided</desc>
-    <icon src=""/>
-  </programme>
-  <programme channel="CGTN.yt" start="20261104090000 +0000" stop="20261104120000 +0000">
-    <title lang="en">https://www.youtube.com/watch?v=Jxk39FR22so</title>
-    <desc lang="en">No description provided</desc>
-    <icon src=""/>
-  </programme>
   <programme channel="CGTN.yt" start="20261104120000 +0000" stop="20261104150000 +0000">
     <title lang="en">https://www.youtube.com/watch?v=Jxk39FR22so</title>
     <desc lang="en">No description provided</desc>
@@ -38,6 +23,21 @@
     <icon src=""/>
   </programme>
   <programme channel="CGTN.yt" start="20261105000000 +0000" stop="20261105030000 +0000">
+    <title lang="en">https://www.youtube.com/watch?v=Jxk39FR22so</title>
+    <desc lang="en">No description provided</desc>
+    <icon src=""/>
+  </programme>
+  <programme channel="CGTN.yt" start="20261105030000 +0000" stop="20261105060000 +0000">
+    <title lang="en">https://www.youtube.com/watch?v=Jxk39FR22so</title>
+    <desc lang="en">No description provided</desc>
+    <icon src=""/>
+  </programme>
+  <programme channel="CGTN.yt" start="20261105060000 +0000" stop="20261105090000 +0000">
+    <title lang="en">https://www.youtube.com/watch?v=Jxk39FR22so</title>
+    <desc lang="en">No description provided</desc>
+    <icon src=""/>
+  </programme>
+  <programme channel="CGTN.yt" start="20261105090000 +0000" stop="20261105120000 +0000">
     <title lang="en">https://www.youtube.com/watch?v=Jxk39FR22so</title>
     <desc lang="en">No description provided</desc>
     <icon src=""/>

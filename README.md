@@ -64,6 +64,10 @@ MAFly-IOS-猫源md5订阅  V3
 
 https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/mao/tangs/index.js.md5  
 
+Maflya-TVBOX解密加密  
+
+https://tvboxjm.maflya.com/  
+
 node公益订阅节点  
 ======  
 maflya-NODE  
@@ -132,6 +136,7 @@ maflya在线电视
 实时在线浏览器收看 请用谷歌及微软的浏览器收看 
 
 MAFLYA-TV电视  
+
 https://tvtest.maflya.com  
 
 

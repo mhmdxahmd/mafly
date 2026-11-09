@@ -10,81 +10,26 @@ from urllib.parse import quote, urljoin
 from base.spider import Spider as BaseSpider
 
 # ============================================================
-# 📺 频道配置（按分组）
+# 📺 YouTube 频道配置（按用户指定分类和顺序）
 # ============================================================
 CHANNEL_GROUPS = {
-    "固定新闻": [
-        ("vr3XyVCR4T0", "中天新闻 24H直播"),
-        ("6IquAgfvYmc", "寰宇新闻 24H直播"),
-        ("ylYJSBUgaMA", "民视新闻 24H直播"),
-        ("V1p33hqPrUk", "TVBS新闻 24H直播"),
-        ("m_dhMSvUCIc", "东森新闻 24H直播"),
-        ("fWlRLYXkVxY", "三立新闻 24H直播"),
-        ("Ry--eMIjYLQ", "台视新闻 24H直播"),
-    ],
     "国际新闻": [
-        ("IZK0QUeT2GA", "CGTN LIVE"),
+        ("Jxk39FR22so", "CGTN LIVE"),
         ("vYRfQo6JMxc", "United Nations联合国"),
-        ("yMMTtY_L-y0", "BBC Earth"),
         ("gCNeDWCI0vo", "Al Jazeera English"),
         ("LuKwFajn37U", "DW News"),
-        ("vNVp6bxkL1c", "CCTV中文国际"),
         ("Ry--eMIjYLQ", "凤凰卫视"),
     ],
-    "实时监测/直播流": [
-        ("z_fY1pj1VBw", "象山看台北"),
-        ("215ahZ_0rTg", "猫空指南宫"),
-        ("_hx5akJfzso", "高雄國際機場"),
-        ("My-tDEttvXg", "桃園機場北跑道"),
-        ("91PfFoqvuUk", "桃园国际机场即时影像"),
-        ("NOZVUBsCDEI", "臺灣桃園國際機場"),
-        ("vXvblXi-PGo", "臺北松山機場"),
-        ("ygC5wni2DMQ", "香港國際機場即時"),
-        ("qQoBmgDKZiI", "東京羽田 3D空港"),
-        ("KyT4qSK8lJo", "台灣地震監視"),
-        ("ADZTiqEGT8g", "台灣天氣即時監測"),
-        ("rvtygG4n6ew", "Live Earthquake"),
-        ("iws3rh5vLAQ", "Kilauea Volcano Livestream"),
-        ("0FBiyFpV__g", "International Space Station"),
-        ("3F0XlKxaqbk", "WorldCam"),
-    ],
-    "游戏": [
-        ("92IaqdAkYO0", "Zelda: Breath Of The Wild"),
-    ],
-    "儿童动画": [
-        ("Fl-WGssGnak", "金刚战士Mighty Morphin Power Rangers"),
-        ("bK03WDeq5SI", "啄木鸟Pica-Pau"),
-        ("DWPcQ4VlauY", "Shrek 1 - 4 Extended"),
-        ("iiRNq1sxr0U", "Rick and Morty"),
-        ("L0VqY0s7-5k", "功夫熊猫Kung Fu Panda"),
-        ("btP-bWKDVik", "MiniMoments"),
-        ("jLzdH2bvle4", "小黄人1-4"),
-        ("2Vf5RcQ84z0", "加菲猫"),
-        ("q5xC6wv9Ut0", "Nat Geo Kids"),
-        ("UavAcv2CBfc", "Shaun the Sheep & Friends"),
-        ("rEKifG2XUZg", "TOM and JERRY"),
-        ("hNf5__nxw5s", "Marvel HQ"),
-        ("SiflAbFG_HI", "Johnny Test - WildBrain"),
-        ("RXoDbwZmXV8", "We Bare Bears"),
-        ("8B7HWfZ4B9g", "Timmy & Friends"),
-        ("JCxdBLVj57g", "Die Schlümpfe"),
-        ("uZkaJ3e9nfY", "Adventure Time"),
-        ("XfZetbS9084", "Cartoonito"),
-        ("OaLXmRtCWO8", "Peppa's Best Bites"),
-    ],
     "儿歌/音乐": [
-        ("m0TPzUkL57E", "Lalafun - Nursery Rhymes"),
-        ("BgAwztE_7hw", "海洋之夜氛围与舒缓睡眠音效"),
-        ("q8hw5oKCDp4", "周杰倫24H音樂時光機"),
-        ("R62E7cFWX6o", "五月天"),
-        ("B7EliniYUrQ", "告五人唱出你的人生BGM"),
         ("SIYoSJ-KvHQ", "YOASOBI - STATION"),
         ("ouGgxvUNhok", "432Hz + 963Hz + 528Hz 深层疗愈"),
         ("PUqkUzXEtuI", "黃明志千萬點閱神曲精選"),
+        ("wKolkRh5-_k", "古风歌曲合集"),
+        ("DP8Esat08rs", "金庸武俠大戲"),
     ],
     "台湾新闻/财经/宗教": [
         ("wIicpuUDgv4", "正德电视台"),
-        ("dVkQNH3IfME", "生命电视台"),
+        ("YyOrp1NBkDM", "生命电视台"),
         ("m_dhMSvUCIc", "TVBS NEWS"),
         ("o_-hSMgpAzs", "TVBS NEWS1"),
         ("2mCSYvcfhtc", "TVBS 新闻HD"),
@@ -93,9 +38,8 @@ CHANNEL_GROUPS = {
         ("V1p33hqPrUk", "东森新闻"),
         ("1I2iq41Akmo", "东森财经"),
         ("vr3XyVCR4T0", "中天新闻"),
-        ("quwqlazU-c8", "公视新闻"),
-        ("wM0g8EoUZ_E", "华视新闻"),
-        ("IfRLIAc2HN8", "台视新闻"),
+        ("hg4nYb3jE9A", "公视新闻"),
+        ("jD79P0pWBc4", "台视新闻"),
         ("ylYJSBUgaMA", "民视新闻"),
         ("yeYC0mbSIOo", "三立新闻网"),
         ("6IquAgfvYmc", "环宇新闻"),
@@ -105,114 +49,208 @@ CHANNEL_GROUPS = {
         ("xLqt2p6Dowo", "非凡财经"),
     ],
     "电视剧": [
-        ("2nhLErwKwbw", "琅琊榜Nirvana in Fire"),
-        ("AfaGwTbKH0A", "China Zone 流金岁月"),
-        ("eyZ55jMTyMQ", "甄嬛传 24小时"),
-        ("et4SqnkNSFo", "潜伏 全集"),
-        ("RGCaUT6-hqU", "雍正王朝"),
-        ("QF6VpFjkFjw", "康熙王朝"),
-        ("wkdREigxTy4", "神断狄仁杰"),
         ("UgOi92IvONg", "86版 西游记"),
-        ("G43NInZfoPE", "华纳兄弟"),
-        ("89c4owSHL2E", "真人快打MortalKombat"),
-        ("sh4N79JlDRo", "变相怪杰TheMask"),
-        ("WXbPdjQuCd4", "速度与激情"),
-        ("XghNs0Cx6JQ", "尖峰时刻RushHour"),
-        ("WVwP298MU7I", "哈利波特HarryPotte"),
-        ("5PaRAsJ6gI0", "黑客帝国The Matrix Trilogy"),
-        ("AAWoKmDJRaw", "TVB 经典 Sitcom 马拉松"),
-        ("HEYnMz9zGhY", "楊麗花歌仔戲24小時"),
+        ("HEYnMz9zGhY", "楊麗花歌仔戲24小時不無聊直播"),
     ],
-    "电视剧/综艺": [
-        ("65bIk97v35Q", "新兵日记"),
+    "台湾电视剧/综艺": [
         ("NyrdWXddfR4", "台湾奇案"),
         ("K2qsju6byIg", "藍色水玲瓏"),
-        ("DSnwGChyQ7M", "我愛我妻我愛子"),
-        ("0ePhPlTJbGo", "天才衝衝衝"),
         ("OhA_G0s9pqw", "現代嘉慶君"),
-        ("CWT2LdX0H-g", "神機妙算劉伯溫"),
-        ("GjXBXz5dl6E", "親戚不計較"),
-        ("FOrcD6iEUso", "我的老師叫小賀"),
-        ("4PAlNX05N64", "包青天"),
-        ("OxL_MrnaHOY", "戲說台灣"),
         ("6ZowCmLBcMY", "台灣靈異事件"),
-        ("B4-L2nfGcuE", "BigBearBaldEagleNest老鹰鸟巢"),
-        ("S_71wzZMf0M", "憨豆先生Mr Bean"),
     ],
     "科技分享": [
         ("FS7IPxmfEms", "不良林"),
         ("epaQ9FmRooc", "jc-nf那坨"),
-        ("u66ExGpIL-s", "爱分享的小企鹅"),
+        ("hWWFQd9aMvc", "爱分享的小企鹅"),
     ],
     "宗教/佛经": [
-        ("vWzNi6wDTGI", "華藏衛視"),
-        ("xnGL8UoHJYs", "華藏網路念佛堂"),
-        ("JCIVsura-0A", "淨空老法師講經直播台"),
+        ("eHkFgEVwefI", "華藏衛視"),
         ("XWQTHTOj6VU", "悟道法師講經直播台"),
-        ("m5mqdL9704w", "北靈巖山寺"),
-        ("oDFtxATBSgY", "淨化音樂"),
         ("Y_OIcysppaA", "大悲咒"),
         ("KSIwUaDOl3A", "心经 The Heart Sutra"),
         ("xJv_2lF1eb4", "地藏菩薩本願經"),
-        ("pOFljdLI-M0", "地藏經讀誦"),
         ("jgUdjPLf2tY", "地藏王菩薩心咒"),
-        ("180E05O2xWk", "南無地藏王菩薩聖號"),
         ("xCHeilSLxHU", "綠度母心咒 108遍"),
-        ("5SFn0nk_mL8", "金刚经-王菲"),
-        ("3UyZFJXQ5Is", "觀世音菩薩普門品"),
-        ("X6Xw4Ht5-yE", "普庵咒"),
-        ("aAZ3-OZb5K4", "安土地真言108遍"),
+        ("aAZ3-OZb5K4", "《安土地真言108遍"),
         ("gahE0BDf_uc", "金剛薩埵百字明咒21遍"),
         ("8TBKZE3rd1Y", "九天應元雷聲普化天尊"),
-        ("r6Hj2HeP5kY", "金光神咒"),
-        ("Bn7GsaDY614", "八大神咒"),
+        ("Bn7GsaDY614", "《八大神咒》孟圆辉"),
         ("9m-_A7ubjLQ", "妙觉 24/7 佛曲电台"),
         ("Oc51BmM0dq0", "齊豫 清淨心靈 經典佛曲"),
-    ],
-    "AI漫剧-华光大帝": [
-        ("ri9DQpGs4vk", "第一集：凌霄法会 马耳大王毙命"),
-        ("SN37dVZyQno", "第二集：华光降世"),
-        ("DS5KoPJy0ZI", "第三集：灵光除龙王"),
-        ("5iF_bqQidgI", "第四集：灵耀被封"),
-        ("sqmd0GZ7_RA", "第五集：华光大闹琼花会"),
-        ("oMLfz35cC98", "第六集：真武大帝出旗"),
-        ("1qMuAel0DaI", "第七集：华光收服千里眼"),
-        ("zXelKt_Nx2Y", "第八集：华光投萧家庄"),
-        ("3PbqdssVy40", "第十集：华光收火鸦"),
-        ("VIH7Ar0Mq4w", "第十一集：华光化观音"),
-        ("vJ4MvDPRJ34", "第十二集：哪吒三太子大斗华光"),
-        ("aiwr2vdyPO8", "第十三集：华光迎娶铁扇公主"),
-        ("O7IgJfqiV2U", "第十四集：华光大闹阴司"),
-        ("4liYdHJHGe8", "第十五集：华光结义孙悟空"),
+        ("E3XJOvJMXBY", "12部经典佛经咒语净心合集"),
     ],
 }
 
 # ============================================================
-# 🌐 代理配置（支持 HTTP/HTTPS/SOCKS5）
+# 🌐 YouTube 代理配置
+# 主代理：严格按第一组提供的顺序优先使用
+# 备用代理：主代理全部不可用/失败时，按第二组顺序接续
+# 说明：这里的 https:// 是 HTTPS 代理连接协议，不是普通网页地址
 # ============================================================
-HTTP_PROXIES = [
-    'http://114.37.235.105:443',   # 家宽直连
-    'http://211.75.210.32:443',    # 家宽动态
-    'https://fan.240104.xyz:443',
-    'https://fan.891058.xyz:443',
-    'https://fan.596189.xyz:443',
-    'https://fan.226278.xyz:443',
-    'https://fan.587475.xyz:443',
-    'https://fan.571589.xyz:443',
-    'https://fan.572609.xyz:443',
-    'https://fan.212800.xyz:443',
-    'https://fan.973511.xyz:443',
+PRIMARY_PROXIES = [
+    "https://119.28.24.235:3128",       # 香港_1
+    "https://103.86.116.118:443",       # 印度尼西亚_1
+    "https://118.184.140.90:58764",     # 美国_42
+    "https://138.199.35.206:9002",      # 美国_3
+    "https://138.199.35.219:9002",      # 美国_13
+    "https://fan.240104.xyz:443",       # HK香港
+    "https://fan.226278.xyz:443",       # US美国
+    "https://103.86.117.202:443",       # 印尼
+    "https://150552-nat-jk.barokah.net.id:443",  # 印尼
+    "https://96.5.129.85:443",          # us美国（原链接 allowInsecure 参数不属于代理地址）
+    "https://87.106.223.158:443",       # NL荷兰
+    "https://103.97.88.154:443",        # NL荷兰2（去掉占位的 null:null@）
 ]
 
-# SOCKS5 代理（可选）
-SOCKS5_PROXIES = [
-    # 'socks5://user:password@host:port',
-    # 'socks5://host:port',
-    # 'socks5h://host:port',  # 通过代理解析 DNS
+BACKUP_PROXIES = [
+    "https://146.70.244.18:443",       # 奥地利_1
+    "https://31.171.155.210:9443",     # 阿尔巴尼亚_1
+    "https://31.171.154.66:443",       # 阿尔巴尼亚_2
+    "https://18.200.158.139:443",     # 爱尔兰_1
+    "https://149.88.96.12:9443",       # 爱尔兰_2
+    "https://146.70.123.98:443",      # 比利时_1
+    "https://37.120.156.18:443",      # 波兰_1
+    "https://151.115.54.133:443",    # 波兰_2
+    "https://151.115.54.133:443",    # 波兰_3
+    "https://151.115.54.133:443",    # 波兰_4
+    "https://37.120.213.210:9443",   # 瑞士_1
+    "https://149.88.27.33:9443",     # 瑞士_2
+    "https://149.36.50.129:443",     # 德国_1
+    "https://149.36.50.157:443",     # 德国_2
+    "https://87.106.223.158:443",    # 德国_3
+    "https://158.173.154.3:9002",    # 德国_4
+    "https://158.173.154.5:9002",    # 德国_5
+    "https://158.173.154.4:9002",    # 德国_6
+    "https://193.233.75.115:443",    # 德国_7
+    "https://79.127.156.177:9443",   # 德国_8
+    "https://158.173.154.2:9002",    # 德国_9
+    "https://159.69.94.125:443",     # 德国_10
+    "https://193.233.75.115:443",    # 德国_11
+    "https://46.29.166.134:1446",    # 俄罗斯_1
+    "https://82.65.162.76:443",      # 法国_1
+    "https://87.98.174.157:6103",    # 法国_2
+    "https://80.124.109.22:8090",    # 法国_3
+    "https://213.139.9.142:9443",    # 法国_4
+    "https://83.206.1.225:8090",     # 法国_5
+    "https://87.98.174.157:6103",    # 法国_6
+    "https://51.158.243.91:443",    # 荷兰_1
+    "https://84.17.47.125:9002",    # 荷兰_2
+    "https://84.17.47.147:9002",    # 荷兰_3
+    "https://84.17.47.146:9002",    # 荷兰_4
+    "https://103.97.88.154:443",    # 荷兰_5
+    "https://84.17.47.149:9002",    # 荷兰_7
+    "https://51.158.243.91:443",    # 荷兰_8
+    "https://84.17.47.146:9002",    # 荷兰_9
+    "https://84.17.47.146:9002",    # 荷兰_10
+    "https://84.17.47.149:9002",    # 荷兰_11x
+    "https://149.36.51.129:443",    # 荷兰_12
+    "https://84.17.47.150:9002",    # 荷兰_13
+    "https://84.17.47.147:9002",    # 荷兰_14
+    "https://84.17.47.148:9002",    # 荷兰_15
+    "https://5.255.118.82:443",     # 荷兰_16
+    "https://51.159.225.197:19362", # 荷兰_18
+    "https://84.17.47.124:9002",    # 荷兰_19
+    "https://149.36.51.157:9443",   # 荷兰_20
+    "https://84.17.47.123:9002",    # 荷兰_21
+    "https://89.150.35.94:443",     # 荷兰_22
+    "https://185.53.129.141:9090",  # 荷兰_23
+    "https://185.140.209.235:443",  # 荷兰_25
+    "https://185.216.35.130:443",   # 捷克_1
+    "https://154.47.29.174:443",    # 克罗地亚_1
+    "https://154.47.29.161:443",    # 克罗地亚_2
+    "https://109.248.147.66:443",   # 拉脱维亚_1
+    "https://185.219.159.16:443",   # 拉脱维亚_2
+    "https://185.221.132.242:443",  # 卢森堡_1
+    "https://185.221.132.226:443",  # 卢森堡_2
+    "https://193.176.84.31:9002",   # 罗马尼亚_1
+    "https://193.176.84.26:9002",   # 罗马尼亚_2
+    "https://193.176.84.32:9002",   # 罗马尼亚_3
+    "https://193.176.84.38:9002",   # 罗马尼亚_4
+    "https://193.176.84.38:9002",   # 罗马尼亚_5
+    "https://193.176.84.16:9002",   # 罗马尼亚_6
+    "https://193.176.84.33:9002",   # 罗马尼亚_7
+    "https://193.176.84.24:9002",   # 罗马尼亚_8
+    "https://185.163.110.194:443",  # 罗马尼亚_9
+    "https://193.176.84.18:9002",   # 罗马尼亚_10
+    "https://193.176.84.22:9002",   # 罗马尼亚_11
+    "https://193.176.84.39:9002",   # 罗马尼亚_12
+    "https://193.176.84.17:9002",   # 罗马尼亚_13
+    "https://193.176.84.31:9002",   # 罗马尼亚_14
+    "https://193.176.84.21:9002",   # 罗马尼亚_15
+    "https://146.70.221.34:443",    # 塞尔维亚_1
+    "https://146.70.221.18:443",    # 塞尔维亚_2
+    "https://146.70.242.146:443",  # 瑞典_1
+    "https://185.245.84.50:9443",   # 丹麦_1
+    "https://138.199.35.211:9002",  # 美国_1
+    "https://138.199.35.200:9002",  # 美国_2
+    "https://138.199.35.206:9002",  # 美国_3
+    "https://138.199.35.203:9002",  # 美国_4
+    "https://138.199.35.195:9002",  # 美国_5
+    "https://138.199.35.195:9002",  # 美国_6
+    "https://138.199.35.207:9002",  # 美国_7
+    "https://138.199.35.201:9002",  # 美国_8
+    "https://138.199.35.210:9002",  # 美国_9
+    "https://voteshirleysew.club:443", # 美国_10
+    "https://138.199.35.216:9002",  # 美国_11
+    "https://138.199.35.206:9002",  # 美国_12
+    "https://138.199.35.219:9002",  # 美国_13
+    "https://138.199.35.219:9002",  # 美国_14
+    "https://138.199.35.198:9002",  # 美国_15
+    "https://138.199.35.212:9002",  # 美国_16
+    "https://149.34.248.65:443",    # 美国_17
+    "https://138.199.35.202:9002",  # 美国_18
+    "https://44.217.145.28:8443",   # 美国_19
+    "https://129.153.93.183:443",   # 美国_21
+    "https://44.248.167.117:8443",  # 美国_22
+    "https://167.88.60.242:443",    # 美国_23
+    "https://154.47.25.78:9443",    # 美国_24
+    "https://68.235.56.59:443",     # 美国_25
+    "https://44.217.145.28:8443",   # 美国_26
+    "https://12.202.180.10:443",    # 美国_27
+    "https://23.133.176.14:443",    # 美国_28
+    "https://12.221.146.147:443",  # 美国_29
+    "https://18.206.28.143:8443",   # 美国_30
+    "https://162.244.227.36:443",  # 美国_31
+    "https://38.247.141.135:443",  # 美国_33
+    "https://173.42.49.102:8090",  # 美国_34
+    "https://44.248.167.117:8443", # 美国_35
+    "https://138.199.35.209:9002", # 美国_36
+    "https://138.199.35.217:9002", # 美国_37
+    "https://138.199.35.204:9002", # 美国_38
+    "https://138.199.35.202:9002", # 美国_39
+    "https://138.199.35.203:9002", # 美国_40
+    "https://138.199.35.207:9002", # 美国_41
+    "https://118.184.140.90:58764",# 美国_42
+    "https://138.199.35.216:9002", # 美国_43
+    "https://130.195.250.34:443",  # 西班牙_1
+    "https://82.102.17.178:443",   # 西班牙_2
+    "https://130.195.250.18:443",  # 西班牙_3
+    "https://119.28.24.235:3128",  # 香港_1
+    "https://120.232.204.58:31343",# 香港_2
+    "https://154.26.139.24:443",   # 新加坡_1
+    "https://23.169.224.34:9443",  # 加拿大_1
+    "https://206.223.183.16:443",  # 加拿大_2
+    "https://134.65.17.77:443",    # 巴西_1
+    "https://120.232.204.58:40583",# 日本_1
+    "https://149.22.85.78:443",    # 希腊_1
+    "https://103.86.116.118:443",  # 印度尼西亚_1
+    "https://212.102.63.61:443",   # 英国_1
+    "https://84.17.50.193:443",    # 英国_2
+    "https://212.102.63.31:443",   # 英国_3
+    "https://185.164.138.156:443", # 英国_4
+    "https://149.22.86.14:443",    # 葡萄牙_1
+    "https://185.183.105.130:443", # 意大利_1
+    "https://93.42.177.250:443",   # 意大利_2
+    "https://95.229.15.89:443",    # 意大利_3
+    "https://109.248.149.34:443",  # 其他_1
 ]
 
-# 合并所有代理
-ALL_PROXIES = HTTP_PROXIES + SOCKS5_PROXIES
+# 保持主代理优先、备用代理其次；去重但不改变首次出现的顺序
+ALL_PROXIES = list(dict.fromkeys(PRIMARY_PROXIES + BACKUP_PROXIES))
+
+# 保留旧变量名，避免其他扩展代码引用时出错
+HTTP_PROXIES = PRIMARY_PROXIES
+SOCKS5_PROXIES = []
 
 DEBUG_LOG = '/sdcard/Download/ytb_live_debug.log'
 
@@ -271,8 +309,8 @@ class Spider(BaseSpider):
 
         debug_log('spider init', {
             'total_proxies': len(ALL_PROXIES),
-            'http_proxies': len(HTTP_PROXIES),
-            'socks5_proxies': len(SOCKS5_PROXIES),
+            'primary_proxies': len(PRIMARY_PROXIES),
+            'backup_proxies': len(BACKUP_PROXIES),
         })
 
     # ---------- 代理健康检查 ----------
@@ -280,20 +318,22 @@ class Spider(BaseSpider):
         """并发检测所有代理的延迟，按延迟排序存入 available_proxies"""
         try:
             results = []
-            with ThreadPoolExecutor(max_workers=10) as executor:
-                future_to_proxy = {executor.submit(self._test_proxy, proxy): proxy for proxy in ALL_PROXIES}
-                for future in as_completed(future_to_proxy, timeout=10):
+            with ThreadPoolExecutor(max_workers=30) as executor:
+                future_to_proxy = {
+                    executor.submit(self._test_proxy, proxy): proxy
+                    for proxy in ALL_PROXIES
+                }
+                working = set()
+                for future in as_completed(future_to_proxy):
                     proxy = future_to_proxy[future]
                     try:
-                        latency = future.result(timeout=5)
-                        if latency is not None:
-                            results.append((latency, proxy))
+                        if future.result() is not None:
+                            working.add(proxy)
                     except Exception:
                         pass
 
-            # 按延迟排序（低延迟在前）
-            results.sort(key=lambda x: x[0])
-            self.available_proxies = [proxy for _, proxy in results]
+            # 按配置顺序排列：主代理在前，备用代理在后
+            self.available_proxies = [p for p in ALL_PROXIES if p in working]
 
             debug_log('proxy check completed', {
                 'total_checked': len(ALL_PROXIES),

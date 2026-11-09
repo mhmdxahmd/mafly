@@ -1,4 +1,13 @@
-[![GitHub Pulse](https://github-pulse-topaz.vercel.app/u/mhmdxahmd?color=ff2d95&bg=141021&text=ffffff&accent=ff2d95&muted=8888aa)](https://www.maflya.com)
+[![GitHub Pulse](https://github-pulse-topaz.vercel.app/u/mhmdxahmd?color=ff2d95&bg=141021&text=ffffff&accent=ff2d95&muted=8888aa)](https://www.maflya.com)  
+## Star History
+
+<a href="https://www.star-history.com/?repos=mhmdxahmd%2Fmafly&type=timeline&logscale=&legend=bottom-right">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=mhmdxahmd/mafly&type=timeline&theme=dark&legend=bottom-right" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=mhmdxahmd/mafly&type=timeline&legend=bottom-right" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=mhmdxahmd/mafly&type=timeline&legend=bottom-right" />
+ </picture>
+</a>  
 # mafly
 > [!IMPORTANT]  
 ![gif图片alien](./MAfly1/pic/alien_converted-1M.gif)  

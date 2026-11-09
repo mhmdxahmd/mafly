@@ -25,7 +25,7 @@ HEADER_PROMO_2_URL = "https://mpimg.cn/view.php/33d9c1521de0e0e9de09ad5d78668564
 HEADER_PROMO_BG = "https://seep.eu.org/https://www.maflya.com/MAfly1/pic/logo-png.png"
 TV_LOGO_WATERMARK = "https://seep.eu.org/https://www.maflya.com/MAfly1/pic/alien_8bit.gif"
 
-# 4. 频道独立 LOGO 配置字典
+# 4. 频道独立 LOGO 配置字典（为空时自动使用 YouTube 视频自带封面）
 CHANNEL_LOGOS = {
     "promo_1": "",  # 动态生成
     "promo_2": TV_LOGO_WATERMARK,

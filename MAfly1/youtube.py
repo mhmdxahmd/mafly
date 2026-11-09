@@ -11,7 +11,7 @@ from urllib.parse import quote, urljoin
 from base.spider import Spider as BaseSpider
 
 # ============================================================
-# 📺 OKTVBox YouTube 直播源 Python 爬虫 (完整旗舰修复版)
+# 📺 OKTVBox YouTube 直播源 Python 爬虫 (智能测速加速版)
 # ============================================================
 
 # 1. 首页 EPG 地址配置
@@ -21,14 +21,15 @@ HEADER_EPG = "https://gitee.com/gsls200808/xmltvepg/raw/master/e9.xml.gz"
 HEADER_PROMO_1_URL = "https://jsnzkpg4.pages.dev/https://mpimg.cn/view.php/7156505e46d701ce78133f2bf0349d4d.mp4"
 HEADER_PROMO_2_URL = "https://mpimg.cn/view.php/33d9c1521de0e0e9de09ad5d78668564.mp4"
 
-# 3. 首页背景图与播放时的电视台左上角动态台标
+# 3. 首页背景图与宣传LOGO/播放器台标
 HEADER_PROMO_BG = "https://seep.eu.org/https://www.maflya.com/MAfly1/pic/logo-png.png"
+PROMO_LOGO_PIC = "https://seep.eu.org/https://www.maflya.com/MAfly1/pic/logo-png.png"
 TV_LOGO_WATERMARK = "https://seep.eu.org/https://www.maflya.com/MAfly1/pic/alien_8bit.gif"
 
-# 4. 频道独立 LOGO 配置字典（为空时自动使用 YouTube 视频自带封面）
+# 4. 频道独立 LOGO 配置字典
 CHANNEL_LOGOS = {
-    "promo_1": "",  # 动态生成
-    "promo_2": TV_LOGO_WATERMARK,
+    "promo_1": PROMO_LOGO_PIC,  # 强制使用 logo-png.png 作为宣传封面
+    "promo_2": PROMO_LOGO_PIC,  # 强制使用 logo-png.png 作为官网封面
 }
 
 # ============================================================
@@ -104,10 +105,11 @@ CHANNEL_GROUPS = {
 }
 
 # ============================================================
-# 🌐 YouTube 代理配置（完整保留 SOCKS5 + 12条主代理 + 140条备用代理）
+# 🌐 YouTube 代理配置（新增 SOCKS5 代理及完整代理池）
 # ============================================================
 SOCKS5_PROXIES = [
-    "socks5://tvbox:a7dfcfd0372536bd@145.239.65.119:20137",
+    "socks5://u8628475611:3e6nK5ESpJmSZ5sK@45.192.242.201:8888", # 新增 SOCKS5 代理（最高优先）
+    "socks5://tvbox:a7dfcfd0372536bd@145.239.65.119:20137",      # 原有 SOCKS5 代理
 ]
 
 PRIMARY_PROXIES = [
@@ -134,142 +136,38 @@ BACKUP_PROXIES = [
     "https://146.70.123.98:443",      # 比利时_1
     "https://37.120.156.18:443",      # 波兰_1
     "https://151.115.54.133:443",    # 波兰_2
-    "https://151.115.54.133:443",    # 波兰_3
-    "https://151.115.54.133:443",    # 波兰_4
     "https://37.120.213.210:9443",   # 瑞士_1
     "https://149.88.27.33:9443",     # 瑞士_2
     "https://149.36.50.129:443",     # 德国_1
     "https://149.36.50.157:443",     # 德国_2
-    "https://87.106.223.158:443",    # 德国_3
     "https://158.173.154.3:9002",    # 德国_4
     "https://158.173.154.5:9002",    # 德国_5
-    "https://158.173.154.4:9002",    # 德国_6
     "https://193.233.75.115:443",    # 德国_7
-    "https://79.127.156.177:9443",   # 德国_8
-    "https://158.173.154.2:9002",    # 德国_9
-    "https://159.69.94.125:443",     # 德国_10
-    "https://193.233.75.115:443",    # 德国_11
     "https://46.29.166.134:1446",    # 俄罗斯_1
     "https://82.65.162.76:443",      # 法国_1
-    "https://87.98.174.157:6103",    # 法国_2
-    "https://80.124.109.22:8090",    # 法国_3
-    "https://213.139.9.142:9443",    # 法国_4
-    "https://83.206.1.225:8090",     # 法国_5
-    "https://87.98.174.157:6103",    # 法国_6
     "https://51.158.243.91:443",    # 荷兰_1
     "https://84.17.47.125:9002",    # 荷兰_2
-    "https://84.17.47.147:9002",    # 荷兰_3
-    "https://84.17.47.146:9002",    # 荷兰_4
-    "https://103.97.88.154:443",    # 荷兰_5
-    "https://84.17.47.149:9002",    # 荷兰_7
-    "https://51.158.243.91:443",    # 荷兰_8
-    "https://84.17.47.146:9002",    # 荷兰_9
-    "https://84.17.47.146:9002",    # 荷兰_10
-    "https://84.17.47.149:9002",    # 荷兰_11x
-    "https://149.36.51.129:443",    # 荷兰_12
-    "https://84.17.47.150:9002",    # 荷兰_13
-    "https://84.17.47.147:9002",    # 荷兰_14
-    "https://84.17.47.148:9002",    # 荷兰_15
-    "https://5.255.118.82:443",     # 荷兰_16
-    "https://51.159.225.197:19362", # 荷兰_18
-    "https://84.17.47.124:9002",    # 荷兰_19
-    "https://149.36.51.157:9443",   # 荷兰_20
-    "https://84.17.47.123:9002",    # 荷兰_21
-    "https://89.150.35.94:443",     # 荷兰_22
-    "https://185.53.129.141:9090",  # 荷兰_23
-    "https://185.140.209.235:443",  # 荷兰_25
     "https://185.216.35.130:443",   # 捷克_1
     "https://154.47.29.174:443",    # 克罗地亚_1
-    "https://154.47.29.161:443",    # 克罗地亚_2
     "https://109.248.147.66:443",   # 拉脱维亚_1
-    "https://185.219.159.16:443",   # 拉脱维亚_2
     "https://185.221.132.242:443",  # 卢森堡_1
-    "https://185.221.132.226:443",  # 卢森堡_2
     "https://193.176.84.31:9002",   # 罗马尼亚_1
-    "https://193.176.84.26:9002",   # 罗马尼亚_2
-    "https://193.176.84.32:9002",   # 罗马尼亚_3
-    "https://193.176.84.38:9002",   # 罗马尼亚_4
-    "https://193.176.84.38:9002",   # 罗马尼亚_5
-    "https://193.176.84.16:9002",   # 罗马尼亚_6
-    "https://193.176.84.33:9002",   # 罗马尼亚_7
-    "https://193.176.84.24:9002",   # 罗马尼亚_8
-    "https://185.163.110.194:443",  # 罗马尼亚_9
-    "https://193.176.84.18:9002",   # 罗马尼亚_10
-    "https://193.176.84.22:9002",   # 罗马尼亚_11
-    "https://193.176.84.39:9002",   # 罗马尼亚_12
-    "https://193.176.84.17:9002",   # 罗马尼亚_13
-    "https://193.176.84.31:9002",   # 罗马尼亚_14
-    "https://193.176.84.21:9002",   # 罗马尼亚_15
     "https://146.70.221.34:443",    # 塞尔维亚_1
-    "https://146.70.221.18:443",    # 塞尔维亚_2
     "https://146.70.242.146:443",  # 瑞典_1
     "https://185.245.84.50:9443",   # 丹麦_1
     "https://138.199.35.211:9002",  # 美国_1
     "https://138.199.35.200:9002",  # 美国_2
-    "https://138.199.35.206:9002",  # 美国_3
-    "https://138.199.35.203:9002",  # 美国_4
-    "https://138.199.35.195:9002",  # 美国_5
-    "https://138.199.35.195:9002",  # 美国_6
-    "https://138.199.35.207:9002",  # 美国_7
-    "https://138.199.35.201:9002",  # 美国_8
-    "https://138.199.35.210:9002",  # 美国_9
-    "https://voteshirleysew.club:443", # 美国_10
-    "https://138.199.35.216:9002",  # 美国_11
-    "https://138.199.35.206:9002",  # 美国_12
-    "https://138.199.35.219:9002",  # 美国_13
-    "https://138.199.35.219:9002",  # 美国_14
-    "https://138.199.35.198:9002",  # 美国_15
-    "https://138.199.35.212:9002",  # 美国_16
-    "https://149.34.248.65:443",    # 美国_17
-    "https://138.199.35.202:9002",  # 美国_18
-    "https://44.217.145.28:8443",   # 美国_19
-    "https://129.153.93.183:443",   # 美国_21
-    "https://44.248.167.117:8443",  # 美国_22
-    "https://167.88.60.242:443",    # 美国_23
-    "https://154.47.25.78:9443",    # 美国_24
-    "https://68.235.56.59:443",     # 美国_25
-    "https://44.217.145.28:8443",   # 美国_26
-    "https://12.202.180.10:443",    # 美国_27
-    "https://23.133.176.14:443",    # 美国_28
-    "https://12.221.146.147:443",  # 美国_29
-    "https://18.206.28.143:8443",   # 美国_30
-    "https://162.244.227.36:443",  # 美国_31
-    "https://38.247.141.135:443",  # 美国_33
-    "https://173.42.49.102:8090",  # 美国_34
-    "https://44.248.167.117:8443", # 美国_35
-    "https://138.199.35.209:9002", # 美国_36
-    "https://138.199.35.217:9002", # 美国_37
-    "https://138.199.35.204:9002", # 美国_38
-    "https://138.199.35.202:9002", # 美国_39
-    "https://138.199.35.203:9002", # 美国_40
-    "https://138.199.35.207:9002", # 美国_41
-    "https://118.184.140.90:58764",# 美国_42
-    "https://138.199.35.216:9002", # 美国_43
     "https://130.195.250.34:443",  # 西班牙_1
-    "https://82.102.17.178:443",   # 西班牙_2
-    "https://130.195.250.18:443",  # 西班牙_3
     "https://119.28.24.235:3128",  # 香港_1
-    "https://120.232.204.58:31343",# 香港_2
     "https://154.26.139.24:443",   # 新加坡_1
     "https://23.169.224.34:9443",  # 加拿大_1
-    "https://206.223.183.16:443",  # 加拿大_2
     "https://134.65.17.77:443",    # 巴西_1
     "https://120.232.204.58:40583",# 日本_1
-    "https://149.22.85.78:443",    # 希腊_1
-    "https://103.86.116.118:443",  # 印度尼西亚_1
     "https://212.102.63.61:443",   # 英国_1
-    "https://84.17.50.193:443",    # 英国_2
-    "https://212.102.63.31:443",   # 英国_3
-    "https://185.164.138.156:443", # 英国_4
-    "https://149.22.86.14:443",    # 葡萄牙_1
     "https://185.183.105.130:443", # 意大利_1
-    "https://93.42.177.250:443",   # 意大利_2
-    "https://95.229.15.89:443",    # 意大利_3
-    "https://109.248.149.34:443",  # 其他_1
 ]
 
-def get_proxy_candidates():
-    """按顺序生成唯一代理列表：SOCKS5 置顶优先，其次主代理，最后备用代理"""
+def get_base_proxy_candidates():
     seen = set()
     candidates = []
     for p in SOCKS5_PROXIES + PRIMARY_PROXIES + BACKUP_PROXIES:
@@ -277,10 +175,6 @@ def get_proxy_candidates():
             seen.add(p)
             candidates.append(p)
     return candidates
-
-ALL_PROXIES = get_proxy_candidates()
-HTTP_PROXIES = PRIMARY_PROXIES
-SOCKS5_PROXIES_COMPAT = SOCKS5_PROXIES
 
 DEBUG_LOG = '/sdcard/Download/ytb_live_debug.log'
 
@@ -304,10 +198,6 @@ def get_proxies_dict(proxy):
         return None
     return {'http': proxy, 'https': proxy}
 
-def iter_proxies_in_order():
-    for p in ALL_PROXIES:
-        yield p
-
 class Spider(BaseSpider):
     def getName(self):
         return 'YouTube直播'
@@ -330,39 +220,58 @@ class Spider(BaseSpider):
             'pic': 3600,
         }
         self.proxy_health_status = {}
+        self.sorted_proxies = get_base_proxy_candidates()
+        
+        # 启动后台异步测速与动态加速排序线程
         threading.Thread(target=self._check_proxies_async, daemon=True).start()
 
     def _check_proxies_async(self):
+        """后台对代理进行测速，并根据延时速度进行动态排序加速"""
         try:
+            base_list = get_base_proxy_candidates()
+            latencies = {}
             with ThreadPoolExecutor(max_workers=20) as executor:
                 future_to_proxy = {
                     executor.submit(self._test_proxy, proxy): proxy
-                    for proxy in ALL_PROXIES
+                    for proxy in base_list
                 }
                 for future in as_completed(future_to_proxy):
                     proxy = future_to_proxy[future]
                     try:
                         lat = future.result()
                         if lat is not None:
+                            latencies[proxy] = lat
                             self.proxy_health_status[proxy] = {'ok': True, 'latency': lat}
                     except Exception:
                         pass
-        except Exception:
-            pass
+            
+            # 根据测速延时从小到大排序（测速成功的排在最前，未测成功的排在后面）
+            sorted_by_speed = sorted(base_list, key=lambda p: latencies.get(p, 999.0))
+            if sorted_by_speed:
+                self.sorted_proxies = sorted_by_speed
+                debug_log('Proxies re-sorted by speed latency successfully', {'fastest': sorted_by_speed[0], 'latency': latencies.get(sorted_by_speed[0], 0)})
+        except Exception as e:
+            debug_log('_check_proxies_async error', str(e))
 
     def _test_proxy(self, proxy):
         try:
             start = time.time()
             proxies = get_proxies_dict(proxy)
-            resp = self.session.get('https://www.youtube.com/generate_204', proxies=proxies, timeout=4)
+            resp = self.session.get('https://www.youtube.com/generate_204', proxies=proxies, timeout=3)
             if resp.status_code == 204:
                 return time.time() - start
             return None
         except Exception:
             return None
 
+    def iter_proxies_in_order(self):
+        """按实时测速加速后的最佳顺序迭代代理"""
+        proxies_to_try = self.sorted_proxies if getattr(self, 'sorted_proxies', None) else get_base_proxy_candidates()
+        for p in proxies_to_try:
+            yield p
+
     def request_with_proxy_fallback(self, method, url, **kwargs):
-        """严格控制 5 秒超时，超时或异常自动切换下一个代理"""
+        """严格控制 5 秒超时，超时或异常自动切换下一个最快测速代理"""
         kwargs.setdefault('timeout', 5)
         headers = kwargs.pop('headers', None) or {}
         req_headers = self.headers.copy()
@@ -372,7 +281,7 @@ class Spider(BaseSpider):
         retry_status_codes = {408, 425, 429, 500, 502, 503, 504}
         last_exception = None
 
-        for proxy in iter_proxies_in_order():
+        for proxy in self.iter_proxies_in_order():
             proxies = get_proxies_dict(proxy)
             kwargs['proxies'] = proxies
             try:
@@ -399,10 +308,10 @@ class Spider(BaseSpider):
     def _get_promo_items(self):
         date_str = self._get_current_date_str()
         promo_1_name = f"更新时间{date_str}"
-        promo_1_pic = self.get_channel_logo("promo_1") or f"https://epg.112114.xyz/logo/更新时间{date_str}.png"
+        promo_1_pic = self.get_channel_logo("promo_1") or PROMO_LOGO_PIC
 
         promo_2_name = "永久官网https://maflya.com"
-        promo_2_pic = self.get_channel_logo("promo_2") or TV_LOGO_WATERMARK
+        promo_2_pic = self.get_channel_logo("promo_2") or PROMO_LOGO_PIC
 
         return [
             {
@@ -455,7 +364,6 @@ class Spider(BaseSpider):
         items = []
         channels = CHANNEL_GROUPS.get(tid, [])
         for vid, name in channels:
-            # 正常自动获取 YouTube 缩略图作为封面
             custom_logo = self.get_channel_logo(vid)
             pic_url = custom_logo if custom_logo else f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg"
             
@@ -471,7 +379,7 @@ class Spider(BaseSpider):
         vid = ids[0]
         if vid == "promo_1":
             date_str = self._get_current_date_str()
-            promo_1_pic = self.get_channel_logo("promo_1") or f"https://epg.112114.xyz/logo/更新时间{date_str}.png"
+            promo_1_pic = self.get_channel_logo("promo_1") or PROMO_LOGO_PIC
             return {"list": [{
                 "vod_id": "promo_1",
                 "vod_name": f"更新时间{date_str}",
@@ -480,7 +388,7 @@ class Spider(BaseSpider):
                 "vod_play_url": f"宣传视频1${HEADER_PROMO_1_URL}"
             }]}
         elif vid == "promo_2":
-            promo_2_pic = self.get_channel_logo("promo_2") or TV_LOGO_WATERMARK
+            promo_2_pic = self.get_channel_logo("promo_2") or PROMO_LOGO_PIC
             return {"list": [{
                 "vod_id": "promo_2",
                 "vod_name": "永久官网https://maflya.com",
@@ -517,7 +425,7 @@ class Spider(BaseSpider):
                 "jx": 0,
                 "url": video_id,
                 "header": self.headers,
-                "logo": TV_LOGO_WATERMARK  # 播放时左上角强制叠加动态台标
+                "logo": TV_LOGO_WATERMARK
             }
 
         hls_url = self._get_hls_with_proxy(video_id)
@@ -529,7 +437,7 @@ class Spider(BaseSpider):
                 "url": play_url,
                 "header": self.headers,
                 "format": "application/x-mpegURL",
-                "logo": TV_LOGO_WATERMARK  # 播放时左上角强制叠加动态台标
+                "logo": TV_LOGO_WATERMARK
             }
         return {
             "parse": 1,
@@ -540,7 +448,7 @@ class Spider(BaseSpider):
 
     def _get_hls_with_proxy(self, video_id):
         watch_url = f'https://www.youtube.com/watch?v={video_id}'
-        for proxy in iter_proxies_in_order():
+        for proxy in self.iter_proxies_in_order():
             proxies = get_proxies_dict(proxy)
             hls_api = self._try_player_api_with_single_proxy(video_id, watch_url, proxy, proxies)
             if hls_api:

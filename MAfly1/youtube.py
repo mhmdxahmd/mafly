@@ -11,7 +11,7 @@ from urllib.parse import quote, urljoin
 from base.spider import Spider as BaseSpider
 
 # ============================================================
-# 📺 OKTVBox YouTube 直播与点播源 Python 爬虫 (全量显式旗舰完美版)
+# 📺 OKTVBox YouTube 直播与点播源 Python 爬虫 (全量显式旗舰完美修复版)
 # ============================================================
 
 # 1. 首页 EPG 地址配置
@@ -338,7 +338,6 @@ BACKUP_PROXIES = [
 def get_base_proxy_candidates():
     seen = set()
     candidates = []
-    # 如果 USE_SOCKS5 为 True 则加载 SOCKS5 代理，为 False 则完全关闭不加载
     active_s5 = SOCKS5_PROXIES if USE_SOCKS5 else []
     for p in active_s5 + PRIMARY_PROXIES + BACKUP_PROXIES:
         if p and p not in seen:
@@ -392,7 +391,6 @@ class Spider(BaseSpider):
         self.proxy_health_status = {}
         self.sorted_proxies = get_base_proxy_candidates()
         
-        # 后台异步测速与动态速度加速排序线程
         threading.Thread(target=self._check_proxies_async, daemon=True).start()
 
     def _check_proxies_async(self):
@@ -591,27 +589,20 @@ class Spider(BaseSpider):
                 "logo": TV_LOGO_WATERMARK
             }
 
-        # 完美支持直播与点播地址解析（解决点播加载失败）
+        # 核心修复：无论是直播还是点播的直链，全部统一交由本地代理缓存（_cache_hls_url）包装！
+        # 这样播放器请求本地代理，由 Python 爬虫通过最佳代理去拉取外网数据，彻底解决播放器直连外网导致的连接超时！
         media_url = self._get_video_url_with_proxy(video_id)
         if media_url:
-            if '.m3u8' in media_url or 'manifest' in media_url or 'hls' in media_url:
-                play_url = self._cache_hls_url(media_url, video_id, 'master')
-                return {
-                    "parse": 0,
-                    "jx": 0,
-                    "url": play_url,
-                    "header": self.headers,
-                    "format": "application/x-mpegURL",
-                    "logo": TV_LOGO_WATERMARK
-                }
-            else:
-                return {
-                    "parse": 0,
-                    "jx": 0,
-                    "url": media_url,
-                    "header": self.headers,
-                    "logo": TV_LOGO_WATERMARK
-                }
+            play_url = self._cache_hls_url(media_url, video_id, 'media')
+            is_m3u8 = '.m3u8' in media_url or 'manifest' in media_url or 'hls' in media_url
+            return {
+                "parse": 0,
+                "jx": 0,
+                "url": play_url,
+                "header": self.headers,
+                "format": "application/x-mpegURL" if is_m3u8 else "",
+                "logo": TV_LOGO_WATERMARK
+            }
 
         return {
             "parse": 1,
@@ -770,7 +761,8 @@ class Spider(BaseSpider):
         target_url = item.get('url') or ''
         try:
             headers = self._hls_headers(item.get('kind'))
-            resp, _ = self.request_with_proxy_fallback('GET', target_url, headers=headers, stream=True, timeout=5)
+            # 针对大文件点播流，采用流式传输(stream=True)并延长超时至 10 秒
+            resp, _ = self.request_with_proxy_fallback('GET', target_url, headers=headers, stream=True, timeout=10)
             if not resp:
                 return [502, 'text/plain', 'HLS proxy failed']
 

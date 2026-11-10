@@ -11,7 +11,7 @@ from urllib.parse import quote, urljoin
 from base.spider import Spider as BaseSpider
 
 # ============================================================
-# 📺 OKTVBox YouTube 直播源 Python 爬虫 (全量显式旗舰版)
+# 📺 OKTVBox YouTube 直播与点播源 Python 爬虫 (全量显式旗舰完美版)
 # ============================================================
 
 # 1. 首页 EPG 地址配置
@@ -22,18 +22,80 @@ HEADER_PROMO_1_URL = "https://jsnzkpg4.pages.dev/https://mpimg.cn/view.php/71565
 HEADER_PROMO_2_URL = "https://mpimg.cn/view.php/33d9c1521de0e0e9de09ad5d78668564.mp4"
 
 # 3. 首页背景图与宣传LOGO/播放器台标
-HEADER_PROMO_BG = "https://seep.eu.org/https://www.maflya.com/MAfly1/pic/alien_8bit.gif"
+HEADER_PROMO_BG = "https://seep.eu.org/https://www.maflya.com/MAfly1/pic/logo-png.png"
 PROMO_LOGO_PIC = "https://seep.eu.org/https://www.maflya.com/MAfly1/pic/logo-png.png"
 TV_LOGO_WATERMARK = "https://seep.eu.org/https://www.maflya.com/MAfly1/pic/alien_8bit.gif"
 
-# 4. 频道独立 LOGO 配置字典
+# ============================================================
+# ⚙️ 功能开关配置：S5 代理总开关 (True 为开启，False 为完全关闭)
+# ============================================================
+USE_SOCKS5 = False
+
+# ============================================================
+# 📺 YouTube 频道独立配置字典（显式展开）
+# ============================================================
 CHANNEL_LOGOS = {
     "promo_1": PROMO_LOGO_PIC,  
-    "promo_2": PROMO_LOGO_PIC,  
+    "promo_2": PROMO_LOGO_PIC,
+    "Jxk39FR22so": "",
+    "vYRfQo6JMxc": "",
+    "gCNeDWCI0vo": "",
+    "LuKwFajn37U": "",
+    "Ry--eMIjYLQ": "",
+    "SIYoSJ-KvHQ": "",
+    "ouGgxvUNhok": "",
+    "PUqkUzXEtuI": "",
+    "wKolkRh5-_k": "",
+    "DP8Esat08rs": "",
+    "N9FnqYgXuHo": "",
+    "EOJQdKv-dIs": "",
+    "GybSrkCk0wo": "",
+    "wIicpuUDgv4": "",
+    "YyOrp1NBkDM": "",
+    "m_dhMSvUCIc": "",
+    "o_-hSMgpAzs": "",
+    "2mCSYvcfhtc": "",
+    "kMwoV2js-B4": "",
+    "E0zhe2gkXBs": "",
+    "V1p33hqPrUk": "",
+    "1I2iq41Akmo": "",
+    "vr3XyVCR4T0": "",
+    "hg4nYb3jE9A": "",
+    "jD79P0pWBc4": "",
+    "ylYJSBUgaMA": "",
+    "yeYC0mbSIOo": "",
+    "6IquAgfvYmc": "",
+    "w87VGpgd90U": "",
+    "yAUQQ0DhPxI": "",
+    "5n0y6b0Q25o": "",
+    "xLqt2p6Dowo": "",
+    "UgOi92IvONg": "",
+    "HEYnMz9zGhY": "",
+    "NyrdWXddfR4": "",
+    "K2qsju6byIg": "",
+    "OhA_G0s9pqw": "",
+    "6ZowCmLBcMY": "",
+    "FS7IPxmfEms": "",
+    "epaQ9FmRooc": "",
+    "hWWFQd9aMvc": "",
+    "eHkFgEVwefI": "",
+    "XWQTHTOj6VU": "",
+    "Y_OIcysppaA": "",
+    "KSIwUaDOl3A": "",
+    "xJv_2lF1eb4": "",
+    "jgUdjPLf2tY": "",
+    "xCHeilSLxHU": "",
+    "aAZ3-OZb5K4": "",
+    "gahE0BDf_uc": "",
+    "8TBKZE3rd1Y": "",
+    "Bn7GsaDY614": "",
+    "9m-_A7ubjLQ": "",
+    "Oc51BmM0dq0": "",
+    "E3XJOvJMXBY": "",
 }
 
 # ============================================================
-# 📺 YouTube 频道分类配置（显式完整展开所有大类与频道）
+# 📺 YouTube 频道分类配置（全量显式展开所有大类与明细）
 # ============================================================
 CHANNEL_GROUPS = {
     "国际新闻": [
@@ -108,10 +170,11 @@ CHANNEL_GROUPS = {
 }
 
 # ============================================================
-# 🌐 YouTube 代理配置（完整显式展开所有 SOCKS5 与 HTTP 节点）
+# 🌐 YouTube 代理配置（全量显式展开 SOCKS5 与所有备用代理）
 # ============================================================
 SOCKS5_PROXIES = [
-    "socks5://tvbox:a7dfcfd0372536bd@145.239.65.119:20137",      # 原有 SOCKS5 代理
+    "socks5://u8628475611:3e6nK5ESpJmSZ5sK@45.192.242.201:8888", 
+    "socks5://tvbox:a7dfcfd0372536bd@145.239.65.119:20137",      
 ]
 
 PRIMARY_PROXIES = [
@@ -275,7 +338,9 @@ BACKUP_PROXIES = [
 def get_base_proxy_candidates():
     seen = set()
     candidates = []
-    for p in SOCKS5_PROXIES + PRIMARY_PROXIES + BACKUP_PROXIES:
+    # 如果 USE_SOCKS5 为 True 则加载 SOCKS5 代理，为 False 则完全关闭不加载
+    active_s5 = SOCKS5_PROXIES if USE_SOCKS5 else []
+    for p in active_s5 + PRIMARY_PROXIES + BACKUP_PROXIES:
         if p and p not in seen:
             seen.add(p)
             candidates.append(p)
@@ -305,7 +370,7 @@ def get_proxies_dict(proxy):
 
 class Spider(BaseSpider):
     def getName(self):
-        return 'YouTube直播'
+        return 'YouTube直播点播'
 
     def init(self, extend=""):
         self.headers = {
@@ -327,11 +392,10 @@ class Spider(BaseSpider):
         self.proxy_health_status = {}
         self.sorted_proxies = get_base_proxy_candidates()
         
-        # 启动后台异步测速与动态速度加速排序线程
+        # 后台异步测速与动态速度加速排序线程
         threading.Thread(target=self._check_proxies_async, daemon=True).start()
 
     def _check_proxies_async(self):
-        """后台对代理进行测速，并根据延时速度进行动态排序加速"""
         try:
             base_list = get_base_proxy_candidates()
             latencies = {}
@@ -350,13 +414,11 @@ class Spider(BaseSpider):
                     except Exception:
                         pass
             
-            # 根据测速延时从小到大排序
             sorted_by_speed = sorted(base_list, key=lambda p: latencies.get(p, 999.0))
             if sorted_by_speed:
                 self.sorted_proxies = sorted_by_speed
-                debug_log('Proxies re-sorted by speed latency successfully', {'fastest': sorted_by_speed[0], 'latency': latencies.get(sorted_by_speed[0], 0)})
-        except Exception as e:
-            debug_log('_check_proxies_async error', str(e))
+        except Exception:
+            pass
 
     def _test_proxy(self, proxy):
         try:
@@ -370,13 +432,11 @@ class Spider(BaseSpider):
             return None
 
     def iter_proxies_in_order(self):
-        """按实时测速加速后的最佳顺序迭代代理"""
         proxies_to_try = self.sorted_proxies if getattr(self, 'sorted_proxies', None) else get_base_proxy_candidates()
         for p in proxies_to_try:
             yield p
 
     def request_with_proxy_fallback(self, method, url, **kwargs):
-        """严格控制 5 秒超时，超时或异常自动切换下一个最快测速代理"""
         kwargs.setdefault('timeout', 5)
         headers = kwargs.pop('headers', None) or {}
         req_headers = self.headers.copy()
@@ -390,7 +450,6 @@ class Spider(BaseSpider):
             proxies = get_proxies_dict(proxy)
             kwargs['proxies'] = proxies
             try:
-                debug_log('request proxy attempt', {'url': url[:60], 'proxy': proxy})
                 response = self.session.request(method, url, **kwargs)
                 if response.status_code == 200:
                     return response, proxy
@@ -399,7 +458,6 @@ class Spider(BaseSpider):
                 else:
                     return response, proxy
             except (requests.exceptions.Timeout, requests.exceptions.ConnectionError, requests.exceptions.RequestException) as e:
-                debug_log('proxy timeout or error, switching', {'proxy': proxy, 'err': str(e)[:80]})
                 last_exception = e
                 continue
 
@@ -476,7 +534,7 @@ class Spider(BaseSpider):
                 "vod_id": vid,
                 "vod_name": name,
                 "vod_pic": self._get_proxy_pic_url(pic_url),
-                "vod_remarks": "LIVE"
+                "vod_remarks": "LIVE/VOD"
             })
         return {"list": items, "page": 1, "pagecount": 1, "limit": len(items), "total": len(items)}
 
@@ -516,8 +574,8 @@ class Spider(BaseSpider):
             "vod_id": vid,
             "vod_name": name,
             "vod_pic": self._get_proxy_pic_url(pic_url),
-            "vod_play_from": "YouTube直播",
-            "vod_play_url": f"直播线路${vid}@live"
+            "vod_play_from": "YouTube直播点播",
+            "vod_play_url": f"直播点播线路${vid}@vod"
         }]}
 
     def playerContent(self, flag, pid, vipFlags):
@@ -533,17 +591,28 @@ class Spider(BaseSpider):
                 "logo": TV_LOGO_WATERMARK
             }
 
-        hls_url = self._get_hls_with_proxy(video_id)
-        if hls_url:
-            play_url = self._cache_hls_url(hls_url, video_id, 'master')
-            return {
-                "parse": 0,
-                "jx": 0,
-                "url": play_url,
-                "header": self.headers,
-                "format": "application/x-mpegURL",
-                "logo": TV_LOGO_WATERMARK
-            }
+        # 完美支持直播与点播地址解析（解决点播加载失败）
+        media_url = self._get_video_url_with_proxy(video_id)
+        if media_url:
+            if '.m3u8' in media_url or 'manifest' in media_url or 'hls' in media_url:
+                play_url = self._cache_hls_url(media_url, video_id, 'master')
+                return {
+                    "parse": 0,
+                    "jx": 0,
+                    "url": play_url,
+                    "header": self.headers,
+                    "format": "application/x-mpegURL",
+                    "logo": TV_LOGO_WATERMARK
+                }
+            else:
+                return {
+                    "parse": 0,
+                    "jx": 0,
+                    "url": media_url,
+                    "header": self.headers,
+                    "logo": TV_LOGO_WATERMARK
+                }
+
         return {
             "parse": 1,
             "url": f'https://www.youtube.com/watch?v={video_id}',
@@ -551,16 +620,16 @@ class Spider(BaseSpider):
             "logo": TV_LOGO_WATERMARK
         }
 
-    def _get_hls_with_proxy(self, video_id):
+    def _get_video_url_with_proxy(self, video_id):
         watch_url = f'https://www.youtube.com/watch?v={video_id}'
         for proxy in self.iter_proxies_in_order():
             proxies = get_proxies_dict(proxy)
-            hls_api = self._try_player_api_with_single_proxy(video_id, watch_url, proxy, proxies)
-            if hls_api:
-                return hls_api
-            hls_page = self._try_page_extract_with_single_proxy(watch_url, proxies)
-            if hls_page:
-                return hls_page
+            res_url = self._try_player_api_with_single_proxy(video_id, watch_url, proxy, proxies)
+            if res_url:
+                return res_url
+            res_page = self._try_page_extract_with_single_proxy(watch_url, proxies)
+            if res_page:
+                return res_page
         return ''
 
     def _try_player_api_with_single_proxy(self, video_id, watch_url, proxy, proxies):
@@ -578,6 +647,7 @@ class Spider(BaseSpider):
             client_configs = [
                 ('web', {'clientName': 'WEB', 'clientVersion': '2.20240310.01.00'}),
                 ('android', {'clientName': 'ANDROID', 'clientVersion': '21.02.35', 'androidSdkVersion': 30}),
+                ('ios', {'clientName': 'IOS', 'clientVersion': '19.29.1'}),
             ]
             for _, config in client_configs:
                 try:
@@ -589,9 +659,20 @@ class Spider(BaseSpider):
                     }
                     api_resp = self.session.post(api_url, json=payload, headers={'Content-Type': 'application/json'}, proxies=proxies, timeout=5)
                     if api_resp.status_code == 200:
-                        hls = api_resp.json().get('streamingData', {}).get('hlsManifestUrl', '')
+                        data = api_resp.json()
+                        streaming_data = data.get('streamingData', {})
+                        
+                        # 1. 尝试获取直播 HLS
+                        hls = streaming_data.get('hlsManifestUrl', '')
                         if hls:
                             return hls
+                        
+                        # 2. 尝试获取点播视频直链 (formats / adaptiveFormats)
+                        formats = streaming_data.get('formats', []) + streaming_data.get('adaptiveFormats', [])
+                        for fmt in formats:
+                            url = fmt.get('url', '')
+                            if url:
+                                return url
                 except Exception:
                     continue
         except Exception:
@@ -602,17 +683,23 @@ class Spider(BaseSpider):
         try:
             resp = self.session.get(watch_url, proxies=proxies, timeout=5)
             if resp.status_code == 200:
-                return self._extract_hls_from_page(resp.text)
+                return self._extract_urls_from_page(resp.text)
         except Exception:
             pass
         return ''
 
-    def _extract_hls_from_page(self, page):
+    def _extract_urls_from_page(self, page):
         if not page:
             return ''
         match = re.search(r'"hlsManifestUrl"\s*:\s*"(https:[^"]+)"', page)
         if match:
             return match.group(1).replace(r'\/', '/')
+        
+        # 匹配点播谷歌视频直链
+        urls = re.findall(r'"url"\s*:\s*"(https://[^"]+?googlevideo\.com[^"]+)"', page)
+        if urls:
+            return urls[0].replace(r'\/', '/')
+            
         matches = re.findall(r'"(https://[^"]*?\.m3u8[^"]*)"', page)
         if matches:
             return matches[0].replace(r'\/', '/')

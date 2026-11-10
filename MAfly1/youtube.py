@@ -49,6 +49,9 @@ CHANNEL_GROUPS = {
         ("PUqkUzXEtuI", "黃明志千萬點閱神曲精選"),
         ("wKolkRh5-_k", "古风歌曲合集"),
         ("DP8Esat08rs", "金庸武俠大戲"),
+        ("N9FnqYgXuHo", "戲腔集合"),
+        ("EOJQdKv-dIs", "【五音療癒】百病生於氣，止於音｜宮商角徵羽・疏肝解鬱・清心安神・健脾祛濕・舒緩焦慮內耗｜Chinese Zen Music・癒し音楽"),
+        ("GybSrkCk0wo", "GREGORIAN TECHNO III"),
     ],
     "台湾新闻/财经/宗教": [
         ("wIicpuUDgv4", "正德电视台"),

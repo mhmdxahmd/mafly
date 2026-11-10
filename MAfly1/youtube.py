@@ -22,7 +22,7 @@ HEADER_PROMO_1_URL = "https://jsnzkpg4.pages.dev/https://mpimg.cn/view.php/71565
 HEADER_PROMO_2_URL = "https://mpimg.cn/view.php/33d9c1521de0e0e9de09ad5d78668564.mp4"
 
 # 3. 首页背景图与宣传LOGO/播放器台标
-HEADER_PROMO_BG = "https://seep.eu.org/https://www.maflya.com/MAfly1/pic/logo-png.png"
+HEADER_PROMO_BG = "https://seep.eu.org/https://www.maflya.com/MAfly1/pic/alien_8bit.gif"
 PROMO_LOGO_PIC = "https://seep.eu.org/https://www.maflya.com/MAfly1/pic/logo-png.png"
 TV_LOGO_WATERMARK = "https://seep.eu.org/https://www.maflya.com/MAfly1/pic/alien_8bit.gif"
 

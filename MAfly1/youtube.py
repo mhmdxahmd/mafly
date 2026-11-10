@@ -111,7 +111,6 @@ CHANNEL_GROUPS = {
 # 🌐 YouTube 代理配置（完整显式展开所有 SOCKS5 与 HTTP 节点）
 # ============================================================
 SOCKS5_PROXIES = [
-    "socks5://u8628475611:3e6nK5ESpJmSZ5sK@45.192.242.201:8888", # 新增 SOCKS5 代理
     "socks5://tvbox:a7dfcfd0372536bd@145.239.65.119:20137",      # 原有 SOCKS5 代理
 ]
 

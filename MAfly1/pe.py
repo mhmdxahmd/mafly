@@ -22,7 +22,7 @@ class Spider(BaseSpider):
         self.sources = [
             ("IPTV直播", "http://seep.eu.org/https://iptv.445569.xyz/live.m3u"),
             ("央视频自建", "http://seep.eu.org/https://yshipin.pages.dev/live.m3u"),
-            ("TikTok直播源[免翻]", "https://x.maflya.com/api/proxy?target=https://tiktok.445569.xyz/live.m3u"),
+            ("TikTok直播源[免翻]", "https://x.maflya.com/api/proxy?target=http://seep.eu.org/https://tiktok.445569.xyz/live.m3u"),
             ("TikTok直播源[免翻1]", "https://cf.subcf.kdns.fr/api/proxy?target=https://tiktok.445569.xyz/live.m3u"),
             ("Twitch直播源", "http://seep.eu.org/https://twitch.445569.xyz/live.m3u"),
             ("咖啡体育直播", "http://seep.eu.org/https://jsnzkpg.de5.net/all.m3u"),

@@ -21,6 +21,7 @@ class Spider(BaseSpider):
 
         self.sources = [
             ("IPTV直播", "http://seep.eu.org/https://iptv.445569.xyz/live.m3u"),
+            ("央视频自建", "http://seep.eu.org/https://yshipin.pages.dev/live.m3u"),
             ("咖啡体育直播", "http://seep.eu.org/https://jsnzkpg.de5.net/all.m3u"),
             ("大米体育直播", "http://seep.eu.org/https://stymei.pages.dev/live.m3u"),
             ("88看球直播", "http://seep.eu.org/https://stymei1.pages.dev/live.m3u"),

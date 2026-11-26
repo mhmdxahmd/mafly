@@ -1,8 +1,8 @@
 /*! 
  * @name 👽maflya音源(三改整合版)
- * @description 基于安妮独家音源v4 + 星海音乐源v3.2.12 + 咪咕正常 + 汽水音乐全红问题
+ * @description 基于安妮独家音源v4 + 星海音乐源v3.2.12 + 汽水音乐URL问题修复
  * @description 官网 https://maflya.com/
- * @version v3.0.3 | 2026-11-26 汽水音乐已加入
+ * @version v3.0.1224 | 2026-11-26 汽水音乐已加入
  * @author  maflya | 裤佬 | 安妮 | 星海
  */
 
@@ -24,7 +24,7 @@ const PLATFORM_NAMES = {
   mg: '咪咕音乐', qs: '汽水音乐', sd: '汽水音乐'
 };
 
-// ==================== 各平台音质（已完整支持） ====================
+// ==================== 各平台音质 ====================
 const MUSIC_QUALITIES = {
   wy: ['128k', '192k', '320k', 'flac', 'flac24bit', 'hires', 'jyeffect', 'sky', 'jymaster'],
   tx: ['128k', '192k', '320k', 'flac', 'flac24bit', 'hires', 'atmos', 'master'],
@@ -258,12 +258,11 @@ async function resolveTxChksz(info, quality) {
   throw new Error(resp.body?.msg || 'ChKSz QQ获取失败');
 }
 
-// ==================== ✅ 修复后的汽水解析器 ====================
+// ==================== 修复后的汽水解析器 ====================
 async function resolveQsVip(info, quality) {
   const keywords = info.name || info.songmid || info.id || '';
   if (!keywords) throw new Error('缺少汽水歌曲名称');
 
-  // 搜索
   let listUrl = null;
   for (const baseUrl of [API.qsVip, API.qsVipFallback]) {
     try {
@@ -286,20 +285,9 @@ async function resolveQsVip(info, quality) {
 
   if (!song) throw new Error('未找到汽水歌曲');
 
-  // 修复 musicUrl（汽水获取音频链接）
-  const songmid = song.id || info.songmid;
-  if (!songmid) throw new Error('缺少汽水 songmid');
-
-  const urlResp = await httpFetch(`https://api.qs.vip/music/url?songmid=${encodeURIComponent(songmid)}&quality=${quality}`);
-  const urlData = urlResp.body;
-
-  if (urlData?.code === 200 && urlData?.data?.url) {
-    return urlData.data.url;
-  }
-
   if (song.url) return song.url;
 
-  throw new Error(urlData?.msg || '汽水 musicUrl 获取失败');
+  throw new Error('汽水 musicUrl 获取失败（搜索返回无 url）');
 }
 
 // ==================== 核心：获取音乐URL ====================
@@ -336,8 +324,8 @@ async function fetchMusicUrl(platform, info, quality) {
       { name: '星海后端', fn: () => resolveXhBackend('mg', info, actualQuality, API.xhBackend) },
       { name: '星海后端(备)', fn: () => resolveXhBackend('mg', info, actualQuality, API.xhBackendFallback) }
     ],
-    qs: [ { name: '汽水搜索', fn: () => resolveQsVip(info, actualQuality) } ],
-    sd: [ { name: '汽水搜索', fn: () => resolveQsVip(info, actualQuality) } ]
+    qs: [{ name: '汽水搜索', fn: () => resolveQsVip(info, actualQuality) }],
+    sd: [{ name: '汽水搜索', fn: () => resolveQsVip(info, actualQuality) }]
   };
 
   const chain = chains[platform] || chains.qs;

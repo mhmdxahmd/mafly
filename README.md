@@ -25,6 +25,13 @@ web网站导航页：
 
 https://www.maflya.com  
 
+maflya 极速云盘 
+
+https://r2.maflya.com/  
+
+可上传TXT等文本 然后进行外链
+
+资源大部分来自  裤佬网盘    
 
 推荐好用的梯子 纯纯自己用过才推荐
 请用我的链接注册 我才能拿佣金
@@ -140,6 +147,10 @@ https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/head
 
 洛雪音乐接口  
 https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/music/lx-maflya-Pro.js  
+
+洛雪音乐接口增加汽水  
+
+https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/maflya-svip-music-source-addqs.js  
 
 
 maflya在线电视 

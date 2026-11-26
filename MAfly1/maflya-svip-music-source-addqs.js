@@ -1,8 +1,8 @@
 /*! 
  * @name 👽maflya音源(三改整合版)
- * @description 基于安妮独家音源v4 + 星海音乐源v3.2.12 + 汽水音乐+修复咪咕播放问题重构
+ * @description 基于安妮独家音源v4 + 星海音乐源v3.2.12 + 咪咕正常 + 汽水音乐全红问题
  * @description 官网 https://maflya.com/
- * @version v3.0.1 | 2026-11-26 汽水音乐已加入
+ * @version v3.0.3 | 2026-11-26 汽水音乐已加入
  * @author  maflya | 裤佬 | 安妮 | 星海
  */
 
@@ -10,8 +10,6 @@ const { EVENT_NAMES, request, on, send, env, version } = globalThis.lx;
 
 // ==================== 配置区 ====================
 const CHKSZ_APIKEY = '';
-
-// 酷我代理解密配置
 const KW_DECRYPT_PROXY = {
   url: '',
   allowEncryptedLossless: false,
@@ -26,18 +24,17 @@ const PLATFORM_NAMES = {
   mg: '咪咕音乐', qs: '汽水音乐', sd: '汽水音乐'
 };
 
-// ==================== 各平台支持的音质（咪咕已完整修复） ====================
+// ==================== 各平台音质（已完整支持） ====================
 const MUSIC_QUALITIES = {
   wy: ['128k', '192k', '320k', 'flac', 'flac24bit', 'hires', 'jyeffect', 'sky', 'jymaster'],
   tx: ['128k', '192k', '320k', 'flac', 'flac24bit', 'hires', 'atmos', 'master'],
   kw: ['128k', '320k', 'flac', 'flac24bit', 'hires'],
   kg: ['128k', '320k', 'flac', 'flac24bit', 'hires'],
-  mg: ['128k', '320k', 'flac', 'flac24bit', 'hires'],     // ✅ 已修复
+  mg: ['128k', '320k', 'flac', 'flac24bit', 'hires'],   // ✅ 咪咕母带修复
   qs: ['128k', '320k', 'flac', 'flac24bit', 'hires'],
   sd: ['128k', '320k', 'flac', 'flac24bit', 'hires']
 };
 
-// 音质降级顺序（已优化）
 const QUALITY_ORDER = ['jymaster', 'sky', 'jyeffect', 'master', 'hires', 'flac24bit', 'atmos', 'flac', '320k', '192k', '128k'];
 
 // ==================== API 端点 ====================
@@ -55,24 +52,18 @@ const API = {
   qsVipFallback: 'https://api.qs.la/music/'
 };
 
-// ==================== 质量映射（咪咕已完整修复） ====================
+// ==================== 质量映射 ====================
 const QUALITY_MAP = {
   kg: { '128k': '128k', '320k': '320k', 'flac': 'flac', 'flac24bit': 'flac24bit', 'hires': 'flac24bit' },
   tx: { '128k': '6', '192k': '7', '320k': '8', 'flac': '10', 'flac24bit': '11', 'hires': '11', 'atmos': '13', 'master': '14' },
   kw: { '128k': '128kmp3', '320k': '320kmp3', 'flac': '2000kflac', 'flac24bit': '4000kflac', 'hires': '4000kflac' },
   wy: { '128k': '128k', '192k': '128k', '320k': '320k', 'flac': 'flac', 'flac24bit': 'flac24bit', 'hires': 'hires', 'jyeffect': 'hires', 'sky': 'atmos', 'jymaster': 'master' },
-  mg: { 
-    '128k': '128k', 
-    '320k': '320k', 
-    'flac': 'flac', 
-    'flac24bit': 'flac24bit', 
-    'hires': 'hires' 
-  },
+  mg: { '128k': '128k', '320k': '320k', 'flac': 'flac', 'flac24bit': 'flac24bit', 'hires': 'hires' },
   qs: { '128k': '128k', '320k': '320k', 'flac': 'flac', 'flac24bit': 'flac24bit', 'hires': 'flac24bit' },
   sd: { '128k': '128k', '320k': '320k', 'flac': 'flac', 'flac24bit': 'flac24bit', 'hires': 'flac24bit' }
 };
 
-// ==================== 工具函数（全部保留） ====================
+// ==================== 工具函数 ====================
 const httpFetch = (url, options = {}) => new Promise((resolve, reject) => {
   request(url, { timeout: 5000, ...options }, (err, resp) => {
     if (err) return reject(err);
@@ -121,7 +112,7 @@ function setCache(key, data) {
   }
 }
 
-// ==================== 搜索函数（裤佬原版完整） ====================
+// ==================== 搜索函数 ====================
 async function searchQsVip(keywords, page = 1, pageSize = 30) {
   if (!keywords) return { isEnd: true, list: [] };
   const urls = [API.qsVip, API.qsVipFallback];
@@ -146,16 +137,170 @@ async function searchQsVip(keywords, page = 1, pageSize = 30) {
         return { isEnd: list.length < pageSize, list, total };
       }
       lastErr = new Error(data?.msg || 'QSVIP搜索异常');
-    } catch (e) {
-      lastErr = e;
-    }
+    } catch (e) { lastErr = e; }
   }
   throw lastErr || new Error('QSVIP搜索全部失败');
 }
 
-// ==================== 所有解析器（全部保持不变） ====================
-// ...（kgAnnie、txVkeys、kwMobi、wyWeb、xhBackend、wyGdStudio、wyChksz、txChksz、qsVip 全部不变）
-// 下面只列出关键修改部分，其他解析器和工具函数完全相同
+// ==================== 所有解析器 ====================
+async function resolveKgAnnie(info, quality) {
+  const hash = info.SQFileHash || info.HQFileHash || info.FileHash || info.hash || info.songmid;
+  if (!hash) throw new Error('缺少酷狗歌曲hash');
+  const type = QUALITY_MAP.kg[quality] || '128k';
+  const resp = await httpFetch(API.kgAnnie, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type, musicInfo: { source: 'kg', hash } })
+  });
+  if (resp.body?.code === 200 && resp.body?.data?.url) return resp.body.data.url;
+  throw new Error(resp.body?.message || `酷狗安妮获取失败(code:${resp.body?.code})`);
+}
+
+async function resolveTxVkeys(info, quality) {
+  const mid = info.songmid;
+  if (!mid) throw new Error('缺少QQ songmid');
+  const qc = QUALITY_MAP.tx[quality] || '6';
+  const resp = await httpFetch(`${API.txVkeys}?mid=${mid}&quality=${qc}`);
+  if (resp.body?.code === 200 && resp.body?.data?.url) return resp.body.data.url;
+  throw new Error(resp.body?.message || `QQ vkeys获取失败(code:${resp.body?.code})`);
+}
+
+async function resolveKwMobi(info, quality) {
+  const rid = info.rid || info.hash || info.songmid || info.id;
+  if (!rid) throw new Error('缺少酷我歌曲ID');
+  const br = QUALITY_MAP.kw[quality];
+  if (!br) throw new Error('不支持的酷我音质');
+  const params = { f: 'web', user: '0', source: 'kwplayerhd_ar_4.3.0.8_tianbao_T1A_qirui.apk', type: 'convert_url_with_sign', rid, br };
+  const qs = Object.keys(params).map(k => `${k}=${encodeURIComponent(params[k])}`).join('&');
+  const resp = await httpFetch(`${API.kwMobi}?${qs}`);
+  if (resp.body?.code === 200 && resp.body?.data?.url) return resp.body.data.url;
+  throw new Error(resp.body?.msg || `酷我mobi获取失败(code:${resp.body?.code})`);
+}
+
+async function resolveWyWeb(info, quality) {
+  const id = info.songmid || info.id || info.hash;
+  if (!id) throw new Error('缺少网易歌曲ID');
+  const level = QUALITY_MAP.wy[quality] || 'flac';
+  const resp = await httpFetch(API.wyWeb, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: { source: 'wy', musicId: id, quality: level }
+  });
+  const b = resp.body;
+  if (b?.code === 200 && b?.url) return b.url;
+  throw new Error(b?.message || `网易web获取失败(code:${b?.code})`);
+}
+
+async function resolveXhBackend(platform, info, quality, baseUrl) {
+  const sourceMap = { wy: 'netease', tx: 'qq', kw: 'kw', kg: 'kg', mg: 'migu' };
+  const source = sourceMap[platform] || platform;
+  const params = { source, quality: quality || '' };
+  params.songmid = info.songmid || info.id || '';
+  params.name = info.name || '';
+  params.singer = info.singer || '';
+  params.albumName = info.albumName || info.album || '';
+  params.interval = info.interval || '';
+
+  if (platform === 'kg') {
+    const types = info._types || {};
+    params.mainHash = info.hash || '';
+    if (types[quality]?.hash) params.hash = types[quality].hash;
+    params.albumId = info.albumId || '';
+  }
+
+  const qs = Object.keys(params).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`).join('&');
+  const url = `${baseUrl}?${qs}`;
+  const resp = await httpFetch(url);
+  const data = resp.body;
+  if (data?.code === 200 && data?.url) {
+    if (platform === 'kw' && KW_DECRYPT_PROXY.allowEncryptedLossless && data.ekey && KW_DECRYPT_PROXY.url) {
+      return `${KW_DECRYPT_PROXY.url}?${KW_DECRYPT_PROXY.urlParamName}=${encodeURIComponent(data.url)}&${KW_DECRYPT_PROXY.ekeyParamName}=${encodeURIComponent(data.ekey)}`;
+    }
+    return data.url;
+  }
+  throw new Error(data?.msg || `星海后端获取失败(code:${data?.code})`);
+}
+
+async function resolveWyGdStudio(info, quality) {
+  const id = info.songmid || info.id || info.hash;
+  if (!id) throw new Error('缺少网易歌曲ID');
+  const br = { '128k': '128', '192k': '192', '320k': '320', 'flac': '740', 'flac24bit': '999', 'hires': '999' }[quality] || '320';
+  const url = `${API.gdStudio}?use_xbridge3=true&loader_name=forest&need_sec_link=1&sec_link_scene=im&theme=light&types=url&source=netease&id=${id}&br=${br}`;
+  const resp = await httpFetch(url);
+  if (resp.body?.url) return resp.body.url;
+  if (quality === 'hires' || quality === 'flac24bit') {
+    const fallbackUrl = `${API.gdStudio}?use_xbridge3=true&loader_name=forest&need_sec_link=1&sec_link_scene=im&theme=light&types=url&source=netease&id=${id}&br=740`;
+    const resp2 = await httpFetch(fallbackUrl);
+    if (resp2.body?.url) return resp2.body.url;
+  }
+  throw new Error(resp.body?.msg || 'GD Studio获取失败');
+}
+
+async function resolveWyChksz(info, quality) {
+  if (!CHKSZ_APIKEY) throw new Error('ChKSz未配置apikey');
+  const id = info.songmid || info.id || info.hash;
+  if (!id) throw new Error('缺少网易歌曲ID');
+  const level = { '128k': 'standard', '192k': 'exhigh', '320k': 'exhigh', 'flac': 'lossless', 'flac24bit': 'hires', 'hires': 'hires', 'jyeffect': 'jyeffect', 'sky': 'sky', 'jymaster': 'jymaster' }[quality];
+  if (!level) throw new Error(`ChKSz不支持网易音质:${quality}`);
+  const resp = await httpFetch(`${API.chkszWy}?id=${id}&level=${level}&apikey=${encodeURIComponent(CHKSZ_APIKEY)}`);
+  if (resp.body?.code === 200 && resp.body?.data?.url) return resp.body.data.url;
+  throw new Error(resp.body?.msg || 'ChKSz网易获取失败');
+}
+
+async function resolveTxChksz(info, quality) {
+  if (!CHKSZ_APIKEY) throw new Error('ChKSz未配置apikey');
+  const mid = info.songmid || info.id;
+  if (!mid) throw new Error('缺少QQ mid');
+  const size = { '128k': '128k', '192k': '320k', '320k': '320k', 'flac': 'flac', 'flac24bit': 'hires', 'hires': 'hires', 'atmos': 'master', 'master': 'master' }[quality];
+  if (!size) throw new Error(`ChKSz不支持QQ音质:${quality}`);
+  const resp = await httpFetch(`${API.chkszTx}?mid=${mid}&size=${size}&type=json&apikey=${encodeURIComponent(CHKSZ_APIKEY)}`);
+  if (resp.body?.code === 200 && resp.body?.url) return resp.body.url;
+  throw new Error(resp.body?.msg || 'ChKSz QQ获取失败');
+}
+
+// ==================== ✅ 修复后的汽水解析器 ====================
+async function resolveQsVip(info, quality) {
+  const keywords = info.name || info.songmid || info.id || '';
+  if (!keywords) throw new Error('缺少汽水歌曲名称');
+
+  // 搜索
+  let listUrl = null;
+  for (const baseUrl of [API.qsVip, API.qsVipFallback]) {
+    try {
+      const resp = await httpFetch(`${baseUrl}?act=search&keywords=${encodeURIComponent(keywords)}&page=1&pagesize=10&type=music`);
+      const data = resp.body;
+      if (data?.code === 200 && Array.isArray(data?.data?.list)) {
+        listUrl = data.data.list;
+        break;
+      }
+    } catch (e) {}
+  }
+  if (!listUrl) throw new Error('汽水搜索失败');
+
+  const song = listUrl.find(item => 
+    item.id === keywords || 
+    item.id === info.songmid || 
+    item.id === info.hash ||
+    item.name?.includes(info.name || '')
+  ) || listUrl[0];
+
+  if (!song) throw new Error('未找到汽水歌曲');
+
+  // 修复 musicUrl（汽水获取音频链接）
+  const songmid = song.id || info.songmid;
+  if (!songmid) throw new Error('缺少汽水 songmid');
+
+  const urlResp = await httpFetch(`https://api.qs.vip/music/url?songmid=${encodeURIComponent(songmid)}&quality=${quality}`);
+  const urlData = urlResp.body;
+
+  if (urlData?.code === 200 && urlData?.data?.url) {
+    return urlData.data.url;
+  }
+
+  if (song.url) return song.url;
+
+  throw new Error(urlData?.msg || '汽水 musicUrl 获取失败');
+}
 
 // ==================== 核心：获取音乐URL ====================
 async function fetchMusicUrl(platform, info, quality) {
@@ -164,14 +309,38 @@ async function fetchMusicUrl(platform, info, quality) {
   if (!id) throw new Error('缺少歌曲标识符');
 
   const chains = {
-    // ...（wy、tx、kw、kg、mg、qs、sd 的链路完全相同，只新增了 mg 的高质量支持）
+    wy: [
+      { name: 'ChKSz网易', fn: () => resolveWyChksz(info, actualQuality) },
+      { name: 'GD Studio', fn: () => resolveWyGdStudio(info, actualQuality) },
+      { name: 'c.wwwweb.top', fn: () => resolveWyWeb(info, actualQuality) },
+      { name: '星海后端', fn: () => resolveXhBackend('wy', info, actualQuality, API.xhBackend) },
+      { name: '星海后端(备)', fn: () => resolveXhBackend('wy', info, actualQuality, API.xhBackendFallback) }
+    ],
+    tx: [
+      { name: 'ChKSz QQ', fn: () => resolveTxChksz(info, actualQuality) },
+      { name: 'vkeys QQ', fn: () => resolveTxVkeys(info, actualQuality) },
+      { name: '星海后端', fn: () => resolveXhBackend('tx', info, actualQuality, API.xhBackend) },
+      { name: '星海后端(备)', fn: () => resolveXhBackend('tx', info, actualQuality, API.xhBackendFallback) }
+    ],
+    kw: [
+      { name: '星海后端', fn: () => resolveXhBackend('kw', info, actualQuality, API.xhBackend) },
+      { name: '酷我mobi', fn: () => resolveKwMobi(info, actualQuality) },
+      { name: '星海后端(备)', fn: () => resolveXhBackend('kw', info, actualQuality, API.xhBackendFallback) }
+    ],
+    kg: [
+      { name: '酷狗安妮', fn: () => resolveKgAnnie(info, actualQuality) },
+      { name: '星海后端', fn: () => resolveXhBackend('kg', info, actualQuality, API.xhBackend) },
+      { name: '星海后端(备)', fn: () => resolveXhBackend('kg', info, actualQuality, API.xhBackendFallback) }
+    ],
     mg: [
       { name: '星海后端', fn: () => resolveXhBackend('mg', info, actualQuality, API.xhBackend) },
       { name: '星海后端(备)', fn: () => resolveXhBackend('mg', info, actualQuality, API.xhBackendFallback) }
-    ]
+    ],
+    qs: [ { name: '汽水搜索', fn: () => resolveQsVip(info, actualQuality) } ],
+    sd: [ { name: '汽水搜索', fn: () => resolveQsVip(info, actualQuality) } ]
   };
 
-  const chain = chains[platform] || chains.mg;
+  const chain = chains[platform] || chains.qs;
   const errors = [];
 
   for (const provider of chain) {

@@ -2,7 +2,7 @@
  * @name 👽maflya终极全能聚合音源
  * @description 全网最全聚合：支持全平台搜索与解析，完美并发竞速
  * @description 官网 https://maflya.com/
- * @version v1424 | 2026-11-26 汽水音乐已加入
+ * @version v.2048 | 2026-11-26 汽水音乐已加入
  * @author 👽maflya
  */
 
@@ -23,7 +23,9 @@ const MUSIC_QUALITIES = {
 
 const QUALITY_ORDER = ['jymaster', 'master', 'atmos_plus', 'atmos', 'sky', 'jyeffect', 'hires', 'flac24bit', 'flac', '320k', '192k', '128k'];
 
-// ==================== 2. 统一请求工具函数 ====================
+// ==================== 2. 统一请求工具函数 (带 302 探测) ====================
+// 部分接口（如念心/星海）返回的可能是 302 跳转地址，LX 播放器直接下载会导致文件错误。
+// 此函数专门发起 HEAD 或 GET(Range: 0-0) 请求，获取最终的 Location 真实音频直链。
 const httpRequest = (url, options = {}) => new Promise((resolve, reject) => {
   const timer = setTimeout(() => reject(new Error('请求超时')), options.timeout || TIMEOUT);
   request(url, {
@@ -37,18 +39,41 @@ const httpRequest = (url, options = {}) => new Promise((resolve, reject) => {
     clearTimeout(timer);
     if (err) return reject(err instanceof Error ? err : new Error(String(err)));
     if (!resp) return reject(new Error('空响应'));
+    
+    // 如果响应头里有 Location，说明是重定向，直接返回目标地址
+    const headers = resp.headers || {};
+    const location = headers.location || headers.Location;
+    if (location && location.startsWith('http')) {
+       return resolve({ body: '', statusCode: 302, headers, url: location });
+    }
+
     let body = resp.body;
     if (typeof body === 'string' && (body.trim().startsWith('{') || body.trim().startsWith('['))) {
       try { body = JSON.parse(body); } catch (e) {}
     }
-    resolve({ body, statusCode: resp.statusCode || 200, headers: resp.headers || {}, url: resp.url });
+    resolve({ body, statusCode: resp.statusCode || 200, headers, url: resp.url });
   });
 });
+
+// 探测 302 真实链接
+const probeRealUrl = async (url) => {
+  try {
+    const res = await httpRequest(url, { method: 'GET', headers: { 'Range': 'bytes=0-0' } });
+    if (res.url && res.url.startsWith('http')) return res.url;
+  } catch (e) {}
+  return url;
+};
 
 // 并发竞速：只要有一个接口成功，立刻返回
 const raceApis = async (apis) => {
   if (!apis || apis.length === 0) throw new Error('无可用接口');
   return await Promise.any(apis.map(fn => fn()));
+};
+
+// 星海动态 Token 生成 (源自 HelloWorld)
+const generateToken = () => {
+  const payload = { device_id: 'lx-online', ip: '0.0.0.0', timestamp: Math.floor(Date.now() / 1000), random: Math.random().toString(36).substring(2) };
+  return btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
 };
 
 // 酷狗 Hash 深度提取 (源自 Hei Music)
@@ -61,17 +86,12 @@ const getKgHash = (info) => {
   return info.SQFileHash || info.HQFileHash || info.FileHash || info.hash || info.songmid || '';
 };
 
-// 星海动态 Token 生成 (源自 HelloWorld)
-const generateToken = () => {
-  const payload = { device_id: 'lx-online', ip: '0.0.0.0', timestamp: Math.floor(Date.now() / 1000), random: Math.random().toString(36).substring(2) };
-  return btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
-};
-
 // ==================== 3. 全平台搜索模块 ====================
 async function searchGeneral(platform, keyword, page = 1, limit = 30) {
-  // --- 汽水专属搜索（全网多渠道） ---
+  const text = encodeURIComponent(keyword || '');
+
+  // --- 汽水专属搜索 ---
   if (platform === 'qs' || platform === 'sd') {
-    const text = encodeURIComponent(keyword || '');
     const searchApis = [
       // 渠道 A：开源 API 库 (injahow)
       async () => {
@@ -98,7 +118,6 @@ async function searchGeneral(platform, keyword, page = 1, limit = 30) {
         throw new Error('qishui pc empty');
       }
     ];
-
     try {
       const list = await raceApis(searchApis);
       return {
@@ -114,17 +133,15 @@ async function searchGeneral(platform, keyword, page = 1, limit = 30) {
           pic: item.pic || item.cover || ''
         }))
       };
-    } catch (e) {
-      return { isEnd: true, list: [] };
-    }
+    } catch (e) { return { isEnd: true, list: [] }; }
   }
 
   // --- 其他平台通用搜索 (Meting API) ---
   const serverMap = { wy: 'netease', tx: 'tencent', kw: 'kuwo', kg: 'kugou', mg: 'migu' };
   const server = serverMap[platform] || 'netease';
   const urls = [
-    `https://api.i-meto.com/meting/api.php?type=search&id=${encodeURIComponent(keyword)}&server=${server}`,
-    `https://api.injahow.cn/meting/?type=search&id=${encodeURIComponent(keyword)}&server=${server}`
+    `https://api.i-meto.com/meting/api.php?type=search&id=${text}&server=${server}`,
+    `https://api.injahow.cn/meting/?type=search&id=${text}&server=${server}`
   ];
   
   for (const url of urls) {
@@ -152,7 +169,7 @@ async function searchGeneral(platform, keyword, page = 1, limit = 30) {
 
 // ==================== 4. 各大平台解析模块 ====================
 
-// 1. 网易云音乐 (全并发)
+// 1. 网易云音乐
 const resolveWy = async (info, quality) => {
   const id = info.songId || info.id || info.songmid;
   if (!id) throw new Error('缺少网易ID');
@@ -160,8 +177,9 @@ const resolveWy = async (info, quality) => {
     // 念心 MCP
     async () => {
       const lvlMap = { '128k': 'standard', '320k': 'exhigh', 'flac': 'lossless', 'flac24bit': 'hires', 'hires': 'hires', 'jyeffect': 'jyeffect', 'sky': 'sky', 'jymaster': 'jymaster' };
-      const res = await httpRequest(`https://mcp.nianxinxz.com/share/ceshi/wy.php?id=${id}&level=${lvlMap[quality] || 'exhigh'}`);
-      if (res.body?.url) return res.body.url;
+      const url = `https://mcp.nianxinxz.com/share/ceshi/wy.php?id=${id}&level=${lvlMap[quality] || 'exhigh'}`;
+      const res = await httpRequest(url);
+      if (res.body?.url) return await probeRealUrl(res.body.url);
       throw new Error('念心失败');
     },
     // wwwweb
@@ -182,7 +200,7 @@ const resolveWy = async (info, quality) => {
       if (res.body?.data?.url) return res.body.data.url;
       throw new Error('海棠失败');
     },
-    // 星海
+    // 星海 (带动态 Token)
     async () => {
       const res = await httpRequest(`https://yy.zddyr.top/lx/api/?source=wy&songmid=${id}&quality=${quality}`, {
         headers: { 'X-Token': generateToken(), 'X-Client': 'YYMusicSource/v1.0.0' }
@@ -193,12 +211,21 @@ const resolveWy = async (info, quality) => {
   ]);
 };
 
-// 2. QQ音乐 (全并发)
+// 2. QQ音乐 (针对“未知大小”深度优化)
 const resolveTx = async (info, quality) => {
   const id = info.songmid || info.id;
   if (!id) throw new Error('缺少QQ mid');
+  
+  const vkeysQc = { '128k': '6', '192k': '7', '320k': '8', 'flac': '10', 'flac24bit': '11', 'hires': '11', 'atmos': '13', 'master': '14' };
+
   return await raceApis([
-    // Tang (强力无鉴权)
+    // 方案 1：Vkeys 接口 (最稳，直出真链)
+    async () => {
+      const res = await httpRequest(`https://api.vkeys.cn/v2/music/tencent/geturl?mid=${id}&quality=${vkeysQc[quality] || '8'}`);
+      if (res.body?.code === 200 && res.body?.data?.url) return res.body.data.url;
+      throw new Error('Vkeys失败');
+    },
+    // 方案 2：Tang API (多字段提取)
     async () => {
       const res = await httpRequest(`https://tang.api.s01s.cn/music_open_api.php?mid=${id}`);
       if (res.body) {
@@ -209,7 +236,7 @@ const resolveTx = async (info, quality) => {
       }
       throw new Error('Tang失败');
     },
-    // 103.79
+    // 方案 3：103.79 接口 (带 Header)
     async () => {
       const res = await httpRequest(`http://103.79.184.97/api/music/url?source=tx&songId=${id}&quality=${quality}&key=6C1F-53W0-GRKI-EVFG`, {
         headers: { 'User-Agent': 'Mozilla/5.0', 'X-Card-Key': '6C1F-53W0-GRKI-EVFG' }
@@ -218,13 +245,16 @@ const resolveTx = async (info, quality) => {
       if (typeof url === 'string' && url.startsWith('http')) return url;
       throw new Error('103.79失败');
     },
-    // Vkeys
+    // 方案 4：海棠
     async () => {
-      const res = await httpRequest(`https://api.vkeys.cn/v2/music/tencent/geturl?mid=${id}&quality=8`);
-      if (res.body?.code === 200 && res.body?.data?.url) return res.body.data.url;
-      throw new Error('Vkeys失败');
+      const res = await httpRequest('https://musicserver.haitangw.cc/v1/music/resolve-url', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ source: 'tx', rid: id, level: quality === 'flac' ? 'lossless' : 'exhigh' })
+      });
+      if (res.body?.data?.url) return res.body.data.url;
+      throw new Error('海棠失败');
     },
-    // 星海
+    // 方案 5：星海
     async () => {
       const res = await httpRequest(`https://yy.zddyr.top/lx/api/?source=tx&songmid=${id}&quality=${quality}`, {
         headers: { 'X-Token': generateToken(), 'X-Client': 'YYMusicSource/v1.0.0' }
@@ -235,7 +265,7 @@ const resolveTx = async (info, quality) => {
   ]);
 };
 
-// 3. 酷我音乐 (全并发)
+// 3. 酷我音乐
 const resolveKw = async (info, quality) => {
   const id = info.rid || info.hash || info.songmid || info.id;
   if (!id) throw new Error('缺少酷我ID');
@@ -261,7 +291,7 @@ const resolveKw = async (info, quality) => {
   ]);
 };
 
-// 4. 酷狗音乐 (全并发)
+// 4. 酷狗音乐
 const resolveKg = async (info, quality) => {
   const hash = getKgHash(info);
   const keyword = encodeURIComponent(`${info.name} ${info.singer}`.trim());
@@ -306,7 +336,7 @@ const resolveKg = async (info, quality) => {
   ]);
 };
 
-// 5. 咪咕音乐 (全并发)
+// 5. 咪咕音乐
 const resolveMg = async (info, quality) => {
   const keyword = encodeURIComponent(`${info.name} ${info.singer}`.trim());
   if (!keyword) throw new Error('缺少歌曲名');
@@ -326,12 +356,12 @@ const resolveMg = async (info, quality) => {
   ]);
 };
 
-// 6. 汽水音乐 (终极全并发：官方+代理+开源)
+// 6. 汽水音乐
 const resolveQs = async (info, quality) => {
   const id = info.songmid || info.id;
   const keyword = encodeURIComponent(`${info.name} ${info.singer}`.trim());
   return await raceApis([
-    // 渠道 A：官方 H5 接口 (获取试听/免费片段)
+    // 官方 H5 接口
     async () => {
       if (!id) throw new Error('无ID');
       const res = await httpRequest(`https://api.qishui.com/luna/h5/seo_track?track_id=${id}`);
@@ -342,21 +372,21 @@ const resolveQs = async (info, quality) => {
       }
       throw new Error('官方 H5 失败');
     },
-    // 渠道 B：代理 (qs.vip) 直接取流
+    // qs.vip 直接取流
     async () => {
       if (!id) throw new Error('无ID');
       const res = await httpRequest(`https://api.qs.vip/music/?act=url&id=${id}&quality=${quality}`);
       if (res.body?.code === 200 && res.body?.data?.url) return res.body.data.url;
       throw new Error('qs.vip 失败');
     },
-    // 渠道 C：代理 (qs.la) 直接取流
+    // qs.la 直接取流
     async () => {
       if (!id) throw new Error('无ID');
       const res = await httpRequest(`https://api.qs.la/music/?act=url&id=${id}&quality=${quality}`);
       if (res.body?.code === 200 && res.body?.data?.url) return res.body.data.url;
       throw new Error('qs.la 失败');
     },
-    // 渠道 D：开源 API 搜索兜底 (injahow)
+    // injahow 搜索兜底
     async () => {
       if (!keyword) throw new Error('无关键词');
       const res = await httpRequest(`https://api.injahow.cn/meting/?type=search&id=${keyword}&server=qishui`);
@@ -382,7 +412,7 @@ async function fetchMusicUrl(platform, info, targetQuality) {
     try {
       const url = await resolver(info, q);
       if (url && typeof url === 'string' && url.startsWith('http')) {
-        return url; // 成功即返回
+        return url; 
       }
     } catch (e) {
       errors.push(`${q}: ${e.message || e}`);
@@ -391,7 +421,7 @@ async function fetchMusicUrl(platform, info, targetQuality) {
   throw new Error(`全平台解析失败 (${errors.join(' | ')})`);
 }
 
-// ==================== 6. 事件监听与注册 ====================
+// ==================== 6. 事件监听 ====================
 on(EVENT_NAMES.request, async ({ action, source, info }) => {
   if (!source) throw new Error('未知音源');
 

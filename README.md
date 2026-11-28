@@ -108,9 +108,11 @@ https://bestcf.pages.dev/
 https://github.com/LancelotRar/best-cf-ips  
 
 =======S5公益内置代理集合---  
+
 MAFLYA-S5-TG内置代理公益  
 
-https://t.me/mas5_bot  
+https://t.me/mas5_bot 
+或 @mas5_bot
 
 S5-TG内置代理公益  
 
@@ -122,9 +124,6 @@ https://t.me/hanbaocloudfree_bot?start=0A745B119F
 
 Telegram 最新 WEB 代理协议！  
 
-安卓手机需要用Telegram beat版本  
-
-安卓官方客户端地址 https://telegram.org/dl/android/apk-public-beta  
 一键导入连接：3个TG内置WEB代理  一键链接  
 
 https://t.me/webproxy?server=webdl.maflya.com&secret=473ce5d4958eb5f968c87680a23854a0      maflya  
@@ -135,8 +134,7 @@ https://t.me/webproxy?server=luckys.ekt.me&secret=5fe9173aea5203e80435f4a8fe138a
 
 全平台支持  
 软件下载  
-KARING  
-https://github.com/KaringX/karing  
+https://r2.maflya.com/#folder=775f54a9-c37b-4395-ae46-4587777f37cc  
 
 
 音乐接口  
@@ -152,6 +150,11 @@ https://gh-proxy.org/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/head
 
 https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/maflya-svip-music-source-addqs.js  
 
+代理加速github ：  
+https://ghproxy.net/https://raw.githubusercontent.com/mhmdxahmd/mafly/refs/heads/main/MAfly1/maflya-svip-music-source-addqs.js  
+
+音乐APP 可以在maflya 极速云盘下载  
+https://r2.maflya.com/#folder=52e9b7c5-d2b9-4bbd-a294-5055493cc940  
 
 maflya在线电视 
 实时在线浏览器收看 请用谷歌及微软的浏览器收看 
@@ -161,15 +164,15 @@ MAFLYA-TV电视
 https://tvtest.maflya.com  
 
 
-稳定的TG内置代理  
+TG内置代理  1128
 ======  
-https://t.me/socks?server=23.27.25.27&port=1080&user=admin&pass=admin  
+@mas5_bot       
+👆TG机器人  
+TG内置代理  
+TG内打开  
 
-裤佬网盘  
-==  
-以上所有的资源软件都可在 裤佬的网盘进行下载  
+https://t.me/socks?server=103.18.230.166&port=42000&user=um3v8zkl&pass=jpmqsctc    
 
-https://526900.xyz/  
 
 影视APP  
 ==  
@@ -182,28 +185,7 @@ https://t.me/fongmi_official
 
 觉得OK 提供对您有价值
 
-赞助 🌟  
-如果这个项目对你有所帮助，欢迎 Star ⭐ 本项目或请作者喝杯咖啡 ☕  
-
-维护不易， 感谢您的支持！这将让本项目可以继续走下去。 
-
-您的支持是我维持下去的动力！  
-零钱赞助：1元不嫌少，10元不嫌多  
-用于维护与升级，确保服务稳定。  
-
-请复制下方 USDT (TRC-20) 地址进行转账：  
-====  
-
-TEsG8GzwxFgewJubiQtjxmVDPeDozzLYj6  
-
-![jpgforTRC20ADDP](./MAfly1/pic/TRC20ADD_2026-08-26.jpg)  
-
-
-[赞助链接](https://pay.maflya.com)    
-
-
-
-灵感来自以下之一 thans
+灵感来自以下之复制粘贴一 thans
 ===  
 
 裤佬 
@@ -211,18 +193,4 @@ TEsG8GzwxFgewJubiQtjxmVDPeDozzLYj6
 https://t.me/stymei  
 https://jsnzkpg.com/  
 
-节点来自之一  thanks
-==  
 
-哄哄公益  
-==  
-
-https://t.me/honghongll  
-
-热气球加速器（VPN）  
-==  
-https://t.me/ic1008  
-
-利群公益 
-==  
-https://t.me/liqunchannel  
